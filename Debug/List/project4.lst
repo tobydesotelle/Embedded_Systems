@@ -1,0 +1,107 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          29/Sep/2022  19:43:58
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Project
+#        5 Current\project4.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWCF5A.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Project 5
+#        Current\project4.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Project 5 Current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Project 5 Current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Project
+#        5 Current\Debug\List\project4.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Project
+#        5 Current\Debug\Obj\project4.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Project 5 Current\project4.c
+      1          //This will include the state machine for project 4
+      2          
+      3          
+      4          void perform_show(void);
+      5          
+      6          /*
+      7          void Run_Straight(void){
+      8           switch(state){
+      9             case WAIT: // Begin
+     10                 wait_case();
+     11                 break; //
+     12               case START: // Begin
+     13                 start_case();
+     14                 break; //
+     15               case RUN: // Run
+     16                 run_case();
+     17                 break; //
+     18               case END: // End
+     19                 end_case();
+     20                 break; //
+     21               default:
+     22                 state=WAIT;
+     23                 break;
+     24           }
+     25          }
+     26          
+     27          */
+     28          
+     29          /*
+     30            Needs to run 2 circles
+     31            then 2 figure eights
+     32            the 2 triangles
+     33          */
+
+   \                                 In  segment CODE, align 2
+     34          void perform_show(void){
+   \                     perform_show:
+     35            
+     36            
+     37            
+     38            
+     39            
+     40          }
+   \   000000   1001         RETA
+     41          
+     42          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   perform_show
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  perform_show
+
+ 
+ 2 bytes in segment CODE
+ 
+ 2 bytes of CODE memory
+
+Errors: none
+Warnings: none

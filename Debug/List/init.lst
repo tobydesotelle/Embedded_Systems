@@ -1,0 +1,216 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:21:00
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\init.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4FD.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\init.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\init.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\init.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\init.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the all of the intilzation functions.
+      4          //
+      5          //
+      6          //  Tobias Desotelle
+      7          //  September 20 2022
+      8          //  Built with IAR Embedded Workbench Version: (7.21.1)
+      9          //------------------------------------------------------------------------------
+     10          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x202
+   \   union <unnamed> _A_PAOUT_L
+   \                     _A_PAOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x242
+   \   union <unnamed> _A_PCOUT_L
+   \                     _A_PCOUT_L:
+   \   000000                DS8 2
+     11          
+     12          extern char display_line[DISPLAYLINES][DISPLAYCHARS];
+     13          extern char *display[DISPLAYLINES];
+     14          extern volatile unsigned char display_changed;
+     15          extern volatile unsigned char update_display;
+     16          
+
+   \                                 In  segment CODE, align 2
+     17          void Master_Init(void){
+   \                     Master_Init:
+     18            Init_Ports();                        // Initialize Ports
+   \   000000   ........     CALLA   #Init_Ports
+     19            Init_Clocks();                       // Initialize Clock System
+   \   000004   ........     CALLA   #Init_Clocks
+     20            Init_Conditions();                   // Initialize Variables and Initial Conditions
+   \   000008   ........     CALLA   #Init_Conditions
+     21            Init_Timers();                       // Initialize Timers
+   \   00000C   ........     CALLA   #Init_Timers
+     22            Init_LCD();                          // Initialize LCD
+   \   000010   ........     CALLA   #Init_LCD
+     23            Init_LEDs();
+   \   000014   ........     CALLA   #Init_LEDs
+     24            Init_ADC();
+   \   000018   ........     CALLA   #Init_ADC
+     25            Init_Serial_UCA0(BAUD115200);
+   \   00001C   4C43         MOV.B   #0x0, R12
+   \   00001E   ........     CALLA   #Init_Serial_UCA0
+     26            Init_Serial_UCA1(BAUD115200);
+   \   000022   4C43         MOV.B   #0x0, R12
+   \   000024   ........     CALLA   #Init_Serial_UCA1
+     27            Init_Display();
+   \   000028   ........     CALLA   #Init_Display
+     28            //#define BAUD115200      (0x00)
+     29            //#define BAUD460800      (0x01)
+     30          }
+   \   00002C   1001         RETA
+
+   \                                 In  segment CODE, align 2
+     31          void Init_Conditions(void){
+   \                     Init_Conditions:
+     32          //------------------------------------------------------------------------------
+     33          
+     34            int i;
+     35            for(i=DISPLAYSTART;i<DISPLAYCHARS;i++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??Init_Conditions_0:
+   \   000002   3F900B00     CMP.W   #0xb, R15
+   \   000006   0A34         JGE     ??Init_Conditions_1
+     36              display_line[DISPLAY0][i] = RESET_STATE;
+   \   000008   CF43....     MOV.B   #0x0, display_line(R15)
+     37              display_line[DISPLAY1][i] = RESET_STATE;
+   \   00000C   CF43....     MOV.B   #0x0, display_line + 11(R15)
+     38              display_line[DISPLAY2][i] = RESET_STATE;
+   \   000010   CF43....     MOV.B   #0x0, display_line + 22(R15)
+     39              display_line[DISPLAY3][i] = RESET_STATE;
+   \   000014   CF43....     MOV.B   #0x0, display_line + 33(R15)
+     40            }
+   \   000018   1F53         ADD.W   #0x1, R15
+   \   00001A   F33F         JMP     ??Init_Conditions_0
+     41            display_line[DISPLAY0][DISPLAYEND] = RESET_STATE;
+   \                     ??Init_Conditions_1:
+   \   00001C   C243....     MOV.B   #0x0, &display_line + 10
+     42            display_line[DISPLAY1][DISPLAYEND] = RESET_STATE;
+   \   000020   C243....     MOV.B   #0x0, &display_line + 21
+     43            display_line[DISPLAY2][DISPLAYEND] = RESET_STATE;
+   \   000024   C243....     MOV.B   #0x0, &display_line + 32
+     44            display_line[DISPLAY3][DISPLAYEND] = RESET_STATE;
+   \   000028   C243....     MOV.B   #0x0, &display_line + 43
+     45          
+     46            display[DISPLAY0] = &display_line[DISPLAY0][RESET_STATE];
+   \   00002C   B240........ MOV.W   #display_line, &display
+     47            display[DISPLAY1] = &display_line[DISPLAY1][RESET_STATE];
+   \   000032   B240........ MOV.W   #display_line + 11, &display + 2
+     48            display[DISPLAY2] = &display_line[DISPLAY2][RESET_STATE];
+   \   000038   B240........ MOV.W   #display_line + 22, &display + 4
+     49            display[DISPLAY3] = &display_line[DISPLAY3][RESET_STATE];
+   \   00003E   B240........ MOV.W   #display_line + 33, &display + 6
+     50            update_display = RESET_STATE;
+   \   000044   C243....     MOV.B   #0x0, &update_display
+     51          
+     52          
+     53          // Interrupts are disabled by default, enable them.
+     54            enable_interrupts();
+   \   000048   ........     CALLA   #enable_interrupts
+     55          //------------------------------------------------------------------------------
+     56          }
+   \   00004C   1001         RETA
+
+   \                                 In  segment CODE, align 2
+     57          void enable_interrupts(void){
+   \                     enable_interrupts:
+     58            __bis_SR_register(GIE);     // enable interrupts
+   \   000000   0343         NOP
+   \   000002   32D2         BIS.W   #0x8, SR
+     59          //  asm volatile ("eint \n");
+     60          }
+   \   000004   1001         RETA
+
+   \                                 In  segment CODE, align 2
+     61          void Init_LEDs(void){
+   \                     Init_LEDs:
+     62          //------------------------------------------------------------------------------
+     63          // LED Configurations
+     64          //------------------------------------------------------------------------------
+     65          // Turns on both LEDs
+     66            P1OUT &= ~RED_LED;
+   \   000000   D2C30202     BIC.B   #0x1, &0x202
+     67            P6OUT &= ~GRN_LED;
+   \   000004   F2C040004302 BIC.B   #0x40, &0x243
+     68          //------------------------------------------------------------------------------
+     69          }
+   \   00000A   1001         RETA
+   \   00000C                REQUIRE _A_PAOUT_L
+   \   00000C                REQUIRE _A_PCOUT_L
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Init_Conditions
+        4   -> enable_interrupts
+      4   Init_LEDs
+      4   Master_Init
+        4   -> Init_ADC
+        4   -> Init_Clocks
+        4   -> Init_Conditions
+        4   -> Init_Display
+        4   -> Init_LCD
+        4   -> Init_LEDs
+        4   -> Init_Ports
+        4   -> Init_Serial_UCA0
+        4   -> Init_Serial_UCA1
+        4   -> Init_Timers
+      4   enable_interrupts
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      78  Init_Conditions
+      12  Init_LEDs
+      46  Master_Init
+       2  _A_PAOUT_L
+       2  _A_PCOUT_L
+       6  enable_interrupts
+
+ 
+ 142 bytes in segment CODE
+   4 bytes in segment DATA16_AN
+ 
+ 142 bytes of CODE memory
+   0 bytes of DATA memory (+ 4 bytes shared)
+
+Errors: none
+Warnings: none

@@ -1,0 +1,431 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:21:00
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\analogtodigital.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4FA.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\analogtodigital.c" -lC "C:\Users\Tobias Desotelle\OneDrive -
+#        UNC Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9
+#        current\Debug\List\analogtodigital.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\analogtodigital.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\analogtodigital.c
+      1          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x700
+   \   union <unnamed> _A_ADCCTL0_L
+   \                     _A_ADCCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x702
+   \   union <unnamed> _A_ADCCTL1_L
+   \                     _A_ADCCTL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x704
+   \   union <unnamed> _A_ADCCTL2_L
+   \                     _A_ADCCTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x70a
+   \   union <unnamed> _A_ADCMCTL0_L
+   \                     _A_ADCMCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x712
+   \   union <unnamed> _A_ADCMEM0_L
+   \                     _A_ADCMEM0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x71a
+   \   union <unnamed> _A_ADCIE_L
+   \                     _A_ADCIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x71e
+   \   union <unnamed> _A_ADCIV_L
+   \                     _A_ADCIV_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x202
+   \   union <unnamed> _A_PAOUT_L
+   \                     _A_PAOUT_L:
+   \   000000                DS8 2
+      2          //extern volatile unsigned int ADC_Left_Detect;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      3          unsigned int ADC_Left_Detect;
+   \                     ADC_Left_Detect:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      4          unsigned int ADC_Right_Detect;
+   \                     ADC_Right_Detect:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      5          unsigned int V_Thumb;
+   \                     V_Thumb:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      6          char adc_char[4];
+   \                     adc_char:
+   \   000000                DS8 4
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      7          unsigned int ADC_Channel=0;
+   \                     ADC_Channel:
+   \   000000                DS8 2
+      8          
+      9          
+
+   \                                 In  segment CODE, align 2
+     10          void Init_ADC(void){
+   \                     Init_ADC:
+     11            //------------------------------------------------------------------------------
+     12            // V_DETECT_L (0x04) // Pin 2 A2
+     13            // V_DETECT_R (0x08) // Pin 3 A3
+     14            // V_THUMB (0x20) // Pin 5 A5
+     15            //------------------------------------------------------------------------------
+     16            // ADCCTL0 Register
+     17            ADCCTL0 = RESET_STATE; // Reset
+   \   000000   82430007     MOV.W   #0x0, &0x700
+     18            ADCCTL0 |= ADCSHT_2; // 16 ADC clocks
+   \   000004   B2D000020007 BIS.W   #0x200, &0x700
+     19            ADCCTL0 |= ADCMSC; // MSC
+   \   00000A   B2D080000007 BIS.W   #0x80, &0x700
+     20            ADCCTL0 |= ADCON; // ADC ON
+   \   000010   B2D010000007 BIS.W   #0x10, &0x700
+     21            
+     22            // ADCCTL1 Register
+     23            ADCCTL2 = RESET_STATE; // Reset
+   \   000016   82430407     MOV.W   #0x0, &0x704
+     24            ADCCTL1 |= ADCSHS_0; // 00b = ADCSC bit
+   \   00001A   924202070207 MOV.W   &0x702, &0x702
+     25            ADCCTL1 |= ADCSHP; // ADC sample-and-hold SAMPCON signal from sampling timer.
+   \   000020   B2D000020207 BIS.W   #0x200, &0x702
+     26            ADCCTL1 &= ~ADCISSH; // ADC invert signal sample-and-hold.
+   \   000026   B2C000010207 BIC.W   #0x100, &0x702
+     27            ADCCTL1 |= ADCDIV_0; // ADC clock divider - 000b = Divide by 1
+   \   00002C   924202070207 MOV.W   &0x702, &0x702
+     28            ADCCTL1 |= ADCSSEL_0; // ADC clock MODCLK
+   \   000032   924202070207 MOV.W   &0x702, &0x702
+     29            ADCCTL1 |= ADCCONSEQ_0; // ADC conversion sequence 00b = Single-channel single-conversion
+   \   000038   924202070207 MOV.W   &0x702, &0x702
+     30            // ADCCTL1 & ADCBUSY identifies a conversion is in process
+     31            
+     32            // ADCCTL2 Register
+     33            ADCCTL2 = RESET_STATE; // Reset
+   \   00003E   82430407     MOV.W   #0x0, &0x704
+     34            ADCCTL2 |= ADCPDIV0; // ADC pre-divider 00b = Pre-divide by 1
+   \   000042   B2D000010407 BIS.W   #0x100, &0x704
+     35            ADCCTL2 |= ADCRES_2; // ADC resolution 10b = 12 bit (14 clock cycle conversion time) was ADCRES_0
+   \   000048   B2D020000407 BIS.W   #0x20, &0x704
+     36            ADCCTL2 &= ~ADCDF; // ADC data read-back format 0b = Binary unsigned.
+   \   00004E   B2C20407     BIC.W   #0x8, &0x704
+     37            ADCCTL2 &= ~ADCSR; // ADC sampling rate 0b = ADC buffer supports up to 200 ksps
+   \   000052   A2C20407     BIC.W   #0x4, &0x704
+     38            // ADCMCTL0 Register
+     39            ADCMCTL0 |= ADCSREF_0; // VREF - 000b = {VR+ = AVCC and VR– = AVSS }
+   \   000056   92420A070A07 MOV.W   &0x70a, &0x70a
+     40            ADCMCTL0 |= ADCINCH_5; // V_THUMB (0x20) Pin 5 A5
+   \   00005C   B2D005000A07 BIS.W   #0x5, &0x70a
+     41            ADCIE |= ADCIE0; // Enable ADC conv complete interrupt
+   \   000062   92D31A07     BIS.W   #0x1, &0x71a
+     42            ADCCTL0 |= ADCENC; // ADC enable conversion.
+   \   000066   A2D30007     BIS.W   #0x2, &0x700
+     43            ADCCTL0 |= ADCSC; // ADC start conversion.
+   \   00006A   92D30007     BIS.W   #0x1, &0x700
+     44          }
+   \   00006E   1001         RETA
+   \   000070                REQUIRE _A_ADCCTL0_L
+   \   000070                REQUIRE _A_ADCCTL2_L
+   \   000070                REQUIRE _A_ADCCTL1_L
+   \   000070                REQUIRE _A_ADCMCTL0_L
+   \   000070                REQUIRE _A_ADCIE_L
+     45          
+     46          #pragma vector=ADC_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     47          __interrupt void ADC_ISR(void){
+   \                     ADC_ISR:
+   \   000000   3F15         PUSHM.W #0x4, R15
+     48            switch(__even_in_range(ADCIV,ADCIV_ADCIFG)){
+   \   000002   1F421E07     MOV.W   &0x71e, R15
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for ADC_ISR>_0`:
+   \   000008   4B3C         JMP     ??ADC_ISR_0
+   \   00000A   4A3C         JMP     ??ADC_ISR_0
+   \   00000C   493C         JMP     ??ADC_ISR_0
+   \   00000E   483C         JMP     ??ADC_ISR_0
+   \   000010   473C         JMP     ??ADC_ISR_0
+   \   000012   463C         JMP     ??ADC_ISR_0
+   \   000014   003C         JMP     ??ADC_ISR_5
+     49            case ADCIV_NONE:
+     50              break;
+     51            case ADCIV_ADCOVIFG: // When a conversion result is written to the ADCMEM0
+     52              // before its previous conversion result was read.
+     53              break;
+     54            case ADCIV_ADCTOVIFG: // ADC conversion-time overflow
+     55              break;
+     56            case ADCIV_ADCHIIFG: // Window comparator interrupt flags
+     57              break;
+     58            case ADCIV_ADCLOIFG: // Window comparator interrupt flag
+     59              break;
+     60            case ADCIV_ADCINIFG: // Window comparator interrupt flag
+     61              break;
+     62            case ADCIV_ADCIFG: // ADCMEM0 memory register with the conversion result
+     63              ADCCTL0 &= ~ADCENC; // Disable ENC bit.
+   \                     ??ADC_ISR_5:
+   \   000016   A2C30007     BIC.W   #0x2, &0x700
+     64              switch (ADC_Channel++){
+   \   00001A   1F42....     MOV.W   &ADC_Channel, R15
+   \   00001E   0E4F         MOV.W   R15, R14
+   \   000020   1E53         ADD.W   #0x1, R14
+   \   000022   824E....     MOV.W   R14, &ADC_Channel
+   \   000026   0F83         SUB.W   #0x0, R15
+   \   000028   0524         JEQ     ??ADC_ISR_2
+   \   00002A   1F83         SUB.W   #0x1, R15
+   \   00002C   1524         JEQ     ??ADC_ISR_3
+   \   00002E   1F83         SUB.W   #0x1, R15
+   \   000030   2324         JEQ     ??ADC_ISR_4
+   \   000032   363C         JMP     ??ADC_ISR_0
+     65              case GET_V_THUMB: // Channel A2 Interrupt
+     66                ADCMCTL0 &= ~ADCINCH_5; // Disable Last channel A2
+   \                     ??ADC_ISR_2:
+   \   000034   B2F0FAFF0A07 AND.W   #0xfffa, &0x70a
+     67                ADCMCTL0 |= ADCINCH_2; // Enable Next channel A3
+   \   00003A   A2D30A07     BIS.W   #0x2, &0x70a
+     68                V_Thumb = ADCMEM0; // Move result into Global
+   \   00003E   92421207.... MOV.W   &0x712, &V_Thumb
+     69                V_Thumb = V_Thumb; // Divide the result by 4
+   \   000044   9242........ MOV.W   &V_Thumb, &V_Thumb
+     70                P2OUT|=IR_LED;
+   \   00004A   E2D20302     BIS.B   #0x4, &0x203
+     71                HEXtoBCD(V_Thumb); // Convert result to String
+   \   00004E   1C42....     MOV.W   &V_Thumb, R12
+   \   000052   ........     CALLA   #HEXtoBCD
+     72                //change_display_adc(adc_char,2); // Place String in Display
+     73                break;
+   \   000056   243C         JMP     ??ADC_ISR_0
+     74              case GET_L_DETECT:
+     75                 ADCMCTL0 &= ~ADCINCH_2; // Disable Last channel A2
+   \                     ??ADC_ISR_3:
+   \   000058   A2C30A07     BIC.W   #0x2, &0x70a
+     76                ADCMCTL0 |= ADCINCH_3; // Enable Next channel A3
+   \   00005C   B2D003000A07 BIS.W   #0x3, &0x70a
+     77                ADC_Right_Detect = ADCMEM0; // Move result into Global
+   \   000062   92421207.... MOV.W   &0x712, &ADC_Right_Detect
+     78                ADC_Right_Detect = ADC_Right_Detect; // Divide the result by 4
+   \   000068   9242........ MOV.W   &ADC_Right_Detect, &ADC_Right_Detect
+     79                HEXtoBCD(ADC_Right_Detect); // Convert result to String
+   \   00006E   1C42....     MOV.W   &ADC_Right_Detect, R12
+   \   000072   ........     CALLA   #HEXtoBCD
+     80                //change_display_adc(adc_char,DISPLAY0); // Place String in Display
+     81                break;
+   \   000076   143C         JMP     ??ADC_ISR_0
+     82              case GET_R_DETECT:
+     83                ADCMCTL0 &= ~ADCINCH_3; // Disable Last channel A2
+   \                     ??ADC_ISR_4:
+   \   000078   B2F0FCFF0A07 AND.W   #0xfffc, &0x70a
+     84                ADCMCTL0 |= ADCINCH_5; // Enable Next channel A3
+   \   00007E   B2D005000A07 BIS.W   #0x5, &0x70a
+     85                ADC_Left_Detect = ADCMEM0; // Move result into Global
+   \   000084   92421207.... MOV.W   &0x712, &ADC_Left_Detect
+     86                ADC_Left_Detect = ADC_Left_Detect; // Divide the result by 4
+   \   00008A   9242........ MOV.W   &ADC_Left_Detect, &ADC_Left_Detect
+     87                HEXtoBCD(ADC_Left_Detect); // Convert result to String
+   \   000090   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   000094   ........     CALLA   #HEXtoBCD
+     88                //change_display_adc(adc_char,DISPLAY1); // Place String in Display
+     89                ADC_Channel=RESET_STATE;
+   \   000098   8243....     MOV.W   #0x0, &ADC_Channel
+     90                P2OUT&=~IR_LED;
+   \   00009C   E2C20302     BIC.B   #0x4, &0x203
+     91                break;
+     92              default:
+     93                break;
+     94              }
+     95          //    ADCCTL0 |= ADCENC; // Enable Conversions
+     96          //    ADCCTL0 |= ADCSC; // Start next sample
+     97              break;
+     98            default:
+     99              break;
+    100            }
+    101          }
+   \                     ??ADC_ISR_0:
+   \   0000A0   3C17         POPM.W  #0x4, R15
+   \   0000A2   0013         RETI
+   \   0000A4                REQUIRE _A_ADCCTL0_L
+   \   0000A4                REQUIRE _A_ADCMCTL0_L
+   \   0000A4                REQUIRE _A_ADCMEM0_L
+   \   0000A4                REQUIRE _A_PAOUT_L
+   \   0000A4                REQUIRE _A_ADCIV_L
+    102          //-----------------------------------------------------------------
+    103          // Hex to BCD Conversion
+    104          // Convert a Hex number to a BCD for display on an LCD or monitor
+    105          //
+    106          //-----------------------------------------------------------------
+
+   \                                 In  segment CODE, align 2
+    107          void HEXtoBCD(unsigned int hex_value){
+   \                     HEXtoBCD:
+    108            unsigned int value;
+    109            for(int i=RESET_STATE; i < adc_num_chars; i++) {
+   \   000000   0E43         MOV.W   #0x0, R14
+   \                     ??HEXtoBCD_0:
+   \   000002   2E92         CMP.W   #0x4, R14
+   \   000004   0534         JGE     ??HEXtoBCD_1
+    110              adc_char[i] = CHAR_0;
+   \   000006   FE403000.... MOV.B   #0x30, adc_char(R14)
+    111            }
+   \   00000C   1E53         ADD.W   #0x1, R14
+   \   00000E   F93F         JMP     ??HEXtoBCD_0
+    112            while (hex_value > Above_999){
+   \                     ??HEXtoBCD_1:
+   \   000010   3C90E803     CMP.W   #0x3e8, R12
+   \   000014   0C28         JNC     ??HEXtoBCD_4
+    113              hex_value = hex_value - (Above_999+add_one);
+   \   000016   3C5018FC     ADD.W   #0xfc18, R12
+    114              value = value + add_one;
+   \   00001A   1F53         ADD.W   #0x1, R15
+    115              adc_char[adc_c_0] = CHAR_0 + value;
+   \   00001C   0E12         PUSH.W  R14
+   \   00001E   C14F0000     MOV.B   R15, 0(SP)
+   \   000022   3E41         POP.W   R14
+   \   000024   7E503000     ADD.B   #0x30, R14
+   \   000028   C24E....     MOV.B   R14, &adc_char
+   \   00002C   F13F         JMP     ??HEXtoBCD_1
+    116            }
+    117            value = RESET_STATE;
+   \                     ??HEXtoBCD_4:
+   \   00002E   0F43         MOV.W   #0x0, R15
+    118            while (hex_value > Above_99){
+   \                     ??HEXtoBCD_2:
+   \   000030   3C906400     CMP.W   #0x64, R12
+   \   000034   0C28         JNC     ??HEXtoBCD_5
+    119              hex_value = hex_value - (Above_99+add_one);
+   \   000036   3C509CFF     ADD.W   #0xff9c, R12
+    120              value = value + add_one;
+   \   00003A   1F53         ADD.W   #0x1, R15
+    121              adc_char[adc_c_1] = CHAR_0 + value;
+   \   00003C   0E12         PUSH.W  R14
+   \   00003E   C14F0000     MOV.B   R15, 0(SP)
+   \   000042   3E41         POP.W   R14
+   \   000044   7E503000     ADD.B   #0x30, R14
+   \   000048   C24E....     MOV.B   R14, &adc_char + 1
+   \   00004C   F13F         JMP     ??HEXtoBCD_2
+    122            }
+    123            value = RESET_STATE;
+   \                     ??HEXtoBCD_5:
+   \   00004E   0F43         MOV.W   #0x0, R15
+    124            while (hex_value > Above_9){
+   \                     ??HEXtoBCD_3:
+   \   000050   3C900A00     CMP.W   #0xa, R12
+   \   000054   0C28         JNC     ??HEXtoBCD_6
+    125              hex_value = hex_value - (Above_9+add_one);
+   \   000056   3C50F6FF     ADD.W   #0xfff6, R12
+    126              value = value + add_one;
+   \   00005A   1F53         ADD.W   #0x1, R15
+    127              adc_char[adc_c_2] = CHAR_0 + value;
+   \   00005C   0E12         PUSH.W  R14
+   \   00005E   C14F0000     MOV.B   R15, 0(SP)
+   \   000062   3E41         POP.W   R14
+   \   000064   7E503000     ADD.B   #0x30, R14
+   \   000068   C24E....     MOV.B   R14, &adc_char + 2
+   \   00006C   F13F         JMP     ??HEXtoBCD_3
+    128            }
+    129            adc_char[adc_c_3] = CHAR_0 + hex_value;
+   \                     ??HEXtoBCD_6:
+   \   00006E   0E12         PUSH.W  R14
+   \   000070   C14C0000     MOV.B   R12, 0(SP)
+   \   000074   3E41         POP.W   R14
+   \   000076   7E503000     ADD.B   #0x30, R14
+   \   00007A   C24E....     MOV.B   R14, &adc_char + 3
+    130          }
+   \   00007E   1001         RETA
+
+   \                                 In  segment INTVEC, offset 0x3a, root
+   \                     `??ADC_ISR::??INTVEC 58`:
+   \   00003A   ....         DC16    ADC_ISR
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+     12   ADC_ISR
+       12   -> HEXtoBCD
+      6   HEXtoBCD
+      4   Init_ADC
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ADC_Channel
+     164  ADC_ISR
+       2  ADC_ISR::??INTVEC 58
+       2  ADC_Left_Detect
+       2  ADC_Right_Detect
+     128  HEXtoBCD
+     112  Init_ADC
+       2  V_Thumb
+       2  _A_ADCCTL0_L
+       2  _A_ADCCTL1_L
+       2  _A_ADCCTL2_L
+       2  _A_ADCIE_L
+       2  _A_ADCIV_L
+       2  _A_ADCMCTL0_L
+       2  _A_ADCMEM0_L
+       2  _A_PAOUT_L
+       4  adc_char
+
+ 
+ 240 bytes in segment CODE
+  16 bytes in segment DATA16_AN
+  12 bytes in segment DATA16_Z
+   2 bytes in segment INTVEC
+ 164 bytes in segment ISR_CODE
+ 
+ 404 bytes of CODE  memory
+   0 bytes of CONST memory (+  2 bytes shared)
+  12 bytes of DATA  memory (+ 16 bytes shared)
+
+Errors: none
+Warnings: none

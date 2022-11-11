@@ -1,0 +1,710 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:21:00
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\serial.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW88C.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\serial.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\serial.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\serial.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\serial.c
+      1          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x500
+   \   union <unnamed> _A_UCA0CTLW0_L
+   \                     _A_UCA0CTLW0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x506
+   \   union <unnamed> _A_UCA0BRW_L
+   \                     _A_UCA0BRW_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x508
+   \   union <unnamed> _A_UCA0MCTLW_L
+   \                     _A_UCA0MCTLW_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x50c
+   \   union <unnamed> _A_UCA0RXBUF_L
+   \                     _A_UCA0RXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x50e
+   \   union <unnamed> _A_UCA0TXBUF_L
+   \                     _A_UCA0TXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x51a
+   \   union <unnamed> _A_UCA0IE_L
+   \                     _A_UCA0IE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x51e
+   \   union <unnamed> _A_UCA0IV_L
+   \                     _A_UCA0IV_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x580
+   \   union <unnamed> _A_UCA1CTLW0_L
+   \                     _A_UCA1CTLW0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x586
+   \   union <unnamed> _A_UCA1BRW_L
+   \                     _A_UCA1BRW_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x588
+   \   union <unnamed> _A_UCA1MCTLW_L
+   \                     _A_UCA1MCTLW_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x59a
+   \   union <unnamed> _A_UCA1IE_L
+   \                     _A_UCA1IE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x59e
+   \   union <unnamed> _A_UCA1IV_L
+   \                     _A_UCA1IV_L:
+   \   000000                DS8 2
+      2          
+      3          extern volatile unsigned short serial_bits;
+      4          #define eUCA0_rx                ()
+      5          
+      6          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      7          volatile unsigned int usb_rx_ring_wr;
+   \                     usb_rx_ring_wr:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      8          volatile char USB_Char_Rx[SMALL_RING_SIZE];
+   \                     USB_Char_Rx:
+   \   000000                DS8 16
+      9          
+     10          //char process_buf_back[32];
+     11          //char process_buf_front[32];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     12          char process_buf_rx[PROCESS_BUF_LENGTH];
+   \                     process_buf_rx:
+   \   000000                DS8 11
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     13          char process_buf_tx[PROCESS_BUF_LENGTH];
+   \                     process_buf_tx:
+   \   000000                DS8 11
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     14          int count=0;
+   \                     count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     15          char RING_BUF_A0[SMALL_RING_SIZE];
+   \                     RING_BUF_A0:
+   \   000000                DS8 16
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     16          char *rx_start;
+   \                     rx_start:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     17          char TX_A1[SMALL_RING_SIZE];
+   \                     TX_A1:
+   \   000000                DS8 16
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     18          char *TX_char=process_buf_rx; 
+   \                     TX_char:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for TX_char>`
+     19          
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     20          char *RX_write=RING_BUF_A0;
+   \                     RX_write:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for RX_write>`
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          char *RX_read;
+   \                     RX_read:
+   \   000000                DS8 2
+     22          
+
+   \                                 In  segment CODE, align 2
+     23          void Init_Serial_UCA0(char speed){
+   \                     Init_Serial_UCA0:
+     24          
+     25            switch(speed){
+   \   000000   4E4C         MOV.B   R12, R14
+   \   000002   4E83         SUB.B   #0x0, R14
+   \   000004   0324         JEQ     ??Init_Serial_UCA0_0
+   \   000006   5E83         SUB.B   #0x1, R14
+   \   000008   2424         JEQ     ??Init_Serial_UCA0_1
+   \   00000A   1001         RETA
+     26            case BAUD115200:
+     27            //------------------------------------------------------------------------------
+     28            // TX error (%) RX error (%)
+     29            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+     30            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
+     31            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
+     32            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
+     33            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
+     34            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+     35            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+     36            //------------------------------------------------------------------------------
+     37            // Configure eUSCI_A0 for UART mode
+     38            UCA0CTLW0 = 0;
+   \                     ??Init_Serial_UCA0_0:
+   \   00000C   82430005     MOV.W   #0x0, &0x500
+     39            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
+   \   000010   92D30005     BIS.W   #0x1, &0x500
+     40            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+   \   000014   B2D080000005 BIS.W   #0x80, &0x500
+     41            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
+   \   00001A   B2C000200005 BIC.W   #0x2000, &0x500
+     42            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+   \   000020   B2C000080005 BIC.W   #0x800, &0x500
+     43            UCA0CTLW0 &= ~UCPEN; // No Parity
+   \   000026   B2C000800005 BIC.W   #0x8000, &0x500
+     44            UCA0CTLW0 &= ~UCSYNC;
+   \   00002C   B2C000010005 BIC.W   #0x100, &0x500
+     45            UCA0CTLW0 &= ~UC7BIT;
+   \   000032   B2C000100005 BIC.W   #0x1000, &0x500
+     46            UCA0CTLW0 |= UCMODE_0;
+   \   000038   924200050005 MOV.W   &0x500, &0x500
+     47            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+     48            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+     49            // UCA?MCTLW = UCSx + UCFx + UCOS16
+     50            UCA0BRW = 4 ; // 115,200 baud
+   \   00003E   A2420605     MOV.W   #0x4, &0x506
+     51            UCA0MCTLW = 0x5551 ;
+   \   000042   B24051550805 MOV.W   #0x5551, &0x508
+     52            UCA0CTLW0 &= ~UCSWRST ; // release from reset
+   \   000048   92C30005     BIC.W   #0x1, &0x500
+     53            //UCA0TXBUF = 0x00; // Prime the Pump
+     54            UCA0IE |= UCRXIE; // Enable RX interrupt
+   \   00004C   92D31A05     BIS.W   #0x1, &0x51a
+     55            break;
+   \   000050   1001         RETA
+     56            case BAUD460800:
+     57            UCA0CTLW0 = 0;
+   \                     ??Init_Serial_UCA0_1:
+   \   000052   82430005     MOV.W   #0x0, &0x500
+     58            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
+   \   000056   92D30005     BIS.W   #0x1, &0x500
+     59            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+   \   00005A   B2D080000005 BIS.W   #0x80, &0x500
+     60            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
+   \   000060   B2C000200005 BIC.W   #0x2000, &0x500
+     61            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+   \   000066   B2C000080005 BIC.W   #0x800, &0x500
+     62            UCA0CTLW0 &= ~UCPEN; // No Parity
+   \   00006C   B2C000800005 BIC.W   #0x8000, &0x500
+     63            UCA0CTLW0 &= ~UCSYNC;
+   \   000072   B2C000010005 BIC.W   #0x100, &0x500
+     64            UCA0CTLW0 &= ~UC7BIT;
+   \   000078   B2C000100005 BIC.W   #0x1000, &0x500
+     65            UCA0CTLW0 |= UCMODE_0;
+   \   00007E   924200050005 MOV.W   &0x500, &0x500
+     66            UCA0BRW = 17 ; // 115,200 baud
+   \   000084   B24011000605 MOV.W   #0x11, &0x506
+     67            UCA0MCTLW = 0x4A00 ;
+   \   00008A   B240004A0805 MOV.W   #0x4a00, &0x508
+     68            UCA0CTLW0 &= ~UCSWRST ; // release from reset
+   \   000090   92C30005     BIC.W   #0x1, &0x500
+     69            //UCA0TXBUF = 0x00; // Prime the Pump
+     70            UCA0IE |= UCRXIE; // Enable RX interrupt
+   \   000094   92D31A05     BIS.W   #0x1, &0x51a
+     71            break;
+     72            }
+     73            //------------------------------------------------------------------------------
+     74          }
+   \   000098   1001         RETA
+   \   00009A                REQUIRE _A_UCA0CTLW0_L
+   \   00009A                REQUIRE _A_UCA0BRW_L
+   \   00009A                REQUIRE _A_UCA0MCTLW_L
+   \   00009A                REQUIRE _A_UCA0IE_L
+
+   \                                 In  segment CODE, align 2
+     75          void Init_Serial_UCA1(char speed){
+   \                     Init_Serial_UCA1:
+     76            
+     77            switch(speed){
+   \   000000   4E4C         MOV.B   R12, R14
+   \   000002   4E83         SUB.B   #0x0, R14
+   \   000004   0324         JEQ     ??Init_Serial_UCA1_0
+   \   000006   5E83         SUB.B   #0x1, R14
+   \   000008   2424         JEQ     ??Init_Serial_UCA1_1
+   \   00000A   1001         RETA
+     78            case BAUD115200:
+     79            //------------------------------------------------------------------------------
+     80            // TX error (%) RX error (%)
+     81            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+     82            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
+     83            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
+     84            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
+     85            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
+     86            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+     87            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+     88            //------------------------------------------------------------------------------
+     89            // Configure eUSCI_A0 for UART mode
+     90            UCA1CTLW0 = 0;
+   \                     ??Init_Serial_UCA1_0:
+   \   00000C   82438005     MOV.W   #0x0, &0x580
+     91            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
+   \   000010   92D38005     BIS.W   #0x1, &0x580
+     92            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+   \   000014   B2D080008005 BIS.W   #0x80, &0x580
+     93            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
+   \   00001A   B2C000208005 BIC.W   #0x2000, &0x580
+     94            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+   \   000020   B2C000088005 BIC.W   #0x800, &0x580
+     95            UCA1CTLW0 &= ~UCPEN; // No Parity
+   \   000026   B2C000808005 BIC.W   #0x8000, &0x580
+     96            UCA1CTLW0 &= ~UCSYNC;
+   \   00002C   B2C000018005 BIC.W   #0x100, &0x580
+     97            UCA1CTLW0 &= ~UC7BIT;
+   \   000032   B2C000108005 BIC.W   #0x1000, &0x580
+     98            UCA1CTLW0 |= UCMODE_0;
+   \   000038   924280058005 MOV.W   &0x580, &0x580
+     99            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    100            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+    101            // UCA?MCTLW = UCSx + UCFx + UCOS16
+    102            UCA1BRW = 4 ; // 115,200 baud
+   \   00003E   A2428605     MOV.W   #0x4, &0x586
+    103            UCA1MCTLW = 0x5551 ;
+   \   000042   B24051558805 MOV.W   #0x5551, &0x588
+    104            UCA1CTLW0 &= ~UCSWRST ; // release from reset
+   \   000048   92C38005     BIC.W   #0x1, &0x580
+    105           // UCA1TXBUF = 0x00; // Prime the Pump
+    106            UCA1IE |= UCRXIE; // Enable RX interrupt
+   \   00004C   92D39A05     BIS.W   #0x1, &0x59a
+    107            break;
+   \   000050   1001         RETA
+    108            case BAUD460800:
+    109            UCA1CTLW0 = 0;
+   \                     ??Init_Serial_UCA1_1:
+   \   000052   82438005     MOV.W   #0x0, &0x580
+    110            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
+   \   000056   92D38005     BIS.W   #0x1, &0x580
+    111            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+   \   00005A   B2D080008005 BIS.W   #0x80, &0x580
+    112            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
+   \   000060   B2C000208005 BIC.W   #0x2000, &0x580
+    113            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+   \   000066   B2C000088005 BIC.W   #0x800, &0x580
+    114            UCA1CTLW0 &= ~UCPEN; // No Parity
+   \   00006C   B2C000808005 BIC.W   #0x8000, &0x580
+    115            UCA1CTLW0 &= ~UCSYNC;
+   \   000072   B2C000018005 BIC.W   #0x100, &0x580
+    116            UCA1CTLW0 &= ~UC7BIT;
+   \   000078   B2C000108005 BIC.W   #0x1000, &0x580
+    117            UCA1CTLW0 |= UCMODE_0;
+   \   00007E   924280058005 MOV.W   &0x580, &0x580
+    118            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    119            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+    120            // UCA?MCTLW = UCSx + UCFx + UCOS16
+    121            UCA1BRW = 17 ;
+   \   000084   B24011008605 MOV.W   #0x11, &0x586
+    122            UCA1MCTLW = 0x4A00 ;
+   \   00008A   B240004A8805 MOV.W   #0x4a00, &0x588
+    123            UCA1CTLW0 &= ~UCSWRST ; // release from reset
+   \   000090   92C38005     BIC.W   #0x1, &0x580
+    124            //UCA1TXBUF = 0x00; // Prime the Pump
+    125            UCA1IE |= UCRXIE; // Enable RX interrupt
+   \   000094   92D39A05     BIS.W   #0x1, &0x59a
+    126            break;
+    127            }
+    128            //------------------------------------------------------------------------------
+    129          }
+   \   000098   1001         RETA
+   \   00009A                REQUIRE _A_UCA1CTLW0_L
+   \   00009A                REQUIRE _A_UCA1BRW_L
+   \   00009A                REQUIRE _A_UCA1MCTLW_L
+   \   00009A                REQUIRE _A_UCA1IE_L
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+    130          char test_output[11];
+   \                     test_output:
+   \   000000                DS8 11
+    131          #pragma vector=EUSCI_A0_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+    132          __interrupt void EUSCI_A0_ISR(void){
+   \                     EUSCI_A0_ISR:
+   \   000000   1F15         PUSHM.W #0x2, R15
+    133            
+    134            switch(__even_in_range(UCA0IV,0x08)){ // Bruh IDK what I did here needs to be fixed
+   \   000002   1F421E05     MOV.W   &0x51e, R15
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for EUSCI_A0_ISR>_0`:
+   \   000008   773C         JMP     ??EUSCI_A0_ISR_3
+   \   00000A   033C         JMP     ??EUSCI_A0_ISR_13
+   \   00000C   5B3C         JMP     ??EUSCI_A0_ISR_14
+   \   00000E   743C         JMP     ??EUSCI_A0_ISR_3
+   \   000010   733C         JMP     ??EUSCI_A0_ISR_3
+    135            case 0: // Vector 0 - no interrupt
+    136              break;
+    137            case 2: // Vector 2 - RXIFG
+    138              serial_bits = SERIAL_RX;
+   \                     ??EUSCI_A0_ISR_13:
+   \   000012   A243....     MOV.W   #0x2, &serial_bits
+    139              *RX_write = UCA0RXBUF;// Writes UCA0RXBUF to current RING_BUF_A0 location
+   \   000016   1E420C05     MOV.W   &0x50c, R14
+   \   00001A   1F42....     MOV.W   &RX_write, R15
+   \   00001E   CF4E0000     MOV.B   R14, 0(R15)
+    140              count++;
+   \   000022   9253....     ADD.W   #0x1, &count
+    141              if(*RX_write != '\0' && rx_start == NULL){
+   \   000026   1F42....     MOV.W   &RX_write, R15
+   \   00002A   CF930000     CMP.B   #0x0, 0(R15)
+   \   00002E   0824         JEQ     ??EUSCI_A0_ISR_5
+   \   000030   8293....     CMP.W   #0x0, &rx_start
+   \   000034   0520         JNE     ??EUSCI_A0_ISR_5
+    142                rx_start = RX_write;
+   \   000036   9242........ MOV.W   &RX_write, &rx_start
+    143                count = 0;
+   \   00003C   8243....     MOV.W   #0x0, &count
+    144              }
+    145              RX_write++;
+   \                     ??EUSCI_A0_ISR_5:
+   \   000040   9253....     ADD.W   #0x1, &RX_write
+    146              if(*(RX_write-1) == '\n' || count == 10){
+   \   000044   1F42....     MOV.W   &RX_write, R15
+   \   000048   FF900A00FFFF CMP.B   #0xa, 0xffff(R15)
+   \   00004E   0424         JEQ     ??EUSCI_A0_ISR_6
+   \   000050   B2900A00.... CMP.W   #0xa, &count
+   \   000056   2E20         JNE     ??EUSCI_A0_ISR_7
+    147                RX_write--;
+   \                     ??EUSCI_A0_ISR_6:
+   \   000058   B253....     ADD.W   #0xffff, &RX_write
+    148                for(int i=0; i<SMALL_RING_SIZE; i++){
+   \   00005C   0F43         MOV.W   #0x0, R15
+   \                     ??EUSCI_A0_ISR_0:
+   \   00005E   3F901000     CMP.W   #0x10, R15
+   \   000062   2134         JGE     ??EUSCI_A0_ISR_8
+    149                  if(rx_start == RX_write && i < PROCESS_BUF_LENGTH){
+   \   000064   9292........ CMP.W   &RX_write, &rx_start
+   \   00006A   0720         JNE     ??EUSCI_A0_ISR_9
+   \   00006C   3F900B00     CMP.W   #0xb, R15
+   \   000070   0434         JGE     ??EUSCI_A0_ISR_9
+    150                    process_buf_rx[i] = ' ';
+   \   000072   FF402000.... MOV.B   #0x20, process_buf_rx(R15)
+   \   000078   143C         JMP     ??EUSCI_A0_ISR_4
+    151                  }
+    152                  else if(rx_start == RX_write){
+   \                     ??EUSCI_A0_ISR_9:
+   \   00007A   9292........ CMP.W   &RX_write, &rx_start
+   \   000080   0320         JNE     ??EUSCI_A0_ISR_10
+    153                    process_buf_rx[i] = '\0';
+   \   000082   CF43....     MOV.B   #0x0, process_buf_rx(R15)
+   \   000086   0D3C         JMP     ??EUSCI_A0_ISR_4
+    154                  } 
+    155                  else{
+    156                    if(rx_start == RING_BUF_A0+SMALL_RING_SIZE){
+   \                     ??EUSCI_A0_ISR_10:
+   \   000088   B290........ CMP.W   #RING_BUF_A0 + 16, &rx_start
+   \   00008E   0320         JNE     ??EUSCI_A0_ISR_11
+    157                      rx_start = RING_BUF_A0;
+   \   000090   B240........ MOV.W   #RING_BUF_A0, &rx_start
+    158                    }
+    159                    process_buf_rx[i] = *(rx_start);
+   \                     ??EUSCI_A0_ISR_11:
+   \   000096   1E42....     MOV.W   &rx_start, R14
+   \   00009A   EF4E....     MOV.B   @R14, process_buf_rx(R15)
+    160                    rx_start++;
+   \   00009E   9253....     ADD.W   #0x1, &rx_start
+    161                  }
+    162                }
+   \                     ??EUSCI_A0_ISR_4:
+   \   0000A2   1F53         ADD.W   #0x1, R15
+   \   0000A4   DC3F         JMP     ??EUSCI_A0_ISR_0
+    163                serial_bits &= ~rx_buff_update;
+   \                     ??EUSCI_A0_ISR_8:
+   \   0000A6   B2C01000.... BIC.W   #0x10, &serial_bits
+    164                rx_start = NULL;
+   \   0000AC   8243....     MOV.W   #0x0, &rx_start
+    165                RX_write++;
+   \   0000B0   9253....     ADD.W   #0x1, &RX_write
+    166              }
+    167              if(RX_write == RING_BUF_A0+SMALL_RING_SIZE){
+   \                     ??EUSCI_A0_ISR_7:
+   \   0000B4   B290........ CMP.W   #RING_BUF_A0 + 16, &RX_write
+   \   0000BA   1E20         JNE     ??EUSCI_A0_ISR_3
+    168                RX_write = RING_BUF_A0;
+   \   0000BC   B240........ MOV.W   #RING_BUF_A0, &RX_write
+    169              }
+    170              
+    171              break;
+   \   0000C2   1A3C         JMP     ??EUSCI_A0_ISR_3
+    172            case 4: // Vector 4 – TXIFG
+    173              serial_bits = SERIAL_TX;
+   \                     ??EUSCI_A0_ISR_14:
+   \   0000C4   A242....     MOV.W   #0x4, &serial_bits
+    174              if(*TX_char=='\0'){
+   \   0000C8   1F42....     MOV.W   &TX_char, R15
+   \   0000CC   CF930000     CMP.B   #0x0, 0(R15)
+   \   0000D0   0B20         JNE     ??EUSCI_A0_ISR_12
+    175                UCA0TXBUF = '\n';
+   \   0000D2   B2400A000E05 MOV.W   #0xa, &0x50e
+    176                UCA0IE &= ~UCTXIE;
+   \   0000D8   A2C31A05     BIC.W   #0x2, &0x51a
+    177                //TX_char=TX_A1;
+    178                serial_bits |= tx_buff_update;
+   \   0000DC   B2D2....     BIS.W   #0x8, &serial_bits
+    179                TX_char=process_buf_rx;
+   \   0000E0   B240........ MOV.W   #process_buf_rx, &TX_char
+   \   0000E6   083C         JMP     ??EUSCI_A0_ISR_3
+    180              }
+    181                else{
+    182                  //UCA0IE &= ~UCTXIE; //<=====
+    183                  UCA0TXBUF = *TX_char;
+   \                     ??EUSCI_A0_ISR_12:
+   \   0000E8   1F42....     MOV.W   &TX_char, R15
+   \   0000EC   6F4F         MOV.B   @R15, R15
+   \   0000EE   4F4F         MOV.B   R15, R15
+   \   0000F0   824F0E05     MOV.W   R15, &0x50e
+    184                  TX_char++;
+   \   0000F4   9253....     ADD.W   #0x1, &TX_char
+    185                }
+    186              break;
+    187            default: break;
+    188            }
+    189          }
+   \                     ??EUSCI_A0_ISR_3:
+   \   0000F8   1E17         POPM.W  #0x2, R15
+   \   0000FA   0013         RETI
+   \   0000FC                REQUIRE _A_UCA0RXBUF_L
+   \   0000FC                REQUIRE _A_UCA0TXBUF_L
+   \   0000FC                REQUIRE _A_UCA0IE_L
+   \   0000FC                REQUIRE _A_UCA0IV_L
+    190          #pragma vector=EUSCI_A1_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+    191          __interrupt void EUSCI_A1_ISR(void){
+   \                     EUSCI_A1_ISR:
+   \   000000   0F12         PUSH.W  R15
+    192            switch(__even_in_range(UCA1IV,0x08)){
+   \   000002   1F429E05     MOV.W   &0x59e, R15
+    193          //  case 0: // Vector 0 - no interrupt
+    194          //    break;
+    195          //  case 2: // Vector 2 - RXIFG
+    196          //    serial_bits = SERIAL_RX;
+    197          //    *RX_write = UCA1RXBUF;
+    198          //    RX_write++;
+    199          //    if(RX_write-RING_BUF_A0==10||*(RX_write-1)=='\0'){
+    200          //      strncpy(process_buf,RING_BUF_A0,11);
+    201          //      RING_BUF_A0_CUR_BUF++;
+    202          //      if(RING_BUF_A0_CUR_BUF==NUM_PROCESS_BUF)
+    203          //        RING_BUF_A0_CUR_BUF=RESET;
+    204          //      RX_write=RING_BUF_A0;
+    205          //    }
+    206          //    
+    207          //    break;
+    208          //  case 4: // Vector 4 – TXIFG
+    209          //    serial_bits = SERIAL_TX;
+    210          //    if(*TX_char=='\0'){
+    211          //      UCA1IE &= ~UCTXIE;
+    212          //      //TX_char=TX_A1;
+    213          //      TX_A1_CUR_BUF++;
+    214          //      if(TX_A1_CUR_BUF==NUM_PROCESS_BUF)
+    215          //        TX_A1_CUR_BUF=RESET;
+    216          //      TX_char=process_buf;
+    217          //    }
+    218          //      else{
+    219          //        UCA1TXBUF = *TX_char;
+    220          //        TX_char++;
+    221          //      }
+    222          //    break;
+    223          //  default: break;
+    224            }
+    225          }
+   \   000006   3F41         POP.W   R15
+   \   000008   0013         RETI
+   \   00000A                REQUIRE _A_UCA1IV_L
+
+   \                                 In  segment INTVEC, offset 0x40, root
+   \                     `??EUSCI_A1_ISR::??INTVEC 64`:
+   \   000040   ....         DC16    EUSCI_A1_ISR
+
+   \                                 In  segment INTVEC, offset 0x42, root
+   \                     `??EUSCI_A0_ISR::??INTVEC 66`:
+   \   000042   ....         DC16    EUSCI_A0_ISR
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for TX_char>`:
+   \   000000   ....         DC16 process_buf_rx
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for RX_write>`:
+   \   000000   ....         DC16 RING_BUF_A0
+    226          //      switch(baud){
+    227          //      case BAUD115200:
+    228          //        change_display_line( BAUD115200_STRING,DISPLAY2);
+    229          //        //sw2 buton press switch to 460800
+    230          //        //sw1 button press transmit current process buffer
+    231          //        if(SW1_AND_TOGGLED){
+    232          //          SW1_CLEAR;
+    233          //          serial_bits = SERIAL_TX; // Sets the flag to chage current buffer in main.
+    234          //          //x   strcpy(process_buf_tx,process_buf_rx);
+    235          //          UCA0IE |= UCTXIE;
+    236          //          //UCA0TXBUF = '\0';
+    237          //          //move rx string to tx position
+    238          //        }
+    239          //        if(SW2_AND_TOGGLED){
+    240          //          SW2_CLEAR;
+    241          //          baud=BAUD460800;
+    242          //          Init_Serial_UCA0(BAUD460800);
+    243          //        }
+    244          //        break;
+    245          //      case BAUD460800:
+    246          //        change_display_line( BAUD460800_STRING,DISPLAY2);
+    247          //        if(SW1_AND_TOGGLED){
+    248          //          SW1_CLEAR;
+    249          //          UCA0IE |= UCTXIE;
+    250          //          //UCA0TXBUF = '\0';
+    251          //        }
+    252          //        if(SW2_AND_TOGGLED){
+    253          //          SW2_CLEAR;
+    254          //          baud=BAUD115200;
+    255          //          Init_Serial_UCA0(BAUD115200);
+    256          //        }
+    257          //        break;
+    258          //        
+    259          //      }
+    260          //      // have two buffer a display buffer and a write buffer.
+    261          //      if(update_display==UPDATED){
+    262          //        switch(serial_bits&0x7){
+    263          //        case SERIAL_WAITING:
+    264          //          
+    265          //          waiting_animation();
+    266          //          
+    267          //          break;
+    268          //        case SERIAL_RX:
+    269          //          change_display_line(RECIVED,DISPLAY0);
+    270          //          clear_line(DISPLAY1);
+    271          //          change_display_line(process_buf_rx,DISPLAY3);
+    272          //          break;
+    273          //        case SERIAL_TX:
+    274          //          change_display_line(TRASMIT,DISPLAY0);
+    275          //          clear_line(DISPLAY3);
+    276          //          change_display_line(process_buf_rx,DISPLAY1);
+    277          //          break;
+    278          //        default:
+    279          //          serial_bits = SERIAL_WAITING;
+    280          //          break;
+    281          //        }
+    282          //      }
+    283          //    
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      8   EUSCI_A0_ISR
+      6   EUSCI_A1_ISR
+      4   Init_Serial_UCA0
+      4   Init_Serial_UCA1
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Initializer for RX_write>
+       2  ?<Initializer for TX_char>
+     252  EUSCI_A0_ISR
+       2  EUSCI_A0_ISR::??INTVEC 66
+      10  EUSCI_A1_ISR
+       2  EUSCI_A1_ISR::??INTVEC 64
+     154  Init_Serial_UCA0
+     154  Init_Serial_UCA1
+      16  RING_BUF_A0
+       2  RX_read
+       2  RX_write
+      16  TX_A1
+       2  TX_char
+      16  USB_Char_Rx
+       2  _A_UCA0BRW_L
+       2  _A_UCA0CTLW0_L
+       2  _A_UCA0IE_L
+       2  _A_UCA0IV_L
+       2  _A_UCA0MCTLW_L
+       2  _A_UCA0RXBUF_L
+       2  _A_UCA0TXBUF_L
+       2  _A_UCA1BRW_L
+       2  _A_UCA1CTLW0_L
+       2  _A_UCA1IE_L
+       2  _A_UCA1IV_L
+       2  _A_UCA1MCTLW_L
+       2  count
+      11  process_buf_rx
+      11  process_buf_tx
+       2  rx_start
+      11  test_output
+       2  usb_rx_ring_wr
+
+ 
+ 308 bytes in segment CODE
+  24 bytes in segment DATA16_AN
+   4 bytes in segment DATA16_I
+   4 bytes in segment DATA16_ID
+  89 bytes in segment DATA16_Z
+   4 bytes in segment INTVEC
+ 262 bytes in segment ISR_CODE
+ 
+ 570 bytes of CODE  memory
+   4 bytes of CONST memory (+  4 bytes shared)
+  93 bytes of DATA  memory (+ 24 bytes shared)
+
+Errors: none
+Warnings: none

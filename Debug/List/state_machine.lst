@@ -1,0 +1,287 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:19:52
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\state_machine.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWFE95.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\state_machine.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\state_machine.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\state_machine.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\state_machine.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains an example of a state machine for learning
+      4          //      and referance.
+      5          //
+      6          //  Tobias Desotelle
+      7          //  September 20 2022
+      8          //  Built with IAR Embedded Workbench Version: (7.21.1)
+      9          //--------------------------------------------------------------------------
+     10          #include "macros.h"
+     11          extern unsigned char state;
+     12          //extern unsigned char event;
+     13          
+     14          extern unsigned int right_speed;
+     15          extern unsigned int left_speed;
+     16          
+     17          extern unsigned short line_detection;
+
+   \                                 In  segment DATA16_I, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     18          unsigned char check_state=START;
+   \                     check_state:
+   \   000000                DS8 1
+   \   000001                REQUIRE `?<Initializer for check_state>`
+     19          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     20          PIDController pid;
+   \                     pid:
+   \   000000                DS8 56
+     21          
+     22          
+
+   \                                 In  segment CODE, align 2
+     23          void Wheels_Process(void){
+   \                     Wheels_Process:
+     24            //------------------------------------------------------
+     25            process_detectors();
+   \   000000   ........     CALLA   #process_detectors
+     26            switch(state){
+   \   000004   5E42....     MOV.B   &state, R14
+   \   000008   4E83         SUB.B   #0x0, R14
+   \   00000A   0E24         JEQ     ??Wheels_Process_3
+   \   00000C   5E83         SUB.B   #0x1, R14
+   \   00000E   1624         JEQ     ??Wheels_Process_4
+   \   000010   5E83         SUB.B   #0x1, R14
+   \   000012   2324         JEQ     ??Wheels_Process_5
+   \   000014   5E83         SUB.B   #0x1, R14
+   \   000016   2C24         JEQ     ??Wheels_Process_6
+   \   000018   5E83         SUB.B   #0x1, R14
+   \   00001A   3624         JEQ     ??Wheels_Process_7
+   \   00001C   5E83         SUB.B   #0x1, R14
+   \   00001E   4F24         JEQ     ??Wheels_Process_8
+   \   000020   7E803F00     SUB.B   #0x3f, R14
+   \   000024   5C24         JEQ     ??Wheels_Process_1
+   \   000026   593C         JMP     ??Wheels_Process_2
+     27            case IDLE: // IDLE
+     28              stop();
+   \                     ??Wheels_Process_3:
+   \   000028   ........     CALLA   #stop
+     29              set_speed(BASE_SPEED);
+   \   00002C   3C408813     MOV.W   #0x1388, R12
+   \   000030   ........     CALLA   #set_speed
+     30              idle_case(START);
+   \   000034   5C43         MOV.B   #0x1, R12
+   \   000036   ........     CALLA   #idle_case
+     31              break; 
+   \   00003A   1001         RETA
+     32            case START: 
+     33              move(FORWARD);
+   \                     ??Wheels_Process_4:
+   \   00003C   3C400300     MOV.W   #0x3, R12
+   \   000040   ........     CALLA   #move
+     34              do_for(&state,IDLE,100);
+   \   000044   3E406400     MOV.W   #0x64, R14
+   \   000048   4D43         MOV.B   #0x0, R13
+   \   00004A   3C40....     MOV.W   #state, R12
+   \   00004E   ........     CALLA   #do_for
+     35              search(LINE_FOUND);
+   \   000052   6C43         MOV.B   #0x2, R12
+   \   000054   ........     CALLA   #search
+     36              break;
+   \   000058   1001         RETA
+     37            case LINE_FOUND: 
+     38              stop();
+   \                     ??Wheels_Process_5:
+   \   00005A   ........     CALLA   #stop
+     39              do_for(&state,BACK_UP,50);
+   \   00005E   3E403200     MOV.W   #0x32, R14
+   \   000062   7D400300     MOV.B   #0x3, R13
+   \   000066   3C40....     MOV.W   #state, R12
+   \   00006A   ........     CALLA   #do_for
+     40              //P6OUT |=GRN_LED;
+     41              break;
+   \   00006E   1001         RETA
+     42            case BACK_UP: 
+     43              move(FORWARD);
+   \                     ??Wheels_Process_6:
+   \   000070   3C400300     MOV.W   #0x3, R12
+   \   000074   ........     CALLA   #move
+     44              do_for(&state,ALIGN,10);
+   \   000078   3E400A00     MOV.W   #0xa, R14
+   \   00007C   6D42         MOV.B   #0x4, R13
+   \   00007E   3C40....     MOV.W   #state, R12
+   \   000082   ........     CALLA   #do_for
+     45              break;
+   \   000086   1001         RETA
+     46            case ALIGN: //Spin until both sensor read strong 
+     47              
+     48              set_speed(BASE_SPEED);
+   \                     ??Wheels_Process_7:
+   \   000088   3C408813     MOV.W   #0x1388, R12
+   \   00008C   ........     CALLA   #set_speed
+     49              move(CW);
+   \   000090   3C400700     MOV.W   #0x7, R12
+   \   000094   ........     CALLA   #move
+     50              if(line_detection>=0X44){
+   \   000098   B2904400.... CMP.W   #0x44, &line_detection
+   \   00009E   0728         JNC     ??Wheels_Process_9
+     51                state = PID;
+   \   0000A0   F2400500.... MOV.B   #0x5, &state
+     52                PIDController_Init(&pid);
+   \   0000A6   3C40....     MOV.W   #pid, R12
+   \   0000AA   ........     CALLA   #PIDController_Init
+     53              }
+     54              //check_state=START;
+     55              do_for(&state,IDLE,1000);
+   \                     ??Wheels_Process_9:
+   \   0000AE   3E40E803     MOV.W   #0x3e8, R14
+   \   0000B2   4D43         MOV.B   #0x0, R13
+   \   0000B4   3C40....     MOV.W   #state, R12
+   \   0000B8   ........     CALLA   #do_for
+     56              break;
+   \   0000BC   1001         RETA
+     57            case PID : // Adjust Reverse
+     58              move(FORWARD);
+   \                     ??Wheels_Process_8:
+   \   0000BE   3C400300     MOV.W   #0x3, R12
+   \   0000C2   ........     CALLA   #move
+     59              pid_control();
+   \   0000C6   ........     CALLA   #pid_control
+     60              do_for(&state,IDLE,1000);
+   \   0000CA   3E40E803     MOV.W   #0x3e8, R14
+   \   0000CE   4D43         MOV.B   #0x0, R13
+   \   0000D0   3C40....     MOV.W   #state, R12
+   \   0000D4   ........     CALLA   #do_for
+     61              break;  
+   \   0000D8   1001         RETA
+     62            case Stop: // Look for End of Stop Time
+     63              
+     64              break; 
+     65            default:
+     66              state = IDLE;
+   \                     ??Wheels_Process_2:
+   \   0000DA   C243....     MOV.B   #0x0, &state
+     67              break;
+     68            }
+     69          }
+   \                     ??Wheels_Process_1:
+   \   0000DE   1001         RETA
+     70          
+
+   \                                 In  segment CODE, align 2
+     71          void pid_control(){
+   \                     pid_control:
+   \   000000   1B15         PUSHM.W #0x2, R11
+     72            //Want to update pid loop and set output
+     73            float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
+   \   000002   ........     CALLA   #measurment
+   \   000006   0D12         PUSH.W  R13
+   \   000008   0C12         PUSH.W  R12
+   \   00000A   0E43         MOV.W   #0x0, R14
+   \   00000C   0F43         MOV.W   #0x0, R15
+   \   00000E   3C40....     MOV.W   #pid, R12
+   \   000012   ........     CALLA   #PIDController_Update
+   \   000016   0A4C         MOV.W   R12, R10
+   \   000018   0B4D         MOV.W   R13, R11
+     74            set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
+   \   00001A   0C4A         MOV.W   R10, R12
+   \   00001C   0D4B         MOV.W   R11, R13
+   \   00001E   ........     CALLA   #_Cast32fto32s
+   \   000022   3C508813     ADD.W   #0x1388, R12
+   \   000026   ........     CALLA   #set_left_speed
+     75            set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
+   \   00002A   3F408813     MOV.W   #0x1388, R15
+   \   00002E   0C4A         MOV.W   R10, R12
+   \   000030   0D4B         MOV.W   R11, R13
+   \   000032   ........     CALLA   #_Cast32fto32s
+   \   000036   0F8C         SUB.W   R12, R15
+   \   000038   0C4F         MOV.W   R15, R12
+   \   00003A   ........     CALLA   #set_right_speed
+     76            
+     77          }
+   \   00003E   A1000400     ADDA    #0x4, SP
+   \   000042   1A17         POPM.W  #0x2, R11
+   \   000044   1001         RETA
+
+   \                                 In  segment DATA16_ID, align 1, align-sorted
+   \                     `?<Initializer for check_state>`:
+   \   000000   01           DC8 1
+     78          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Wheels_Process
+        4   -> PIDController_Init
+        4   -> do_for
+        4   -> idle_case
+        4   -> move
+        4   -> pid_control
+        4   -> process_detectors
+        4   -> search
+        4   -> set_speed
+        4   -> stop
+     12   pid_control
+       12   -> PIDController_Update
+        8   -> measurment
+       12   -> set_left_speed
+       12   -> set_right_speed
+       12 _Cast32fto32s
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  ?<Initializer for check_state>
+     224  Wheels_Process
+       1  check_state
+      56  pid
+      70  pid_control
+
+ 
+ 294 bytes in segment CODE
+   1 byte  in segment DATA16_I
+   1 byte  in segment DATA16_ID
+  56 bytes in segment DATA16_Z
+ 
+ 294 bytes of CODE  memory
+   1 byte  of CONST memory
+  57 bytes of DATA  memory
+
+Errors: none
+Warnings: none

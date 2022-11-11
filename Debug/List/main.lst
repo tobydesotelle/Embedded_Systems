@@ -1,0 +1,208 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:35:05
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\main.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWED49.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\main.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\main.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\main.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\main.c
+      1          /*
+      2            Description: This file contains the Main Routine - "While" Operating System
+      3            
+      4          
+      5            Tobias Desotelle
+      6            Team: Magic Smoke
+      7            October 14 2022
+      8            Built with IAR Embedded Workbench Version: (7.21.1)
+      9          */
+     10          
+     11          
+     12          //Coding Check List
+     13          //create adc readout menu
+     14          //fix measurment function for edge cases
+     15          //Build pid debuging display
+     16          //Make pid_update updated from timer
+     17          //Menu Function
+     18          //Start using Dac
+     19          //fix Processbuffers to rolling
+     20          
+     21          
+     22          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x222
+   \   union <unnamed> _A_PBOUT_L
+   \                     _A_PBOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x130
+   \   union <unnamed> _A_PM5CTL0_L
+   \                     _A_PM5CTL0_L:
+   \   000000                DS8 2
+     23          
+     24          // Global Variables
+     25          extern char display_line[DISPLAYLINES][DISPLAYCHARS];
+     26          extern char *display[DISPLAYLINES];
+     27          
+     28          
+     29          extern volatile unsigned char update_display;
+     30          extern volatile unsigned int update_display_count;
+     31          
+     32          extern char process_buf_rx[PROCESS_BUF_LENGTH];
+     33          extern char process_buf_tx[PROCESS_BUF_LENGTH];
+     34          
+     35          //volatile unsigned int time50;//50ms
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          volatile unsigned int time_interval50;//50ms
+   \                     time_interval50:
+   \   000000                DS8 2
+     37          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     38          unsigned char state;
+   \                     state:
+   \   000000                DS8 1
+     39          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     40          volatile unsigned short motor_control_bits;
+   \                     motor_control_bits:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     41          volatile unsigned char switch_control;
+   \                     switch_control:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          volatile unsigned short timer_bits;
+   \                     timer_bits:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     43          volatile unsigned short serial_bits;
+   \                     serial_bits:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     44          volatile unsigned short display_bits;
+   \                     display_bits:
+   \   000000                DS8 2
+     45          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     46          unsigned char baud; 
+   \                     baud:
+   \   000000                DS8 1
+     47          
+
+   \                                 In  segment CODE, align 2
+     48          void main(void){
+   \                     main:
+     49            PM5CTL0 &= ~LOCKLPM5;// Disable the GPIO power-on default high-impedance mode to activate
+   \   000000   92C33001     BIC.W   #0x1, &0x130
+     50            Master_Init();
+   \   000004   ........     CALLA   #Master_Init
+     51            while(!((display_bits) & (Splash_bit))){
+   \                     ??main_0:
+   \   000008   92B3....     BIT.W   #0x1, &display_bits
+   \   00000C   FD2B         JNC     ??main_0
+     52            }
+     53            //serial_bits= 1;
+     54            while(ALWAYS){
+     55              menu_state_machine();
+   \                     ??main_1:
+   \   00000E   ........     CALLA   #menu_state_machine
+     56              process_switches();
+   \   000012   ........     CALLA   #process_switches
+     57              Display_Process();
+   \   000016   ........     CALLA   #Display_Process
+     58              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+   \   00001A   D2E32202     XOR.B   #0x1, &0x222
+   \   00001E   F73F         JMP     ??main_1
+   \   000020   0343         NOP
+   \   000022                REQUIRE _A_PM5CTL0_L
+   \   000022                REQUIRE _A_PBOUT_L
+     59              //Wheels_Process();         //State machine for line following 
+     60            }
+     61          }
+     62          
+     63            
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   main
+        4   -> Display_Process
+        4   -> Master_Init
+        4   -> menu_state_machine
+        4   -> process_switches
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  _A_PBOUT_L
+       2  _A_PM5CTL0_L
+       1  baud
+       2  display_bits
+      34  main
+       2  motor_control_bits
+       2  serial_bits
+       1  state
+       1  switch_control
+       2  time_interval50
+       2  timer_bits
+
+ 
+ 34 bytes in segment CODE
+  4 bytes in segment DATA16_AN
+ 13 bytes in segment DATA16_Z
+ 
+ 34 bytes of CODE memory
+ 13 bytes of DATA memory (+ 4 bytes shared)
+
+Errors: none
+Warnings: none

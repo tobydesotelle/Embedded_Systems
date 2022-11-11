@@ -1,0 +1,45 @@
+#Generating source browse information for project homework 9
+
+
+#Abbreviations
+cc = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.5\common\bin\SourceIndexer.exe
+ll = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.5\common\bin\PbdLink.exe
+bd = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.5\common\bin\makeBrowseData.exe
+
+
+
+#Rules
+rule index
+  depfile = $out.dep
+  command = $cc -out=$out -f $in
+rule link
+  command = $ll -M $out $in
+rule browsedata
+  command = $bd $in -output  $out
+
+
+
+#Build steps
+build analogtodigital.pbi : index analogtodigital.xcl
+build cases.pbi : index cases.xcl
+build clocks.pbi : index clocks.xcl
+build display.pbi : index display.xcl
+build init.pbi : index init.xcl
+build line_detection.pbi : index line_detection.xcl
+build main.pbi : index main.xcl
+build menu.pbi : index menu.xcl
+build pid.pbi : index pid.xcl
+build ports.pbi : index ports.xcl
+build serial.pbi : index serial.xcl
+build switches.pbi : index switches.xcl
+build timers.pbi : index timers.xcl
+build timers_isr.pbi : index timers_isr.xcl
+build wheel_control.pbi : index wheel_control.xcl
+build homework$ 9_part0.pbi : link analogtodigital.pbi cases.pbi clocks.pbi display.pbi
+build homework$ 9_part1.pbi : link init.pbi line_detection.pbi main.pbi menu.pbi
+build homework$ 9_part2.pbi : link pid.pbi ports.pbi serial.pbi switches.pbi
+build homework$ 9_part3.pbi : link timers.pbi timers_isr.pbi wheel_control.pbi
+build homework$ 9.pbd : link homework$ 9_part0.pbi homework$ 9_part1.pbi homework$ 9_part2.pbi homework$ 9_part3.pbi
+build homework$ 9.pbw : browsedata homework$ 9.pbd
+
+

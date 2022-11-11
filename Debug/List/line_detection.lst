@@ -1,0 +1,253 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:23:03
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\line_detection.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWE738.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\line_detection.c" -lC "C:\Users\Tobias Desotelle\OneDrive -
+#        UNC Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\line_detection.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\line_detection.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\line_detection.c
+      1          #include "macros.h"
+      2          #define DECTECTION_THRESHOLD            (100)
+      3          #define DECTECTION_TOLERANCE            (10)
+      4          
+      5          
+      6          #define FULL_DETECTION                  (110)
+      7          #define STRONG_DETECTION                (100)
+      8          #define SLIGHT_DETECTION                (30)
+      9          #define BASE_READING                    (20)
+     10          
+     11          #define SLIGHT_DETECTION_TOLERANCE      (30)
+     12          
+     13          
+     14          #define BASE_READING_TOLERANCE          (20)
+     15          
+     16          
+     17          #define DTH                             (DECTECTION_THRESHOLD+DECTECTION_TOLERANCE)//DECTECTION_THRESHOLD_LOW
+     18          #define DTL                             (DECTECTION_THRESHOLD-DECTECTION_TOLERANCE)//DECTECTION_THRESHOLD_HIGH
+     19          
+     20          #define ERROR_LIMITS                          (1000)
+     21          
+     22          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          unsigned short line_detection;
+   \                     line_detection:
+   \   000000                DS8 2
+     24          extern unsigned int ADC_Left_Detect;
+     25          extern unsigned int ADC_Right_Detect;
+     26          extern unsigned int V_Thumb;
+     27          
+     28          
+     29          
+
+   \                                 In  segment CODE, align 2
+     30          float measurment(){//This is the measurment value for the pid contoller
+   \                     measurment:
+   \   000000   1B15         PUSHM.W #0x2, R11
+     31          //  if(ADC_Left_Detect<=BASE_READING);//
+     32          //  if(ADC_Right_Detect<=BASE_READING);
+     33            return (float)ADC_Left_Detect - ADC_Right_Detect ;//+ PID_SETPOINT;
+   \   000002   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   000006   0D43         MOV.W   #0x0, R13
+   \   000008   ........     CALLA   #_Cast32uto32f
+   \   00000C   0A4C         MOV.W   R12, R10
+   \   00000E   0B4D         MOV.W   R13, R11
+   \   000010   1C42....     MOV.W   &ADC_Right_Detect, R12
+   \   000014   0D43         MOV.W   #0x0, R13
+   \   000016   ........     CALLA   #_Cast32uto32f
+   \   00001A   0E4C         MOV.W   R12, R14
+   \   00001C   0F4D         MOV.W   R13, R15
+   \   00001E   0C4A         MOV.W   R10, R12
+   \   000020   0D4B         MOV.W   R11, R13
+   \   000022   ........     CALLA   #_Sub32f
+   \   000026   1A17         POPM.W  #0x2, R11
+   \   000028   1001         RETA
+     34          }
+     35          
+     36          
+
+   \                                 In  segment CODE, align 2
+     37          void set_line_bit(unsigned short level_detection){
+   \                     set_line_bit:
+     38            if(level_detection>L_CLEAR)line_detection &= L_CLEAR;
+   \   000000   3C901000     CMP.W   #0x10, R12
+   \   000004   0428         JNC     ??set_line_bit_1
+   \   000006   B2F00F00.... AND.W   #0xf, &line_detection
+   \   00000C   033C         JMP     ??set_line_bit_0
+     39            else line_detection &= R_CLEAR;
+   \                     ??set_line_bit_1:
+   \   00000E   B2F0F000.... AND.W   #0xf0, &line_detection
+     40            line_detection |= level_detection;
+   \                     ??set_line_bit_0:
+   \   000014   82DC....     BIS.W   R12, &line_detection
+     41          }
+   \   000018   1001         RETA
+     42          
+
+   \                                 In  segment CODE, align 2
+     43          void left_detector_process(){
+   \                     left_detector_process:
+     44            if(ADC_Right_Detect<=BASE_READING)set_line_bit(R_BASE);
+   \   000000   B2901500.... CMP.W   #0x15, &ADC_Right_Detect
+   \   000006   042C         JC      ??left_detector_process_0
+   \   000008   1C43         MOV.W   #0x1, R12
+   \   00000A   ........     CALLA   #set_line_bit
+   \   00000E   1001         RETA
+     45            else if(ADC_Right_Detect<=SLIGHT_DETECTION)set_line_bit(R_SLIGHT);
+   \                     ??left_detector_process_0:
+   \   000010   B2901F00.... CMP.W   #0x1f, &ADC_Right_Detect
+   \   000016   042C         JC      ??left_detector_process_1
+   \   000018   2C43         MOV.W   #0x2, R12
+   \   00001A   ........     CALLA   #set_line_bit
+   \   00001E   1001         RETA
+     46            else if(ADC_Right_Detect<=STRONG_DETECTION)set_line_bit(R_STRONG);
+   \                     ??left_detector_process_1:
+   \   000020   B2906500.... CMP.W   #0x65, &ADC_Right_Detect
+   \   000026   042C         JC      ??left_detector_process_2
+   \   000028   2C42         MOV.W   #0x4, R12
+   \   00002A   ........     CALLA   #set_line_bit
+   \   00002E   1001         RETA
+     47            else if(ADC_Right_Detect>STRONG_DETECTION)set_line_bit(R_FULL);
+   \                     ??left_detector_process_2:
+   \   000030   B2906500.... CMP.W   #0x65, &ADC_Right_Detect
+   \   000036   0328         JNC     ??left_detector_process_3
+   \   000038   3C42         MOV.W   #0x8, R12
+   \   00003A   ........     CALLA   #set_line_bit
+     48          }
+   \                     ??left_detector_process_3:
+   \   00003E   1001         RETA
+
+   \                                 In  segment CODE, align 2
+     49          void right_detector_process(){
+   \                     right_detector_process:
+     50            if(ADC_Left_Detect<=BASE_READING)set_line_bit(L_BASE);
+   \   000000   B2901500.... CMP.W   #0x15, &ADC_Left_Detect
+   \   000006   052C         JC      ??right_detector_process_0
+   \   000008   3C401000     MOV.W   #0x10, R12
+   \   00000C   ........     CALLA   #set_line_bit
+   \   000010   1001         RETA
+     51            else if(ADC_Left_Detect<=SLIGHT_DETECTION)set_line_bit(L_SLIGHT);
+   \                     ??right_detector_process_0:
+   \   000012   B2901F00.... CMP.W   #0x1f, &ADC_Left_Detect
+   \   000018   052C         JC      ??right_detector_process_1
+   \   00001A   3C402000     MOV.W   #0x20, R12
+   \   00001E   ........     CALLA   #set_line_bit
+   \   000022   1001         RETA
+     52            else if(ADC_Left_Detect<=STRONG_DETECTION)set_line_bit(L_STRONG);
+   \                     ??right_detector_process_1:
+   \   000024   B2906500.... CMP.W   #0x65, &ADC_Left_Detect
+   \   00002A   052C         JC      ??right_detector_process_2
+   \   00002C   3C404000     MOV.W   #0x40, R12
+   \   000030   ........     CALLA   #set_line_bit
+   \   000034   1001         RETA
+     53            else if(ADC_Left_Detect>STRONG_DETECTION)set_line_bit(L_FULL);
+   \                     ??right_detector_process_2:
+   \   000036   B2906500.... CMP.W   #0x65, &ADC_Left_Detect
+   \   00003C   0428         JNC     ??right_detector_process_3
+   \   00003E   3C408000     MOV.W   #0x80, R12
+   \   000042   ........     CALLA   #set_line_bit
+     54          }
+   \                     ??right_detector_process_3:
+   \   000046   1001         RETA
+     55          
+
+   \                                 In  segment CODE, align 2
+     56          void process_detectors(){
+   \                     process_detectors:
+     57            left_detector_process();
+   \   000000   ........     CALLA   #left_detector_process
+     58            right_detector_process();
+   \   000004   ........     CALLA   #right_detector_process
+     59          }
+   \   000008   1001         RETA
+     60          
+
+   \                                 In  segment CODE, align 2
+     61          unsigned short strong_detect(){
+   \                     strong_detect:
+     62            if(line_detection==0x88){
+   \   000000   B2908800.... CMP.W   #0x88, &line_detection
+   \   000006   0220         JNE     ??strong_detect_0
+     63              return 1;
+   \   000008   1C43         MOV.W   #0x1, R12
+   \   00000A   1001         RETA
+     64            }
+     65            return 0;
+   \                     ??strong_detect_0:
+   \   00000C   0C43         MOV.W   #0x0, R12
+   \   00000E   1001         RETA
+     66          }
+     67          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   left_detector_process
+        4   -> set_line_bit
+      8   measurment
+        8 _Cast32uto32f
+        8 _Sub32f
+      4   process_detectors
+        4   -> left_detector_process
+        4   -> right_detector_process
+      4   right_detector_process
+        4   -> set_line_bit
+      4   set_line_bit
+      4   strong_detect
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      64  left_detector_process
+       2  line_detection
+      42  measurment
+      10  process_detectors
+      72  right_detector_process
+      26  set_line_bit
+      16  strong_detect
+
+ 
+ 230 bytes in segment CODE
+   2 bytes in segment DATA16_Z
+ 
+ 230 bytes of CODE memory
+   2 bytes of DATA memory
+
+Errors: none
+Warnings: none

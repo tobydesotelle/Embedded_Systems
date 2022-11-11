@@ -1,0 +1,144 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:39:22
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\pid.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWD7F6.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\pid.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\pid.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\pid.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\pid.c
+      1          #include "pid.h"
+      2          #include "macros.h"
+      3          
+      4          #define KP              (20.0f)
+      5          #define KI              (0)
+      6          #define KD              (0)
+      7          #define MAX             (30000)
+      8          #define MIN             (-MAX)
+      9          #define SAMPLE_TIME     (0.1)
+     10          void PIDController_Init(PIDController *pid) {
+     11                  
+     12                  pid->Kp = KP;
+     13                  pid->Ki = KI;
+     14                  pid->Kd = KD;
+     15                  pid->limMax = MAX;
+     16                  pid->limMin = MIN;
+     17                  pid->T = SAMPLE_TIME;
+     18                  
+     19          	/* Clear controller variables */
+     20          	pid->integrator = 0.0f;
+     21          	pid->prevError  = 0.0f;
+     22          
+     23          	pid->differentiator  = 0.0f;
+     24          	pid->prevMeasurement = 0.0f;
+     25          
+     26          	pid->out = 0.0f;
+     27          
+     28          }
+     29          
+     30          float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
+     31          
+     32          	/*
+     33          	* Error signal
+     34          	*/
+     35              float error = setpoint - measurement;
+     36          
+     37          
+     38          	/*
+     39          	* Proportional
+     40          	*/
+     41              float proportional = pid->Kp * error;
+     42          
+     43          
+     44          	/*
+     45          	* Integral
+     46          	*/
+     47              pid->integrator = pid->integrator + 0.5f * pid->Ki * pid->T * (error + pid->prevError);
+     48          
+     49          	/* Anti-wind-up via integrator clamping */
+     50          //    if (pid->integrator > pid->limMaxInt) {
+     51          //
+     52          //        pid->integrator = pid->limMaxInt;
+     53          //
+     54          //    } else if (pid->integrator < pid->limMinInt) {
+     55          //
+     56          //        pid->integrator = pid->limMinInt;
+     57          //
+     58          //    }
+     59          
+     60          
+     61          	/*
+     62          	* Derivative (band-limited differentiator)
+     63          	*/
+     64          		
+     65          //    pid->differentiator = -(2.0f * pid->Kd * (measurement - pid->prevMeasurement)	/* Note: derivative on measurement, therefore minus sign in front of equation! */
+     66          //                        + (2.0f * pid->tau - pid->T) * pid->differentiator)
+     67          //                        / (2.0f * pid->tau + pid->T);
+     68          
+     69          
+     70          	/*
+     71          	* Compute output and apply limits
+     72          	*/
+     73              pid->out = proportional + pid->integrator; //+ pid->differentiator;
+     74          
+     75              if (pid->out > pid->limMax) {
+     76          
+     77                  pid->out = pid->limMax;
+     78          
+     79              } else if (pid->out < pid->limMin) {
+     80          
+     81                  pid->out = pid->limMin;
+     82          
+     83              }
+     84          
+     85          	/* Store error and measurement for later use */
+     86              pid->prevError       = error;
+     87              pid->prevMeasurement = measurement;
+     88          
+     89          	/* Return controller output */
+     90              return pid->out;
+     91          
+     92          }
+     93          void pid_control(){
+     94            //Want to update pid loop and set output
+     95            float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
+                                                              ^
+Error[Pe020]: identifier "pid" is undefined
+     96            set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
+     97            set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
+     98            
+     99          }
+
+Errors: 1
+Warnings: none

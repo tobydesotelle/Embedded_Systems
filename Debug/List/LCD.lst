@@ -1,0 +1,1090 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Aug/2022  15:49:01
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\LCD.c
+#    Command line  =  
+#        -f C:\Users\JIMCAR~1\AppData\Local\Temp\EW32ED.tmp
+#        ("D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\LCD.c" -lC
+#        "D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\Debug\List" -o
+#        "D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\Debug\Obj" --no_cse --no_unroll --no_inline --no_code_motion
+#        --no_tbaa --debug -D__MSP430FR2355__ -e --double=32 --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5_3\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -On --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\Debug\List\LCD.lst
+#    Object file   =  
+#        D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple
+#        all\Debug\Obj\LCD.r43
+#
+###############################################################################
+
+D:\GoogleDrive-NCSU\ECE306\Current\Homework\HW1\Homework 01 Simple all\LCD.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the LCD Routine -
+      4          //
+      5          //
+      6          //  Jim Carlson
+      7          //  Aug 2013
+      8          //  Built with IAR Embedded Workbench Version: V4.10A/W32 (5.40.1)
+      9          //------------------------------------------------------------------------------
+     10          
+     11          //------------------------------------------------------------------------------
+     12          #include  "functions.h"
+     13          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x202
+   \   union <unnamed> _A_PAOUT_L
+   \                     _A_PAOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x222
+   \   union <unnamed> _A_PBOUT_L
+   \                     _A_PBOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x386
+   \   union <unnamed> _A_TB0CCTL2_L
+   \                     _A_TB0CCTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x396
+   \   union <unnamed> _A_TB0CCR2_L
+   \                     _A_TB0CCR2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5c0
+   \   union <unnamed> _A_UCB1CTLW0_L
+   \                     _A_UCB1CTLW0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5c6
+   \   union <unnamed> _A_UCB1BRW_L
+   \                     _A_UCB1BRW_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5cc
+   \   union <unnamed> _A_UCB1RXBUF_L
+   \                     _A_UCB1RXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5ce
+   \   union <unnamed> _A_UCB1TXBUF_L
+   \                     _A_UCB1TXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5ec
+   \   union <unnamed> _A_UCB1IFG_L
+   \                     _A_UCB1IFG_L:
+   \   000000                DS8 2
+     14          #include  "ports.h"
+     15          #include  "lcd.h"
+     16          //#include  "spi.h"
+     17          
+     18          #define LCD_INTERVAL        (12500) // 8,000,000 / 8 / 8 / [1/100msec] = 12500
+     19          #define SPI_CLK_PRESCALER      (80)
+     20          
+     21          // Function Prototypes
+     22          void LCD_test(void);
+     23          void spi_chipselect_active(void);
+     24          void spi_chipselect_active(void);
+     25          void spi_reset_idle(void);
+     26          void spi_reset_active(void);
+     27          void Display_Process(void);
+     28          void Display_Update(char p_L1,char p_L2,char p_L3,char p_L4);
+     29          void enable_display_update(void);
+     30          void update_string(char *string_data, int string);
+     31          void Init_LCD(void);
+     32          void lcd_4line(void);
+     33          void lcd_BIG_mid(void);
+     34          void lcd_BIG_bot(void);
+     35          void lcd_180(void);
+     36          void lcd_out(char *s, char line, char position);
+     37          void lcd_puts(char *s);
+     38          void WriteIns(char instruction);
+     39          void WriteData(char data);
+     40          unsigned char CheckBusy(void);
+     41          void ClrDisplay(void);
+     42          void ClrDisplay_Buffer_0(void);
+     43          void ClrDisplay_Buffer_1(void);
+     44          void ClrDisplay_Buffer_2(void);
+     45          void ClrDisplay_Buffer_3(void);
+     46          void SetPostion(char pos);
+     47          void DisplayOnOff(char data);
+     48          void Init_SPI_B1(void);
+     49          void SPI_B1_write(char byte);
+     50          
+     51          // Variables =====================================================================
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     52          volatile unsigned char current_character;
+   \                     current_character:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     53          volatile unsigned int update_display_count;
+   \                     update_display_count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     54          volatile unsigned int display_update_time;
+   \                     display_update_time:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     55          volatile unsigned char update_display;
+   \                     update_display:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     56          volatile unsigned char display_changed;
+   \                     display_changed:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     57          unsigned char lcd_control;
+   \                     lcd_control:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     58          char display_line[4][11];
+   \                     display_line:
+   \   000000                DS8 44
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     59          char *display[4];
+   \                     display:
+   \   000000                DS8 8
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     60          char posi_L1;
+   \                     posi_L1:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     61          char posi_L2;
+   \                     posi_L2:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     62          char posi_L3;
+   \                     posi_L3:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     63          char posi_L4;
+   \                     posi_L4:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     64          char lcd_orient;
+   \                     lcd_orient:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     65          unsigned int char_count;
+   \                     char_count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     66          char current_line;
+   \                     current_line:
+   \   000000                DS8 1
+     67          
+     68          extern volatile unsigned char SPI_Char;
+     69          extern volatile unsigned char current_character;
+     70          
+
+   \                                 In  segment CODE, align 2
+     71          void LCD_test(void){
+   \                     LCD_test:
+     72          //  unsigned int temporary_value;
+     73          //  int temp;
+     74            if (wait_for_character()){
+   \   000000   ........     CALLA   #wait_for_character
+   \   000004   0C93         CMP.W   #0x0, R12
+   \   000006   0324         JEQ     ??LCD_test_2
+     75              print_CR();
+   \   000008   ........     CALLA   #print_CR
+     76              return;
+   \   00000C   1001         RETA
+     77            }
+     78            outchar(current_character);
+   \                     ??LCD_test_2:
+   \   00000E   5C42....     MOV.B   &current_character, R12
+   \   000012   ........     CALLA   #outchar
+     79            switch (current_character) {
+   \   000016   5E42....     MOV.B   &current_character, R14
+   \   00001A   7E803000     SUB.B   #0x30, R14
+   \   00001E   1424         JEQ     ??LCD_test_0
+   \   000020   7E800300     SUB.B   #0x3, R14
+   \   000024   0924         JEQ     ??LCD_test_3
+   \   000026   5E83         SUB.B   #0x1, R14
+   \   000028   0A24         JEQ     ??LCD_test_4
+   \   00002A   7E801500     SUB.B   #0x15, R14
+   \   00002E   0A24         JEQ     ??LCD_test_5
+   \   000030   7E802000     SUB.B   #0x20, R14
+   \   000034   0724         JEQ     ??LCD_test_5
+   \   000036   083C         JMP     ??LCD_test_0
+     80              case 0x30:  // 0
+     81              break;
+     82              case 0x33:  // 3 3 lines of Text
+     83              lcd_BIG_mid();
+   \                     ??LCD_test_3:
+   \   000038   ........     CALLA   #lcd_BIG_mid
+     84              break;
+   \   00003C   053C         JMP     ??LCD_test_0
+     85              case 0x34:  // 4 4 Lines of Text
+     86              lcd_4line();
+   \                     ??LCD_test_4:
+   \   00003E   ........     CALLA   #lcd_4line
+     87              break;
+   \   000042   023C         JMP     ??LCD_test_0
+     88              case 0x49:  // I
+     89              case 0x69:  // i
+     90              Init_LCD();
+   \                     ??LCD_test_5:
+   \   000044   ........     CALLA   #Init_LCD
+     91              break;
+     92              default:
+     93              break;
+     94            } // end of character determination Switch
+     95            current_character = 0x00;
+   \                     ??LCD_test_0:
+   \   000048   C243....     MOV.B   #0x0, &current_character
+     96          //------------------------------------------------------------------------------
+     97          }
+   \   00004C   1001         RETA
+     98          
+
+   \                                 In  segment CODE, align 2
+     99          void spi_chipselect_idle(void){
+   \                     spi_chipselect_idle:
+    100            __delay_cycles(600);
+   \   000000                ////////////// Start of 600 cycles delay.
+   \   000000   0343         NOP
+   \   000002   3F40C600     MOV.W   #0xc6, R15
+   \                     ??spi_chipselect_idle_0:
+   \   000006   3F53         ADD.W   #0xffff, R15
+   \   000008   FE2F         JC      ??spi_chipselect_idle_0
+   \   00000A                ////////////// End of delay code.
+    101            P4OUT |= UCB1_CS_LCD;
+   \   00000A   F2D010002302 BIS.B   #0x10, &0x223
+    102          }
+   \   000010   1001         RETA
+   \   000012                REQUIRE _A_PBOUT_L
+    103          
+
+   \                                 In  segment CODE, align 2
+    104          void spi_chipselect_active(void){
+   \                     spi_chipselect_active:
+    105            P4OUT &= ~UCB1_CS_LCD;
+   \   000000   F2C010002302 BIC.B   #0x10, &0x223
+    106            __delay_cycles(10);
+   \   000006                ////////////// Start of 10 cycles delay.
+   \   000006                RPT     #0x9
+   \   000006   48180F10     RRCX.W  R15
+   \   00000A                ////////////// End of delay code.
+    107          }
+   \   00000A   1001         RETA
+   \   00000C                REQUIRE _A_PBOUT_L
+    108          
+
+   \                                 In  segment CODE, align 2
+    109          void spi_reset_idle(void){
+   \                     spi_reset_idle:
+    110            P2OUT |= RESET_LCD;
+   \   000000   D2D30302     BIS.B   #0x1, &0x203
+    111          }
+   \   000004   1001         RETA
+   \   000006                REQUIRE _A_PAOUT_L
+    112          
+
+   \                                 In  segment CODE, align 2
+    113          void spi_reset_active(void){
+   \                     spi_reset_active:
+    114            P2OUT &= ~RESET_LCD;
+   \   000000   D2C30302     BIC.B   #0x1, &0x203
+    115          }
+   \   000004   1001         RETA
+   \   000006                REQUIRE _A_PAOUT_L
+    116          
+    117          //void Display_Process(void){
+    118          //  if(update_display){
+    119          //    update_display = 0;
+    120          //    if(display_changed){
+    121          //      display_changed = 0;
+    122          //      Display_Update(0,0,0,0);
+    123          //    }
+    124          //  }
+    125          //}
+    126          
+
+   \                                 In  segment CODE, align 2
+    127          void Display_Update(char p_L1,char p_L2,char p_L3,char p_L4){
+   \                     Display_Update:
+   \   000000   3B15         PUSHM.W #0x4, R11
+   \   000002   4A4C         MOV.B   R12, R10
+   \   000004   484D         MOV.B   R13, R8
+   \   000006   494E         MOV.B   R14, R9
+   \   000008   4B4F         MOV.B   R15, R11
+    128            lcd_out(display_line[0], LCD_HOME_L1, p_L1);
+   \   00000A   4E4A         MOV.B   R10, R14
+   \   00000C   7D408000     MOV.B   #0x80, R13
+   \   000010   3C40....     MOV.W   #display_line, R12
+   \   000014   ........     CALLA   #lcd_out
+    129            lcd_out(display_line[1], LCD_HOME_L2, p_L2);
+   \   000018   4E48         MOV.B   R8, R14
+   \   00001A   7D40A000     MOV.B   #0xa0, R13
+   \   00001E   3C40....     MOV.W   #display_line + 11, R12
+   \   000022   ........     CALLA   #lcd_out
+    130            lcd_out(display_line[2], LCD_HOME_L3, p_L3);
+   \   000026   4E49         MOV.B   R9, R14
+   \   000028   7D40C000     MOV.B   #0xc0, R13
+   \   00002C   3C40....     MOV.W   #display_line + 22, R12
+   \   000030   ........     CALLA   #lcd_out
+    131            lcd_out(display_line[3], LCD_HOME_L4, p_L4);
+   \   000034   4E4B         MOV.B   R11, R14
+   \   000036   7D40E000     MOV.B   #0xe0, R13
+   \   00003A   3C40....     MOV.W   #display_line + 33, R12
+   \   00003E   ........     CALLA   #lcd_out
+    132          }
+   \   000042   3817         POPM.W  #0x4, R11
+   \   000044   1001         RETA
+    133          
+
+   \                                 In  segment CODE, align 2
+    134          void enable_display_update(void){
+   \                     enable_display_update:
+    135          // Display Update Timer
+    136            TB0CCR2 = LCD_INTERVAL;     // CCR2
+   \   000000   B240D4309603 MOV.W   #0x30d4, &0x396
+    137            TB0CCTL2 |= CCIE;           // CCR2 enable interrupt
+   \   000006   B2D010008603 BIS.W   #0x10, &0x386
+    138          }
+   \   00000C   1001         RETA
+   \   00000E                REQUIRE _A_TB0CCR2_L
+   \   00000E                REQUIRE _A_TB0CCTL2_L
+    139          
+
+   \                                 In  segment CODE, align 2
+    140          void update_string(char *string_data, int string){
+   \                     update_string:
+    141            int i =0;
+   \   000000   0F43         MOV.W   #0x0, R15
+    142            while (*string_data) {
+   \                     ??update_string_0:
+   \   000002   CC930000     CMP.B   #0x0, 0(R12)
+   \   000006   0924         JEQ     ??update_string_1
+    143              display_line[string][i++] = *string_data++;
+   \   000008   0E4D         MOV.W   R13, R14
+   \   00000A                RPT     #0xa
+   \   00000A   49180E5D     ADDX.W  R13, R14
+   \   00000E   0E5F         ADD.W   R15, R14
+   \   000010   EE4C....     MOV.B   @R12, display_line(R14)
+   \   000014   1C53         ADD.W   #0x1, R12
+   \   000016   1F53         ADD.W   #0x1, R15
+   \   000018   F43F         JMP     ??update_string_0
+    144            }
+    145          }
+   \                     ??update_string_1:
+   \   00001A   1001         RETA
+    146          
+
+   \                                 In  segment CODE, align 2
+    147          void Init_LCD(void){
+   \                     Init_LCD:
+    148          //------------------------------------------------------------------------------
+    149            Init_SPI_B1();  // Initialize SPI Port
+   \   000000   ........     CALLA   #Init_SPI_B1
+    150          // turn on power
+    151            spi_reset_idle();
+   \   000004   ........     CALLA   #spi_reset_idle
+    152            spi_chipselect_idle();
+   \   000008   ........     CALLA   #spi_chipselect_idle
+    153          
+    154          // delay 8000 * [1/8MHz]
+    155            __delay_cycles(8000);
+   \   00000C                ////////////// Start of 8000 cycles delay.
+   \   00000C   3F40690A     MOV.W   #0xa69, R15
+   \                     ??Init_LCD_0:
+   \   000010   3F53         ADD.W   #0xffff, R15
+   \   000012   FE2F         JC      ??Init_LCD_0
+   \   000014                ////////////// End of delay code.
+    156          
+    157            spi_reset_active();
+   \   000014   ........     CALLA   #spi_reset_active
+    158          // delay 300000 * [1/8MHz]
+    159            __delay_cycles(300000);
+   \   000018                ////////////// Start of 300000 cycles delay.
+   \   000018   3F40F624     MOV.W   #0x24f6, R15
+   \   00001C   0343         NOP
+   \   00001E   1E43         MOV.W   #0x1, R14
+   \                     ??Init_LCD_1:
+   \   000020   3F53         ADD.W   #0xffff, R15
+   \   000022   3E63         ADDC.W  #0xffff, R14
+   \   000024   FD2F         JC      ??Init_LCD_1
+   \   000026                ////////////// End of delay code.
+    160            spi_reset_idle();
+   \   000026   ........     CALLA   #spi_reset_idle
+    161          // delay 300000 * [1/8MHz]
+    162            __delay_cycles(300000);
+   \   00002A                ////////////// Start of 300000 cycles delay.
+   \   00002A   3F40F624     MOV.W   #0x24f6, R15
+   \   00002E   0343         NOP
+   \   000030   1E43         MOV.W   #0x1, R14
+   \                     ??Init_LCD_2:
+   \   000032   3F53         ADD.W   #0xffff, R15
+   \   000034   3E63         ADDC.W  #0xffff, R14
+   \   000036   FD2F         JC      ??Init_LCD_2
+   \   000038                ////////////// End of delay code.
+    163          
+    164          // init Display
+    165            WriteIns(0x3A);    //8-Bit data length extension Bit RE=1; REV=0
+   \   000038   7C403A00     MOV.B   #0x3a, R12
+   \   00003C   ........     CALLA   #WriteIns
+    166            WriteIns(0x09);    //4 line display
+   \   000040   7C400900     MOV.B   #0x9, R12
+   \   000044   ........     CALLA   #WriteIns
+    167            WriteIns(0x06);    //Bottom view
+   \   000048   7C400600     MOV.B   #0x6, R12
+   \   00004C   ........     CALLA   #WriteIns
+    168            WriteIns(0x1E);    //Bias setting BS1=1
+   \   000050   7C401E00     MOV.B   #0x1e, R12
+   \   000054   ........     CALLA   #WriteIns
+    169            WriteIns(0x39);    //8-Bit data length extension Bit RE=0; IS=1
+   \   000058   7C403900     MOV.B   #0x39, R12
+   \   00005C   ........     CALLA   #WriteIns
+    170            WriteIns(0x1B);    //BS0=1 -> Bias=1/6
+   \   000060   7C401B00     MOV.B   #0x1b, R12
+   \   000064   ........     CALLA   #WriteIns
+    171            WriteIns(0x6E);    //Divider on and set value
+   \   000068   7C406E00     MOV.B   #0x6e, R12
+   \   00006C   ........     CALLA   #WriteIns
+    172            WriteIns(0x57);    //Booster on and set contrast (BB1=C5, DB0=C4)
+   \   000070   7C405700     MOV.B   #0x57, R12
+   \   000074   ........     CALLA   #WriteIns
+    173            WriteIns(0x7F);    //Set contrast (DB3-DB0=C3-C0)
+   \   000078   7C407F00     MOV.B   #0x7f, R12
+   \   00007C   ........     CALLA   #WriteIns
+    174            WriteIns(0x38);    //8-Bit data length extension Bit RE=0; IS=0
+   \   000080   7C403800     MOV.B   #0x38, R12
+   \   000084   ........     CALLA   #WriteIns
+    175            ClrDisplay();
+   \   000088   ........     CALLA   #ClrDisplay
+    176            DisplayOnOff(DISPLAY_ON);
+   \   00008C   6C42         MOV.B   #0x4, R12
+   \   00008E   ........     CALLA   #DisplayOnOff
+    177          // delay 8000 * [1/8MHz]
+    178            __delay_cycles(8000);
+   \   000092                ////////////// Start of 8000 cycles delay.
+   \   000092   3F40690A     MOV.W   #0xa69, R15
+   \                     ??Init_LCD_3:
+   \   000096   3F53         ADD.W   #0xffff, R15
+   \   000098   FE2F         JC      ??Init_LCD_3
+   \   00009A                ////////////// End of delay code.
+    179          
+    180          }
+   \   00009A   1001         RETA
+    181          
+
+   \                                 In  segment CODE, align 2
+    182          void lcd_4line(void){
+   \                     lcd_4line:
+    183          //  0x3A ->Function set: RE = 1
+    184            WriteIns(0x38);	//4 Lines middle
+   \   000000   7C403800     MOV.B   #0x38, R12
+   \   000004   ........     CALLA   #WriteIns
+    185            display_changed = 1;
+   \   000008   D243....     MOV.B   #0x1, &display_changed
+    186          }
+   \   00000C   1001         RETA
+    187          
+
+   \                                 In  segment CODE, align 2
+    188          void lcd_BIG_mid(void){
+   \                     lcd_BIG_mid:
+    189          //  0x3A ->Function set: RE = 1
+    190            WriteIns(0x3A);	//3 Lines middle
+   \   000000   7C403A00     MOV.B   #0x3a, R12
+   \   000004   ........     CALLA   #WriteIns
+    191          //  0x17 -> 3 Lines middle
+    192            WriteIns(0x17);	//3 Lines middle
+   \   000008   7C401700     MOV.B   #0x17, R12
+   \   00000C   ........     CALLA   #WriteIns
+    193          //  0x3C ->Function set: RE = 0, DH = 1
+    194            WriteIns(0x3C);	//3 Lines middle
+   \   000010   7C403C00     MOV.B   #0x3c, R12
+   \   000014   ........     CALLA   #WriteIns
+    195            display_changed = 1;
+   \   000018   D243....     MOV.B   #0x1, &display_changed
+    196          }
+   \   00001C   1001         RETA
+    197          
+
+   \                                 In  segment CODE, align 2
+    198          void lcd_BIG_bot(void){
+   \                     lcd_BIG_bot:
+    199          //  0x3A ->Function set: RE = 1
+    200            WriteIns(0x3A);	//3 Lines middle
+   \   000000   7C403A00     MOV.B   #0x3a, R12
+   \   000004   ........     CALLA   #WriteIns
+    201          //  0x13 -> 3 Lines bot
+    202            WriteIns(0x13);	//3 Lines middle
+   \   000008   7C401300     MOV.B   #0x13, R12
+   \   00000C   ........     CALLA   #WriteIns
+    203          //  0x3C ->Function set: RE = 0, DH = 1
+    204            WriteIns(0x3C);	//3 Lines middle
+   \   000010   7C403C00     MOV.B   #0x3c, R12
+   \   000014   ........     CALLA   #WriteIns
+    205            display_changed = 1;
+   \   000018   D243....     MOV.B   #0x1, &display_changed
+    206          }
+   \   00001C   1001         RETA
+    207          
+
+   \                                 In  segment CODE, align 2
+    208          void lcd_180(void){
+   \                     lcd_180:
+    209            WriteIns(0x3A);	// 0x3A ->Function set: RE = 1 Enable Change
+   \   000000   7C403A00     MOV.B   #0x3a, R12
+   \   000004   ........     CALLA   #WriteIns
+    210            if(lcd_orient){
+   \   000008   C293....     CMP.B   #0x0, &lcd_orient
+   \   00000C   0724         JEQ     ??lcd_180_1
+    211              lcd_orient = 0;
+   \   00000E   C243....     MOV.B   #0x0, &lcd_orient
+    212              WriteIns(0x06);	// 0x06 -> Bottom View
+   \   000012   7C400600     MOV.B   #0x6, R12
+   \   000016   ........     CALLA   #WriteIns
+   \   00001A   063C         JMP     ??lcd_180_0
+    213            }else{
+    214              lcd_orient = 1;
+   \                     ??lcd_180_1:
+   \   00001C   D243....     MOV.B   #0x1, &lcd_orient
+    215              WriteIns(0x05);	//  0x05 -> Top View
+   \   000020   7C400500     MOV.B   #0x5, R12
+   \   000024   ........     CALLA   #WriteIns
+    216            }
+    217            WriteIns(0x3C);	// 0x3C ->Function set: RE = 0, DH = 1 Disable Change
+   \                     ??lcd_180_0:
+   \   000028   7C403C00     MOV.B   #0x3c, R12
+   \   00002C   ........     CALLA   #WriteIns
+    218            display_changed = 1;
+   \   000030   D243....     MOV.B   #0x1, &display_changed
+    219          }
+   \   000034   1001         RETA
+    220          
+
+   \                                 In  segment CODE, align 2
+    221          void lcd_out(char *s, char line, char position){
+   \                     lcd_out:
+   \   000000   3B15         PUSHM.W #0x4, R11
+   \   000002   084C         MOV.W   R12, R8
+   \   000004   4A4D         MOV.B   R13, R10
+   \   000006   4B4E         MOV.B   R14, R11
+    222          // Write a string to the display, using lcd_putc.
+    223            WriteIns(line+position);
+   \   000008   4C4A         MOV.B   R10, R12
+   \   00000A   4C5B         ADD.B   R11, R12
+   \   00000C   ........     CALLA   #WriteIns
+    224            while (*s) {
+   \                     ??lcd_out_0:
+   \   000010   C8930000     CMP.B   #0x0, 0(R8)
+   \   000014   0524         JEQ     ??lcd_out_1
+    225              WriteData(*s++);
+   \   000016   6C48         MOV.B   @R8, R12
+   \   000018   ........     CALLA   #WriteData
+   \   00001C   1853         ADD.W   #0x1, R8
+   \   00001E   F83F         JMP     ??lcd_out_0
+    226            }
+    227          }
+   \                     ??lcd_out_1:
+   \   000020   3817         POPM.W  #0x4, R11
+   \   000022   1001         RETA
+    228          
+
+   \                                 In  segment CODE, align 2
+    229          void lcd_puts(char *s){
+   \                     lcd_puts:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    230          // Write a string to the display, using lcd_putc.
+    231            char_count = 1;
+   \   000004   9243....     MOV.W   #0x1, &char_count
+    232            if (s == NULL){
+   \   000008   0A93         CMP.W   #0x0, R10
+   \   00000A   0824         JEQ     ??lcd_puts_1
+    233              return;
+    234            }
+    235            while (*s) {
+   \                     ??lcd_puts_0:
+   \   00000C   CA930000     CMP.B   #0x0, 0(R10)
+   \   000010   0524         JEQ     ??lcd_puts_1
+    236              WriteData(*s++);
+   \   000012   6C4A         MOV.B   @R10, R12
+   \   000014   ........     CALLA   #WriteData
+   \   000018   1A53         ADD.W   #0x1, R10
+   \   00001A   F83F         JMP     ??lcd_puts_0
+    237            }
+    238          }
+   \                     ??lcd_puts_1:
+   \   00001C   3A41         POP.W   R10
+   \   00001E   1001         RETA
+    239          
+
+   \                                 In  segment CODE, align 2
+    240          void WriteIns(char instruction){
+   \                     WriteIns:
+   \   000000   4D4C         MOV.B   R12, R13
+    241          //-----------------------------------------------------
+    242          // Func: WriteIns(instruction)
+    243          // Desc: sends instruction to display
+    244          //-----------------------------------------------------
+    245            spi_chipselect_active();
+   \   000002   ........     CALLA   #spi_chipselect_active
+    246            SPI_B1_write(START_WR_INSTRUCTION);    // Send 5 synchronization bits, RS = 0, R/W = 0
+   \   000006   7C401F00     MOV.B   #0x1f, R12
+   \   00000A   ........     CALLA   #SPI_B1_write
+    247            SPI_B1_write(instruction & 0x0F);      // Send lower data bits
+   \   00000E   4C4D         MOV.B   R13, R12
+   \   000010   7CF00F00     AND.B   #0xf, R12
+   \   000014   ........     CALLA   #SPI_B1_write
+    248            SPI_B1_write((instruction>>4) & 0x0F); // Send higher data bits
+   \   000018   4C4D         MOV.B   R13, R12
+   \   00001A                RPT     #0x4
+   \   00001A   43194C10     RRUX.B  R12
+   \   00001E   ........     CALLA   #SPI_B1_write
+    249            spi_chipselect_idle();
+   \   000022   ........     CALLA   #spi_chipselect_idle
+    250          }
+   \   000026   1001         RETA
+    251          
+
+   \                                 In  segment CODE, align 2
+    252          void WriteData(char data){
+   \                     WriteData:
+   \   000000   4D4C         MOV.B   R12, R13
+    253          //-----------------------------------------------------
+    254          //Func: WriteData(data)
+    255          //Desc: sends data to display
+    256          //-----------------------------------------------------
+    257            spi_chipselect_active();
+   \   000002   ........     CALLA   #spi_chipselect_active
+    258            //  CheckBusy();
+    259            SPI_B1_write(START_WR_DATA);      // Send 5 synchronization bits, RS = 1, R/W = 0
+   \   000006   7C405F00     MOV.B   #0x5f, R12
+   \   00000A   ........     CALLA   #SPI_B1_write
+    260            SPI_B1_write(data & 0x0F);        // Send lower data bits
+   \   00000E   4C4D         MOV.B   R13, R12
+   \   000010   7CF00F00     AND.B   #0xf, R12
+   \   000014   ........     CALLA   #SPI_B1_write
+    261            SPI_B1_write((data>>4) & 0x0F);   // Send higher data bits
+   \   000018   4C4D         MOV.B   R13, R12
+   \   00001A                RPT     #0x4
+   \   00001A   43194C10     RRUX.B  R12
+   \   00001E   ........     CALLA   #SPI_B1_write
+    262            spi_chipselect_idle();
+   \   000022   ........     CALLA   #spi_chipselect_idle
+    263          }
+   \   000026   1001         RETA
+    264          
+
+   \                                 In  segment CODE, align 2
+    265          unsigned char CheckBusy(void){
+   \                     CheckBusy:
+    266          //-----------------------------------------------------
+    267          //Func: CheckBusy()
+    268          //Desc: checks if display is idle
+    269          //-----------------------------------------------------
+    270            unsigned char readData = 1;
+   \   000000   5C43         MOV.B   #0x1, R12
+    271            //  do{
+    272            //    SPI_put(0x3F);         //Send 5 synchronization bits, RS = 0, R/W = 1
+    273            //    SPI_put(0x00);         //dummy write to receive data
+    274            //    while(ri_u0c1 == 0);   //wait while data is received
+    275            //    readData= ~u0rbl;      //store data
+    276            //  }while(readData&0x80);   //check for busy flag
+    277            //
+    278            return readData;
+   \   000002   1001         RETA
+    279          }
+    280          
+
+   \                                 In  segment CODE, align 2
+    281          void ClrDisplay(void){
+   \                     ClrDisplay:
+    282          //-----------------------------------------------------
+    283          // Func: ClrDisplay
+    284          // Desc: Clears entire Display content and set home pos
+    285          //-----------------------------------------------------
+    286            ClrDisplay_Buffer_0();
+   \   000000   ........     CALLA   #ClrDisplay_Buffer_0
+    287            ClrDisplay_Buffer_1();
+   \   000004   ........     CALLA   #ClrDisplay_Buffer_1
+    288            ClrDisplay_Buffer_2();
+   \   000008   ........     CALLA   #ClrDisplay_Buffer_2
+    289            ClrDisplay_Buffer_3();
+   \   00000C   ........     CALLA   #ClrDisplay_Buffer_3
+    290            display_changed = 0;
+   \   000010   C243....     MOV.B   #0x0, &display_changed
+    291          }
+   \   000014   1001         RETA
+    292          
+
+   \                                 In  segment CODE, align 2
+    293          void ClrDisplay_Buffer_0(void){
+   \                     ClrDisplay_Buffer_0:
+    294            int i;
+    295            for(i=0;i<10;i++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??ClrDisplay_Buffer_0_0:
+   \   000002   3F900A00     CMP.W   #0xa, R15
+   \   000006   0534         JGE     ??ClrDisplay_Buffer_0_1
+    296              display_line[0][i] = ' ';
+   \   000008   FF402000.... MOV.B   #0x20, display_line(R15)
+    297            }
+   \   00000E   1F53         ADD.W   #0x1, R15
+   \   000010   F83F         JMP     ??ClrDisplay_Buffer_0_0
+    298          }
+   \                     ??ClrDisplay_Buffer_0_1:
+   \   000012   1001         RETA
+    299          
+
+   \                                 In  segment CODE, align 2
+    300          void ClrDisplay_Buffer_1(void){
+   \                     ClrDisplay_Buffer_1:
+    301            int i;
+    302            for(i=0;i<10;i++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??ClrDisplay_Buffer_1_0:
+   \   000002   3F900A00     CMP.W   #0xa, R15
+   \   000006   0534         JGE     ??ClrDisplay_Buffer_1_1
+    303              display_line[1][i] = ' ';
+   \   000008   FF402000.... MOV.B   #0x20, display_line + 11(R15)
+    304            }
+   \   00000E   1F53         ADD.W   #0x1, R15
+   \   000010   F83F         JMP     ??ClrDisplay_Buffer_1_0
+    305          }
+   \                     ??ClrDisplay_Buffer_1_1:
+   \   000012   1001         RETA
+    306          
+
+   \                                 In  segment CODE, align 2
+    307          void ClrDisplay_Buffer_2(void){
+   \                     ClrDisplay_Buffer_2:
+    308            int i;
+    309            for(i=0;i<10;i++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??ClrDisplay_Buffer_2_0:
+   \   000002   3F900A00     CMP.W   #0xa, R15
+   \   000006   0534         JGE     ??ClrDisplay_Buffer_2_1
+    310              display_line[2][i] = ' ';
+   \   000008   FF402000.... MOV.B   #0x20, display_line + 22(R15)
+    311            }
+   \   00000E   1F53         ADD.W   #0x1, R15
+   \   000010   F83F         JMP     ??ClrDisplay_Buffer_2_0
+    312          }
+   \                     ??ClrDisplay_Buffer_2_1:
+   \   000012   1001         RETA
+    313          
+
+   \                                 In  segment CODE, align 2
+    314          void ClrDisplay_Buffer_3(void){
+   \                     ClrDisplay_Buffer_3:
+    315            int i;
+    316            for(i=0;i<10;i++){
+   \   000000   0F43         MOV.W   #0x0, R15
+   \                     ??ClrDisplay_Buffer_3_0:
+   \   000002   3F900A00     CMP.W   #0xa, R15
+   \   000006   0534         JGE     ??ClrDisplay_Buffer_3_1
+    317              display_line[3][i] = ' ';
+   \   000008   FF402000.... MOV.B   #0x20, display_line + 33(R15)
+    318            }
+   \   00000E   1F53         ADD.W   #0x1, R15
+   \   000010   F83F         JMP     ??ClrDisplay_Buffer_3_0
+    319          }
+   \                     ??ClrDisplay_Buffer_3_1:
+   \   000012   1001         RETA
+    320          
+
+   \                                 In  segment CODE, align 2
+    321          void SetPostion(char pos){
+   \                     SetPostion:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   4A4C         MOV.B   R12, R10
+    322          //-----------------------------------------------------
+    323          // Func: SetPostion(postion)
+    324          // Desc: set postion
+    325          //-----------------------------------------------------
+    326            WriteIns(LCD_HOME_L1+pos);
+   \   000004   4C4A         MOV.B   R10, R12
+   \   000006   7C508000     ADD.B   #0x80, R12
+   \   00000A   ........     CALLA   #WriteIns
+    327            display_changed = 0;
+   \   00000E   C243....     MOV.B   #0x0, &display_changed
+    328          }
+   \   000012   3A41         POP.W   R10
+   \   000014   1001         RETA
+    329          
+
+   \                                 In  segment CODE, align 2
+    330          void DisplayOnOff(char data){
+   \                     DisplayOnOff:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   4A4C         MOV.B   R12, R10
+    331          //-----------------------------------------------------
+    332          // Func: DisplayOnOff(control)
+    333          // Desc: use definitions of header file to set display
+    334          //-----------------------------------------------------
+    335            WriteIns(0x08+data);
+   \   000004   4C4A         MOV.B   R10, R12
+   \   000006   7C52         ADD.B   #0x8, R12
+   \   000008   ........     CALLA   #WriteIns
+    336            display_changed = 0;
+   \   00000C   C243....     MOV.B   #0x0, &display_changed
+    337          }
+   \   000010   3A41         POP.W   R10
+   \   000012   1001         RETA
+    338          
+
+   \                                 In  segment CODE, align 2
+    339          void Init_SPI_B1(void){
+   \                     Init_SPI_B1:
+    340          //------------------------------------------------------------------------------
+    341          //SPI
+    342          //------------------------------------------------------------------------------
+    343          // Reset peripheral
+    344            UCB1CTLW0 = UCSWRST;
+   \   000000   9243C005     MOV.W   #0x1, &0x5c0
+    345            UCB1CTLW0 |= UCSSEL__SMCLK; // SMCLK is clock source
+   \   000004   B2D08000C005 BIS.W   #0x80, &0x5c0
+    346            UCB1BRW = SPI_CLK_PRESCALER;
+   \   00000A   B2405000C605 MOV.W   #0x50, &0x5c6
+    347            UCB1CTLW0 |= UCCKPL;        // Clock polarity high
+   \   000010   B2D00040C005 BIS.W   #0x4000, &0x5c0
+    348            UCB1CTLW0 |= UCMST;         // master mode
+   \   000016   B2D00008C005 BIS.W   #0x800, &0x5c0
+    349            UCB1CTLW0 |= UCSYNC;
+   \   00001C   B2D00001C005 BIS.W   #0x100, &0x5c0
+    350            UCB1CTLW0 |= UCMODE_0;
+   \   000022   9242C005C005 MOV.W   &0x5c0, &0x5c0
+    351            UCB1CTLW0 &= ~UCMSB;        // master mode, LSB transmitted first
+   \   000028   B2C00020C005 BIC.W   #0x2000, &0x5c0
+    352            // Enable peripheral
+    353            UCB1CTLW0 &= ~UCSWRST;
+   \   00002E   92C3C005     BIC.W   #0x1, &0x5c0
+    354            // Wait to ensure the peripheral is up
+    355            __delay_cycles(100);
+   \   000032                ////////////// Start of 100 cycles delay.
+   \   000032   003C         JMP     ??Init_SPI_B1_1
+   \                     ??Init_SPI_B1_1:
+   \   000034   3F401F00     MOV.W   #0x1f, R15
+   \                     ??Init_SPI_B1_0:
+   \   000038   3F53         ADD.W   #0xffff, R15
+   \   00003A   FE2F         JC      ??Init_SPI_B1_0
+   \   00003C                ////////////// End of delay code.
+    356          //------------------------------------------------------------------------------
+    357          }
+   \   00003C   1001         RETA
+   \   00003E                REQUIRE _A_UCB1CTLW0_L
+   \   00003E                REQUIRE _A_UCB1BRW_L
+    358          
+
+   \                                 In  segment CODE, align 2
+    359          void SPI_B1_write(char byte){
+   \                     SPI_B1_write:
+   \                     ??SPI_B1_write_0:
+    360          //------------------------------------------------------------------------------
+    361          // Writes a byte out of SPIB, assumes CSB already low
+    362          // Wait for TX empty
+    363            while (!(UCB1IFG & UCTXIFG));
+   \   000000   A2B3EC05     BIT.W   #0x2, &0x5ec
+   \   000004   FD2B         JNC     ??SPI_B1_write_0
+    364            UCB1TXBUF = byte;
+   \   000006   4C4C         MOV.B   R12, R12
+   \   000008   824CCE05     MOV.W   R12, &0x5ce
+    365            // Wait for TX empty
+    366            while (!(UCB1IFG & UCTXIFG));
+   \                     ??SPI_B1_write_1:
+   \   00000C   A2B3EC05     BIT.W   #0x2, &0x5ec
+   \   000010   FD2B         JNC     ??SPI_B1_write_1
+    367            current_character = UCB1RXBUF;
+   \   000012   1E42CC05     MOV.W   &0x5cc, R14
+   \   000016   C24E....     MOV.B   R14, &current_character
+    368            //------------------------------------------------------------------------------
+    369          }
+   \   00001A   1001         RETA
+   \   00001C                REQUIRE _A_UCB1IFG_L
+   \   00001C                REQUIRE _A_UCB1TXBUF_L
+   \   00001C                REQUIRE _A_UCB1RXBUF_L
+    370          
+    371          
+    372          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   CheckBusy
+      4   ClrDisplay
+        4   -> ClrDisplay_Buffer_0
+        4   -> ClrDisplay_Buffer_1
+        4   -> ClrDisplay_Buffer_2
+        4   -> ClrDisplay_Buffer_3
+      4   ClrDisplay_Buffer_0
+      4   ClrDisplay_Buffer_1
+      4   ClrDisplay_Buffer_2
+      4   ClrDisplay_Buffer_3
+      6   DisplayOnOff
+        6   -> WriteIns
+     12   Display_Update
+       12   -> lcd_out
+      4   Init_LCD
+        4   -> ClrDisplay
+        4   -> DisplayOnOff
+        4   -> Init_SPI_B1
+        4   -> WriteIns
+        4   -> spi_chipselect_idle
+        4   -> spi_reset_active
+        4   -> spi_reset_idle
+      4   Init_SPI_B1
+      4   LCD_test
+        4   -> Init_LCD
+        4   -> lcd_4line
+        4   -> lcd_BIG_mid
+        4   -> outchar
+        4   -> print_CR
+        4   -> wait_for_character
+      4   SPI_B1_write
+      6   SetPostion
+        6   -> WriteIns
+      4   WriteData
+        4   -> SPI_B1_write
+        4   -> spi_chipselect_active
+        4   -> spi_chipselect_idle
+      4   WriteIns
+        4   -> SPI_B1_write
+        4   -> spi_chipselect_active
+        4   -> spi_chipselect_idle
+      4   enable_display_update
+      4   lcd_180
+        4   -> WriteIns
+      4   lcd_4line
+        4   -> WriteIns
+      4   lcd_BIG_bot
+        4   -> WriteIns
+      4   lcd_BIG_mid
+        4   -> WriteIns
+     12   lcd_out
+       12   -> WriteData
+       12   -> WriteIns
+      6   lcd_puts
+        6   -> WriteData
+      4   spi_chipselect_active
+      4   spi_chipselect_idle
+      4   spi_reset_active
+      4   spi_reset_idle
+      4   update_string
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  CheckBusy
+      22  ClrDisplay
+      20  ClrDisplay_Buffer_0
+      20  ClrDisplay_Buffer_1
+      20  ClrDisplay_Buffer_2
+      20  ClrDisplay_Buffer_3
+      20  DisplayOnOff
+      70  Display_Update
+     156  Init_LCD
+      62  Init_SPI_B1
+      78  LCD_test
+      28  SPI_B1_write
+      22  SetPostion
+      40  WriteData
+      40  WriteIns
+       2  _A_PAOUT_L
+       2  _A_PBOUT_L
+       2  _A_TB0CCR2_L
+       2  _A_TB0CCTL2_L
+       2  _A_UCB1BRW_L
+       2  _A_UCB1CTLW0_L
+       2  _A_UCB1IFG_L
+       2  _A_UCB1RXBUF_L
+       2  _A_UCB1TXBUF_L
+       2  char_count
+       1  current_character
+       1  current_line
+       8  display
+       1  display_changed
+      44  display_line
+       2  display_update_time
+      14  enable_display_update
+      54  lcd_180
+      14  lcd_4line
+      30  lcd_BIG_bot
+      30  lcd_BIG_mid
+       1  lcd_control
+       1  lcd_orient
+      36  lcd_out
+      32  lcd_puts
+       1  posi_L1
+       1  posi_L2
+       1  posi_L3
+       1  posi_L4
+      12  spi_chipselect_active
+      18  spi_chipselect_idle
+       6  spi_reset_active
+       6  spi_reset_idle
+       1  update_display
+       2  update_display_count
+      28  update_string
+
+ 
+ 902 bytes in segment CODE
+  18 bytes in segment DATA16_AN
+  68 bytes in segment DATA16_Z
+ 
+ 902 bytes of CODE memory
+  68 bytes of DATA memory (+ 18 bytes shared)
+
+Errors: none
+Warnings: none

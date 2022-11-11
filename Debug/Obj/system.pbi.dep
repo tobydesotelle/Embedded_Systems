@@ -1,0 +1,8 @@
+system.pbi: \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\legacy.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\intrinsics.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\in430.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430fr2355.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430.h \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Project\ 8\ Current\functions.h \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Project\ 8\ Current\system.c

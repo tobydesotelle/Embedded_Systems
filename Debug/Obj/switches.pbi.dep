@@ -1,0 +1,20 @@
+switches.pbi: \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current\switches.c \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current/macros.h \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current/functions.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/msp430fr2355.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/in430.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/intrinsics.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/legacy.h \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current/pid.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\time.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\ycheck.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\yvals.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\DLib_Defaults.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\lib\dlib\dl430xlsfn.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\DLib_Product.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\xencoding_limits.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\DLib_Threads.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\ysizet.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\dlib\c\string.h

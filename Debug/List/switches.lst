@@ -1,0 +1,241 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:21:00
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\switches.c
+#    Command line  =  
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW949.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
+#        current\switches.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
+#        ./ --core=430X --data_model=small -On --multiplier=32
+#        --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\List\switches.lst
+#    Object file   =  
+#        C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\switches.r43
+#
+###############################################################################
+
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\switches.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the functions to process if a switch has   
+      4          //      been pressed.
+      5          //
+      6          //  Tobias Desotelle
+      7          //  September 20 2022
+      8          //  Built with IAR Embedded Workbench Version: (7.21.1)
+      9          //--------------------------------------------------------------------------
+     10          
+     11          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x21c
+   \   union <unnamed> _A_PAIFG_L
+   \                     _A_PAIFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x23c
+   \   union <unnamed> _A_PBIFG_L
+   \                     _A_PBIFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x384
+   \   union <unnamed> _A_TB0CCTL1_L
+   \                     _A_TB0CCTL1_L:
+   \   000000                DS8 2
+     12          extern volatile unsigned char switch_control;
+     13          extern volatile unsigned short timer_bits;
+     14          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     15          volatile unsigned int sw1_timer;
+   \                     sw1_timer:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     16          volatile unsigned int sw2_timer;
+   \                     sw2_timer:
+   \   000000                DS8 2
+     17          //Switch 1 
+     18          #pragma vector=PORT4_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     19          __interrupt void switchP4_interrupt(void){
+   \                     switchP4_interrupt:
+     20            if (P4IFG & SW1) {
+   \   000000   E2B33D02     BIT.B   #0x2, &0x23d
+   \   000004   0C28         JNC     ??switchP4_interrupt_0
+     21              P4IFG &= ~SW1; // IFG SW1 cleared
+   \   000006   E2C33D02     BIC.B   #0x2, &0x23d
+     22              switch_control |= SW1_PRESSED;
+   \   00000A   D2D3....     BIS.B   #0x1, &switch_control
+     23              switch_control &= ~SW1_RELEASED;
+   \   00000E   E2C2....     BIC.B   #0x4, &switch_control
+     24              switch_control |= SW1_TOGGLED;
+   \   000012   F2D01000.... BIS.B   #0x10, &switch_control
+     25              //sw1_timer=RESET_STATE;
+     26              TB0CCTL1 |= CCIE; // starts debounce timer
+   \   000018   B2D010008403 BIS.W   #0x10, &0x384
+     27            }
+     28          }
+   \                     ??switchP4_interrupt_0:
+   \   00001E   0013         RETI
+   \   000020                REQUIRE _A_PBIFG_L
+   \   000020                REQUIRE _A_TB0CCTL1_L
+     29          // Switch 2 
+     30          #pragma vector=PORT2_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     31          __interrupt void switchP2_interrupt(void){
+   \                     switchP2_interrupt:
+     32            
+     33            if (P2IFG & SW2) {
+   \   000000   F2B21D02     BIT.B   #0x8, &0x21d
+   \   000004   0C28         JNC     ??switchP2_interrupt_0
+     34              P2IFG &= ~SW2; // IFG SW1 cleared
+   \   000006   F2C21D02     BIC.B   #0x8, &0x21d
+     35              switch_control |= SW2_PRESSED;
+   \   00000A   E2D3....     BIS.B   #0x2, &switch_control
+     36              switch_control &= ~SW1_RELEASED;
+   \   00000E   E2C2....     BIC.B   #0x4, &switch_control
+     37              switch_control ^= SW2_TOGGLED;
+   \   000012   F2E02000.... XOR.B   #0x20, &switch_control
+     38              //sw2_timer=RESET_STATE;
+     39              TB0CCTL1 |= CCIE; //starts debounce timer
+   \   000018   B2D010008403 BIS.W   #0x10, &0x384
+     40            }
+     41          }
+   \                     ??switchP2_interrupt_0:
+   \   00001E   0013         RETI
+   \   000020                REQUIRE _A_PAIFG_L
+   \   000020                REQUIRE _A_TB0CCTL1_L
+     42          
+
+   \                                 In  segment CODE, align 2
+     43          void process_switches(){
+   \                     process_switches:
+     44            if(sw1_timer>=TIME20){
+   \   000000   B2901400.... CMP.W   #0x14, &sw1_timer
+   \   000006   0628         JNC     ??process_switches_0
+     45              sw1_timer = RESET_STATE;
+   \   000008   8243....     MOV.W   #0x0, &sw1_timer
+     46              switch_control &= ~SW1_PRESSED;
+   \   00000C   D2C3....     BIC.B   #0x1, &switch_control
+     47              switch_control |= SW1_RELEASED;
+   \   000010   E2D2....     BIS.B   #0x4, &switch_control
+     48            }
+     49            if(sw2_timer>=TIME20){
+   \                     ??process_switches_0:
+   \   000014   B2901400.... CMP.W   #0x14, &sw2_timer
+   \   00001A   0628         JNC     ??process_switches_1
+     50              sw2_timer = RESET_STATE;
+   \   00001C   8243....     MOV.W   #0x0, &sw2_timer
+     51              switch_control &= ~SW2_PRESSED;
+   \   000020   E2C3....     BIC.B   #0x2, &switch_control
+     52              switch_control |= SW2_RELEASED;
+   \   000024   F2D2....     BIS.B   #0x8, &switch_control
+     53              
+     54            }
+     55            if(switch_control==0){
+   \                     ??process_switches_1:
+   \   000028   C293....     CMP.B   #0x0, &switch_control
+   \   00002C   0420         JNE     ??process_switches_2
+     56              switch_control |= SW1_RELEASED;
+   \   00002E   E2D2....     BIS.B   #0x4, &switch_control
+     57              switch_control |= SW2_RELEASED;
+   \   000032   F2D2....     BIS.B   #0x8, &switch_control
+     58            }
+     59          //  if((switch_control&SW1_RELEASED)&&(switch_control&SW1_PRESSED)){
+     60          //    switch_control &= ~SW1_PRESSED;
+     61          //    switch_control |= SW1_RELEASED;
+     62          //  }
+     63          //  if((switch_control&SW2_RELEASED)&&(switch_control&SW2_PRESSED)){
+     64          //    switch_control &= ~SW2_PRESSED;
+     65          //    switch_control |= SW2_RELEASED;
+     66          //  }
+     67            
+     68            if((switch_control&SW1_RELEASED)&&(switch_control&SW2_RELEASED)){
+   \                     ??process_switches_2:
+   \   000036   E2B2....     BIT.B   #0x4, &switch_control
+   \   00003A   0628         JNC     ??process_switches_3
+   \   00003C   F2B2....     BIT.B   #0x8, &switch_control
+   \   000040   0328         JNC     ??process_switches_3
+     69              TB0CCTL1 &= ~CCIE; //Turn off debounce 
+   \   000042   B2C010008403 BIC.W   #0x10, &0x384
+     70            }
+     71          }
+   \                     ??process_switches_3:
+   \   000048   1001         RETA
+   \   00004A                REQUIRE _A_TB0CCTL1_L
+
+   \                                 In  segment INTVEC, offset 0x2c, root
+   \                     `??switchP4_interrupt::??INTVEC 44`:
+   \   00002C   ....         DC16    switchP4_interrupt
+
+   \                                 In  segment INTVEC, offset 0x30, root
+   \                     `??switchP2_interrupt::??INTVEC 48`:
+   \   000030   ....         DC16    switchP2_interrupt
+     72          
+     73          
+     74          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   process_switches
+      4   switchP2_interrupt
+      4   switchP4_interrupt
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  _A_PAIFG_L
+       2  _A_PBIFG_L
+       2  _A_TB0CCTL1_L
+      74  process_switches
+       2  sw1_timer
+       2  sw2_timer
+      32  switchP2_interrupt
+       2  switchP2_interrupt::??INTVEC 48
+      32  switchP4_interrupt
+       2  switchP4_interrupt::??INTVEC 44
+
+ 
+ 74 bytes in segment CODE
+  6 bytes in segment DATA16_AN
+  4 bytes in segment DATA16_Z
+  4 bytes in segment INTVEC
+ 64 bytes in segment ISR_CODE
+ 
+ 138 bytes of CODE  memory
+   0 bytes of CONST memory (+ 4 bytes shared)
+   4 bytes of DATA  memory (+ 6 bytes shared)
+
+Errors: none
+Warnings: none
