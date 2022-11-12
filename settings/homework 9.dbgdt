@@ -832,7 +832,7 @@
                     <item>cur_song_char</item>
                     <item>cur_song_char</item>
                     <item>song_toggle</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

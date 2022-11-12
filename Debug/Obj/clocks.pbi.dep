@@ -1,6 +1,6 @@
 clocks.pbi: \
-  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current\clocks.c \
-  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\ECE306\Code\Homework\ 9\ current/functions.h \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems\clocks.c \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems/functions.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/msp430fr2355.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/in430.h \
