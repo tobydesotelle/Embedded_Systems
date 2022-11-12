@@ -205,6 +205,7 @@ __interrupt void EUSCI_A0_ISR(void){
   }
   }
   }
+//This is a git test
 //      switch(baud){
 //      case BAUD115200:
 //        change_display_line( BAUD115200_STRING,DISPLAY2);
