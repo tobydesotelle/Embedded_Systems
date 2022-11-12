@@ -48,6 +48,7 @@ unsigned char baud;
 void main(void){
   PM5CTL0 &= ~LOCKLPM5;// Disable the GPIO power-on default high-impedance mode to activate
   Master_Init();
+  BACKLIGHT = 30000;
   while(!((display_bits) & (Splash_bit))){
   }
   //serial_bits= 1;

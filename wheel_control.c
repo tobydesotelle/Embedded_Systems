@@ -183,4 +183,11 @@ void Wheels_Process(void){
     break;
   }
 }
+void pid_control(){
+  //Want to update pid loop and set output
+  float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
+  set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
+  set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
+  
+}
 

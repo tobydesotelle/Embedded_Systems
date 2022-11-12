@@ -38,6 +38,7 @@
 #define SERIAL_TX       (0x04)
 #define tx_buff_update  (0x08)
 #define rx_buff_update  (0x10)
+#define Serial_off      (0x20)
 
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
@@ -58,9 +59,9 @@
 #define ADC_menu                (0x03)
 #define PID_menu                (0x04)
 
-#define Settings_dis             ("Settings  ")
-#define Adc_disp                 ("ADC Vals  ")
-#define Pid_menu                 ("PID Tune  ")
+#define Settings_dis             ("  Settings")
+#define Adc_disp                 ("  ADC Vals")
+#define Pid_menu                 ("  PID Tune")
 
 
 // ===========================SWITCHES==========================================

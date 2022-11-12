@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:39:22
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          11/Nov/2022  23:33:19
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -14,14 +14,15 @@
 #    __code_model  =  large
 #    Source file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\pid.c
+#        Asheville\Documents\GitHub\Embedded_Systems\pid.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWD7F6.tmp ("C:\Users\Tobias
-#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
-#        current\pid.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9003.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\pid.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
 #        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
@@ -30,14 +31,14 @@
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List\pid.lst
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List\pid.lst
 #    Object file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\pid.r43
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\pid.r43
 #
 ###############################################################################
 
-C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\pid.c
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\pid.c
       1          #include "pid.h"
       2          #include "macros.h"
       3          
@@ -47,44 +48,122 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
       7          #define MAX             (30000)
       8          #define MIN             (-MAX)
       9          #define SAMPLE_TIME     (0.1)
+
+   \                                 In  segment CODE, align 2
      10          void PIDController_Init(PIDController *pid) {
+   \                     PIDController_Init:
      11                  
      12                  pid->Kp = KP;
+   \   000000   8C430000     MOV.W   #0x0, 0(R12)
+   \   000004   BC40A0410200 MOV.W   #0x41a0, 0x2(R12)
      13                  pid->Ki = KI;
+   \   00000A   8C430400     MOV.W   #0x0, 0x4(R12)
+   \   00000E   8C430600     MOV.W   #0x0, 0x6(R12)
      14                  pid->Kd = KD;
+   \   000012   8C430800     MOV.W   #0x0, 0x8(R12)
+   \   000016   8C430A00     MOV.W   #0x0, 0xa(R12)
      15                  pid->limMax = MAX;
+   \   00001A   BC4000601400 MOV.W   #0x6000, 0x14(R12)
+   \   000020   BC40EA461600 MOV.W   #0x46ea, 0x16(R12)
      16                  pid->limMin = MIN;
+   \   000026   BC4000601000 MOV.W   #0x6000, 0x10(R12)
+   \   00002C   BC40EAC61200 MOV.W   #0xc6ea, 0x12(R12)
      17                  pid->T = SAMPLE_TIME;
+   \   000032   BC40CDCC2000 MOV.W   #0xcccd, 0x20(R12)
+   \   000038   BC40CC3D2200 MOV.W   #0x3dcc, 0x22(R12)
      18                  
      19          	/* Clear controller variables */
      20          	pid->integrator = 0.0f;
+   \   00003E   8C432400     MOV.W   #0x0, 0x24(R12)
+   \   000042   8C432600     MOV.W   #0x0, 0x26(R12)
      21          	pid->prevError  = 0.0f;
+   \   000046   8C432800     MOV.W   #0x0, 0x28(R12)
+   \   00004A   8C432A00     MOV.W   #0x0, 0x2a(R12)
      22          
      23          	pid->differentiator  = 0.0f;
+   \   00004E   8C432C00     MOV.W   #0x0, 0x2c(R12)
+   \   000052   8C432E00     MOV.W   #0x0, 0x2e(R12)
      24          	pid->prevMeasurement = 0.0f;
+   \   000056   8C433000     MOV.W   #0x0, 0x30(R12)
+   \   00005A   8C433200     MOV.W   #0x0, 0x32(R12)
      25          
      26          	pid->out = 0.0f;
+   \   00005E   8C433400     MOV.W   #0x0, 0x34(R12)
+   \   000062   8C433600     MOV.W   #0x0, 0x36(R12)
      27          
      28          }
+   \   000066   1001         RETA
      29          
+
+   \                                 In  segment CODE, align 2
      30          float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
+   \                     PIDController_Update:
+   \   000000   6A15         PUSHM.W #0x7, R10
+   \   000002   0F12         PUSH.W  R15
+   \   000004   0E12         PUSH.W  R14
+   \   000006   0A4C         MOV.W   R12, R10
+   \   000008   18411600     MOV.W   0x16(SP), R8
+   \   00000C   19411800     MOV.W   0x18(SP), R9
      31          
      32          	/*
      33          	* Error signal
      34          	*/
      35              float error = setpoint - measurement;
+   \   000010   2C41         MOV.W   @SP, R12
+   \   000012   1D410200     MOV.W   0x2(SP), R13
+   \   000016   0E48         MOV.W   R8, R14
+   \   000018   0F49         MOV.W   R9, R15
+   \   00001A   ........     CALLA   #_Sub32f
+   \   00001E   064C         MOV.W   R12, R6
+   \   000020   074D         MOV.W   R13, R7
      36          
      37          
      38          	/*
      39          	* Proportional
      40          	*/
      41              float proportional = pid->Kp * error;
+   \   000022   2C4A         MOV.W   @R10, R12
+   \   000024   1D4A0200     MOV.W   0x2(R10), R13
+   \   000028   0E46         MOV.W   R6, R14
+   \   00002A   0F47         MOV.W   R7, R15
+   \   00002C   ........     CALLA   #_Mul32f
+   \   000030   044C         MOV.W   R12, R4
+   \   000032   054D         MOV.W   R13, R5
      42          
      43          
      44          	/*
      45          	* Integral
      46          	*/
      47              pid->integrator = pid->integrator + 0.5f * pid->Ki * pid->T * (error + pid->prevError);
+   \   000034   1C4A0400     MOV.W   0x4(R10), R12
+   \   000038   1D4A0600     MOV.W   0x6(R10), R13
+   \   00003C   0E43         MOV.W   #0x0, R14
+   \   00003E   3F40003F     MOV.W   #0x3f00, R15
+   \   000042   ........     CALLA   #_Mul32f
+   \   000046   0E4C         MOV.W   R12, R14
+   \   000048   0F4D         MOV.W   R13, R15
+   \   00004A   1C4A2000     MOV.W   0x20(R10), R12
+   \   00004E   1D4A2200     MOV.W   0x22(R10), R13
+   \   000052   ........     CALLA   #_Mul32f
+   \   000056   0D12         PUSH.W  R13
+   \   000058   0C12         PUSH.W  R12
+   \   00005A   0C46         MOV.W   R6, R12
+   \   00005C   0D47         MOV.W   R7, R13
+   \   00005E   1E4A2800     MOV.W   0x28(R10), R14
+   \   000062   1F4A2A00     MOV.W   0x2a(R10), R15
+   \   000066   ........     CALLA   #_Add32f
+   \   00006A   0E4C         MOV.W   R12, R14
+   \   00006C   0F4D         MOV.W   R13, R15
+   \   00006E   3C41         POP.W   R12
+   \   000070   3D41         POP.W   R13
+   \   000072   ........     CALLA   #_Mul32f
+   \   000076   0E4C         MOV.W   R12, R14
+   \   000078   0F4D         MOV.W   R13, R15
+   \   00007A   1C4A2400     MOV.W   0x24(R10), R12
+   \   00007E   1D4A2600     MOV.W   0x26(R10), R13
+   \   000082   ........     CALLA   #_Add32f
+   \   000086   8A4C2400     MOV.W   R12, 0x24(R10)
+   \   00008A   8A4D2600     MOV.W   R13, 0x26(R10)
      48          
      49          	/* Anti-wind-up via integrator clamping */
      50          //    if (pid->integrator > pid->limMaxInt) {
@@ -111,34 +190,85 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
      71          	* Compute output and apply limits
      72          	*/
      73              pid->out = proportional + pid->integrator; //+ pid->differentiator;
+   \   00008E   0C44         MOV.W   R4, R12
+   \   000090   0D45         MOV.W   R5, R13
+   \   000092   1E4A2400     MOV.W   0x24(R10), R14
+   \   000096   1F4A2600     MOV.W   0x26(R10), R15
+   \   00009A   ........     CALLA   #_Add32f
+   \   00009E   8A4C3400     MOV.W   R12, 0x34(R10)
+   \   0000A2   8A4D3600     MOV.W   R13, 0x36(R10)
      74          
      75              if (pid->out > pid->limMax) {
+   \   0000A6   1C4A1400     MOV.W   0x14(R10), R12
+   \   0000AA   1D4A1600     MOV.W   0x16(R10), R13
+   \   0000AE   1E4A3400     MOV.W   0x34(R10), R14
+   \   0000B2   1F4A3600     MOV.W   0x36(R10), R15
+   \   0000B6   ........     CALLA   #?FLT_LT
+   \   0000BA   0728         JNC     ??PIDController_Update_1
      76          
      77                  pid->out = pid->limMax;
+   \   0000BC   9A4A14003400 MOV.W   0x14(R10), 0x34(R10)
+   \   0000C2   9A4A16003600 MOV.W   0x16(R10), 0x36(R10)
+   \   0000C8   113C         JMP     ??PIDController_Update_0
      78          
      79              } else if (pid->out < pid->limMin) {
+   \                     ??PIDController_Update_1:
+   \   0000CA   1C4A3400     MOV.W   0x34(R10), R12
+   \   0000CE   1D4A3600     MOV.W   0x36(R10), R13
+   \   0000D2   1E4A1000     MOV.W   0x10(R10), R14
+   \   0000D6   1F4A1200     MOV.W   0x12(R10), R15
+   \   0000DA   ........     CALLA   #?FLT_LT
+   \   0000DE   0628         JNC     ??PIDController_Update_0
      80          
      81                  pid->out = pid->limMin;
+   \   0000E0   9A4A10003400 MOV.W   0x10(R10), 0x34(R10)
+   \   0000E6   9A4A12003600 MOV.W   0x12(R10), 0x36(R10)
      82          
      83              }
      84          
      85          	/* Store error and measurement for later use */
      86              pid->prevError       = error;
+   \                     ??PIDController_Update_0:
+   \   0000EC   8A462800     MOV.W   R6, 0x28(R10)
+   \   0000F0   8A472A00     MOV.W   R7, 0x2a(R10)
      87              pid->prevMeasurement = measurement;
+   \   0000F4   8A483000     MOV.W   R8, 0x30(R10)
+   \   0000F8   8A493200     MOV.W   R9, 0x32(R10)
      88          
      89          	/* Return controller output */
      90              return pid->out;
+   \   0000FC   1C4A3400     MOV.W   0x34(R10), R12
+   \   000100   1D4A3600     MOV.W   0x36(R10), R13
+   \   000104   A1000400     ADDA    #0x4, SP
+   \   000108   6417         POPM.W  #0x7, R10
+   \   00010A   1001         RETA
      91          
      92          }
-     93          void pid_control(){
-     94            //Want to update pid loop and set output
-     95            float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
-                                                              ^
-Error[Pe020]: identifier "pid" is undefined
-     96            set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
-     97            set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
-     98            
-     99          }
 
-Errors: 1
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   PIDController_Init
+     26   PIDController_Update
+       22 ?FLT_LT
+       22 _Add32f
+       26 _Add32f
+       22 _Mul32f
+       22 _Sub32f
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     104  PIDController_Init
+     268  PIDController_Update
+
+ 
+ 372 bytes in segment CODE
+ 
+ 372 bytes of CODE memory
+
+Errors: none
 Warnings: none

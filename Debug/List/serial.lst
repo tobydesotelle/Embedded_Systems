@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:21:00
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          11/Nov/2022  23:45:19
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -14,14 +14,15 @@
 #    __code_model  =  large
 #    Source file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\serial.c
+#        Asheville\Documents\GitHub\Embedded_Systems\serial.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW88C.tmp ("C:\Users\Tobias
-#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
-#        current\serial.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW8F7D.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\serial.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
 #        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
@@ -30,14 +31,14 @@
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List\serial.lst
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List\serial.lst
 #    Object file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\serial.r43
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\serial.r43
 #
 ###############################################################################
 
-C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\serial.c
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\serial.c
       1          #include "macros.h"
 
    \                                 In  segment DATA16_AN, at 0x500
@@ -90,6 +91,16 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    \                     _A_UCA1MCTLW_L:
    \   000000                DS8 2
 
+   \                                 In  segment DATA16_AN, at 0x58c
+   \   union <unnamed> _A_UCA1RXBUF_L
+   \                     _A_UCA1RXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x58e
+   \   union <unnamed> _A_UCA1TXBUF_L
+   \                     _A_UCA1TXBUF_L:
+   \   000000                DS8 2
+
    \                                 In  segment DATA16_AN, at 0x59a
    \   union <unnamed> _A_UCA1IE_L
    \                     _A_UCA1IE_L:
@@ -116,7 +127,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
       8          volatile char USB_Char_Rx[SMALL_RING_SIZE];
    \                     USB_Char_Rx:
    \   000000                DS8 16
-      9          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      9          char temp;
+   \                     temp:
+   \   000000                DS8 1
      10          //char process_buf_back[32];
      11          //char process_buf_front[32];
 
@@ -532,45 +548,38 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    \                                 In  segment ISR_CODE, align 2
     191          __interrupt void EUSCI_A1_ISR(void){
    \                     EUSCI_A1_ISR:
-   \   000000   0F12         PUSH.W  R15
+   \   000000   1F15         PUSHM.W #0x2, R15
     192            switch(__even_in_range(UCA1IV,0x08)){
    \   000002   1F429E05     MOV.W   &0x59e, R15
-    193          //  case 0: // Vector 0 - no interrupt
-    194          //    break;
-    195          //  case 2: // Vector 2 - RXIFG
-    196          //    serial_bits = SERIAL_RX;
-    197          //    *RX_write = UCA1RXBUF;
-    198          //    RX_write++;
-    199          //    if(RX_write-RING_BUF_A0==10||*(RX_write-1)=='\0'){
-    200          //      strncpy(process_buf,RING_BUF_A0,11);
-    201          //      RING_BUF_A0_CUR_BUF++;
-    202          //      if(RING_BUF_A0_CUR_BUF==NUM_PROCESS_BUF)
-    203          //        RING_BUF_A0_CUR_BUF=RESET;
-    204          //      RX_write=RING_BUF_A0;
-    205          //    }
-    206          //    
-    207          //    break;
-    208          //  case 4: // Vector 4 – TXIFG
-    209          //    serial_bits = SERIAL_TX;
-    210          //    if(*TX_char=='\0'){
-    211          //      UCA1IE &= ~UCTXIE;
-    212          //      //TX_char=TX_A1;
-    213          //      TX_A1_CUR_BUF++;
-    214          //      if(TX_A1_CUR_BUF==NUM_PROCESS_BUF)
-    215          //        TX_A1_CUR_BUF=RESET;
-    216          //      TX_char=process_buf;
-    217          //    }
-    218          //      else{
-    219          //        UCA1TXBUF = *TX_char;
-    220          //        TX_char++;
-    221          //      }
-    222          //    break;
-    223          //  default: break;
-    224            }
-    225          }
-   \   000006   3F41         POP.W   R15
-   \   000008   0013         RETI
-   \   00000A                REQUIRE _A_UCA1IV_L
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for EUSCI_A1_ISR>_0`:
+   \   000008   0D3C         JMP     ??EUSCI_A1_ISR_0
+   \   00000A   033C         JMP     ??EUSCI_A1_ISR_1
+   \   00000C   0B3C         JMP     ??EUSCI_A1_ISR_0
+   \   00000E   0A3C         JMP     ??EUSCI_A1_ISR_0
+   \   000010   093C         JMP     ??EUSCI_A1_ISR_0
+    193              case 0: // Vector 0 - no interrupt
+    194              break;
+    195              case 2: // Vector 2 - RXIFG
+    196              temp =  UCA1RXBUF;
+   \                     ??EUSCI_A1_ISR_1:
+   \   000012   1E428C05     MOV.W   &0x58c, R14
+   \   000016   C24E....     MOV.B   R14, &temp
+    197              UCA1TXBUF = temp;
+   \   00001A   5F42....     MOV.B   &temp, R15
+   \   00001E   4F4F         MOV.B   R15, R15
+   \   000020   824F8E05     MOV.W   R15, &0x58e
+    198              break;
+    199              case 4: // Vector 4 – TXIFG
+    200              break;
+    201            }
+    202          }
+   \                     ??EUSCI_A1_ISR_0:
+   \   000024   1E17         POPM.W  #0x2, R15
+   \   000026   0013         RETI
+   \   000028                REQUIRE _A_UCA1RXBUF_L
+   \   000028                REQUIRE _A_UCA1TXBUF_L
+   \   000028                REQUIRE _A_UCA1IV_L
 
    \                                 In  segment INTVEC, offset 0x40, root
    \                     `??EUSCI_A1_ISR::??INTVEC 64`:
@@ -587,71 +596,71 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    \                                 In  segment DATA16_ID, align 2, align-sorted
    \                     `?<Initializer for RX_write>`:
    \   000000   ....         DC16 RING_BUF_A0
-    226          //      switch(baud){
-    227          //      case BAUD115200:
-    228          //        change_display_line( BAUD115200_STRING,DISPLAY2);
-    229          //        //sw2 buton press switch to 460800
-    230          //        //sw1 button press transmit current process buffer
-    231          //        if(SW1_AND_TOGGLED){
-    232          //          SW1_CLEAR;
-    233          //          serial_bits = SERIAL_TX; // Sets the flag to chage current buffer in main.
-    234          //          //x   strcpy(process_buf_tx,process_buf_rx);
-    235          //          UCA0IE |= UCTXIE;
-    236          //          //UCA0TXBUF = '\0';
-    237          //          //move rx string to tx position
-    238          //        }
-    239          //        if(SW2_AND_TOGGLED){
-    240          //          SW2_CLEAR;
-    241          //          baud=BAUD460800;
-    242          //          Init_Serial_UCA0(BAUD460800);
-    243          //        }
-    244          //        break;
-    245          //      case BAUD460800:
-    246          //        change_display_line( BAUD460800_STRING,DISPLAY2);
-    247          //        if(SW1_AND_TOGGLED){
-    248          //          SW1_CLEAR;
-    249          //          UCA0IE |= UCTXIE;
-    250          //          //UCA0TXBUF = '\0';
-    251          //        }
-    252          //        if(SW2_AND_TOGGLED){
-    253          //          SW2_CLEAR;
-    254          //          baud=BAUD115200;
-    255          //          Init_Serial_UCA0(BAUD115200);
-    256          //        }
-    257          //        break;
-    258          //        
+    203          //      switch(baud){
+    204          //      case BAUD115200:
+    205          //        change_display_line( BAUD115200_STRING,DISPLAY2);
+    206          //        //sw2 buton press switch to 460800
+    207          //        //sw1 button press transmit current process buffer
+    208          //        if(SW1_AND_TOGGLED){
+    209          //          SW1_CLEAR;
+    210          //          serial_bits = SERIAL_TX; // Sets the flag to chage current buffer in main.
+    211          //          //x   strcpy(process_buf_tx,process_buf_rx);
+    212          //          UCA0IE |= UCTXIE;
+    213          //          //UCA0TXBUF = '\0';
+    214          //          //move rx string to tx position
+    215          //        }
+    216          //        if(SW2_AND_TOGGLED){
+    217          //          SW2_CLEAR;
+    218          //          baud=BAUD460800;
+    219          //          Init_Serial_UCA0(BAUD460800);
+    220          //        }
+    221          //        break;
+    222          //      case BAUD460800:
+    223          //        change_display_line( BAUD460800_STRING,DISPLAY2);
+    224          //        if(SW1_AND_TOGGLED){
+    225          //          SW1_CLEAR;
+    226          //          UCA0IE |= UCTXIE;
+    227          //          //UCA0TXBUF = '\0';
+    228          //        }
+    229          //        if(SW2_AND_TOGGLED){
+    230          //          SW2_CLEAR;
+    231          //          baud=BAUD115200;
+    232          //          Init_Serial_UCA0(BAUD115200);
+    233          //        }
+    234          //        break;
+    235          //        
+    236          //      }
+    237          //      // have two buffer a display buffer and a write buffer.
+    238          //      if(update_display==UPDATED){
+    239          //        switch(serial_bits&0x7){
+    240          //        case SERIAL_WAITING:
+    241          //          
+    242          //          waiting_animation();
+    243          //          
+    244          //          break;
+    245          //        case SERIAL_RX:
+    246          //          change_display_line(RECIVED,DISPLAY0);
+    247          //          clear_line(DISPLAY1);
+    248          //          change_display_line(process_buf_rx,DISPLAY3);
+    249          //          break;
+    250          //        case SERIAL_TX:
+    251          //          change_display_line(TRASMIT,DISPLAY0);
+    252          //          clear_line(DISPLAY3);
+    253          //          change_display_line(process_buf_rx,DISPLAY1);
+    254          //          break;
+    255          //        default:
+    256          //          serial_bits = SERIAL_WAITING;
+    257          //          break;
+    258          //        }
     259          //      }
-    260          //      // have two buffer a display buffer and a write buffer.
-    261          //      if(update_display==UPDATED){
-    262          //        switch(serial_bits&0x7){
-    263          //        case SERIAL_WAITING:
-    264          //          
-    265          //          waiting_animation();
-    266          //          
-    267          //          break;
-    268          //        case SERIAL_RX:
-    269          //          change_display_line(RECIVED,DISPLAY0);
-    270          //          clear_line(DISPLAY1);
-    271          //          change_display_line(process_buf_rx,DISPLAY3);
-    272          //          break;
-    273          //        case SERIAL_TX:
-    274          //          change_display_line(TRASMIT,DISPLAY0);
-    275          //          clear_line(DISPLAY3);
-    276          //          change_display_line(process_buf_rx,DISPLAY1);
-    277          //          break;
-    278          //        default:
-    279          //          serial_bits = SERIAL_WAITING;
-    280          //          break;
-    281          //        }
-    282          //      }
-    283          //    
+    260          //    
 
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
       8   EUSCI_A0_ISR
-      6   EUSCI_A1_ISR
+      8   EUSCI_A1_ISR
       4   Init_Serial_UCA0
       4   Init_Serial_UCA1
 
@@ -664,7 +673,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
        2  ?<Initializer for TX_char>
      252  EUSCI_A0_ISR
        2  EUSCI_A0_ISR::??INTVEC 66
-      10  EUSCI_A1_ISR
+      40  EUSCI_A1_ISR
        2  EUSCI_A1_ISR::??INTVEC 64
      154  Init_Serial_UCA0
      154  Init_Serial_UCA1
@@ -686,25 +695,28 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
        2  _A_UCA1IE_L
        2  _A_UCA1IV_L
        2  _A_UCA1MCTLW_L
+       2  _A_UCA1RXBUF_L
+       2  _A_UCA1TXBUF_L
        2  count
       11  process_buf_rx
       11  process_buf_tx
        2  rx_start
+       1  temp
       11  test_output
        2  usb_rx_ring_wr
 
  
  308 bytes in segment CODE
-  24 bytes in segment DATA16_AN
+  28 bytes in segment DATA16_AN
    4 bytes in segment DATA16_I
    4 bytes in segment DATA16_ID
-  89 bytes in segment DATA16_Z
+  90 bytes in segment DATA16_Z
    4 bytes in segment INTVEC
- 262 bytes in segment ISR_CODE
+ 292 bytes in segment ISR_CODE
  
- 570 bytes of CODE  memory
+ 600 bytes of CODE  memory
    4 bytes of CONST memory (+  4 bytes shared)
-  93 bytes of DATA  memory (+ 24 bytes shared)
+  94 bytes of DATA  memory (+ 28 bytes shared)
 
 Errors: none
 Warnings: none

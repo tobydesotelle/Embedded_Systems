@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          10/Nov/2022  22:35:05
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          11/Nov/2022  23:33:19
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -14,14 +14,15 @@
 #    __code_model  =  large
 #    Source file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\main.c
+#        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWED49.tmp ("C:\Users\Tobias
-#        Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9
-#        current\main.c" -lC "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List" -o
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9001.tmp ("C:\Users\Tobias
+#        Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj" --no_cse
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
+#        "C:\Users\Tobias Desotelle\OneDrive - UNC
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
 #        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
@@ -30,14 +31,14 @@
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\List\main.lst
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\List\main.lst
 #    Object file   =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\ECE306\Code\Homework 9 current\Debug\Obj\main.r43
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\main.r43
 #
 ###############################################################################
 
-C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 current\main.c
+C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\main.c
       1          /*
       2            Description: This file contains the Main Routine - "While" Operating System
       3            
@@ -69,6 +70,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    \                                 In  segment DATA16_AN, at 0x130
    \   union <unnamed> _A_PM5CTL0_L
    \                     _A_PM5CTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x45c
+   \   union <unnamed> _A_TB3CCR5_L
+   \                     _A_TB3CCR5_L:
    \   000000                DS8 2
      23          
      24          // Global Variables
@@ -143,31 +149,34 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    \   000000   92C33001     BIC.W   #0x1, &0x130
      50            Master_Init();
    \   000004   ........     CALLA   #Master_Init
-     51            while(!((display_bits) & (Splash_bit))){
+     51            BACKLIGHT = 30000;
+   \   000008   B24030755C04 MOV.W   #0x7530, &0x45c
+     52            while(!((display_bits) & (Splash_bit))){
    \                     ??main_0:
-   \   000008   92B3....     BIT.W   #0x1, &display_bits
-   \   00000C   FD2B         JNC     ??main_0
-     52            }
-     53            //serial_bits= 1;
-     54            while(ALWAYS){
-     55              menu_state_machine();
+   \   00000E   92B3....     BIT.W   #0x1, &display_bits
+   \   000012   FD2B         JNC     ??main_0
+     53            }
+     54            //serial_bits= 1;
+     55            while(ALWAYS){
+     56              menu_state_machine();
    \                     ??main_1:
-   \   00000E   ........     CALLA   #menu_state_machine
-     56              process_switches();
-   \   000012   ........     CALLA   #process_switches
-     57              Display_Process();
-   \   000016   ........     CALLA   #Display_Process
-     58              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
-   \   00001A   D2E32202     XOR.B   #0x1, &0x222
-   \   00001E   F73F         JMP     ??main_1
-   \   000020   0343         NOP
-   \   000022                REQUIRE _A_PM5CTL0_L
-   \   000022                REQUIRE _A_PBOUT_L
-     59              //Wheels_Process();         //State machine for line following 
-     60            }
-     61          }
-     62          
-     63            
+   \   000014   ........     CALLA   #menu_state_machine
+     57              process_switches();
+   \   000018   ........     CALLA   #process_switches
+     58              Display_Process();
+   \   00001C   ........     CALLA   #Display_Process
+     59              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+   \   000020   D2E32202     XOR.B   #0x1, &0x222
+   \   000024   F73F         JMP     ??main_1
+   \   000026   0343         NOP
+   \   000028                REQUIRE _A_PM5CTL0_L
+   \   000028                REQUIRE _A_TB3CCR5_L
+   \   000028                REQUIRE _A_PBOUT_L
+     60              //Wheels_Process();         //State machine for line following 
+     61            }
+     62          }
+     63          
+     64            
 
    Maximum stack usage in bytes:
 
@@ -186,9 +195,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
    -----  --------------
        2  _A_PBOUT_L
        2  _A_PM5CTL0_L
+       2  _A_TB3CCR5_L
        1  baud
        2  display_bits
-      34  main
+      40  main
        2  motor_control_bits
        2  serial_bits
        1  state
@@ -197,12 +207,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\ECE306\Code\Homework 9 curren
        2  timer_bits
 
  
- 34 bytes in segment CODE
-  4 bytes in segment DATA16_AN
+ 40 bytes in segment CODE
+  6 bytes in segment DATA16_AN
  13 bytes in segment DATA16_Z
  
- 34 bytes of CODE memory
- 13 bytes of DATA memory (+ 4 bytes shared)
+ 40 bytes of CODE memory
+ 13 bytes of DATA memory (+ 6 bytes shared)
 
 Errors: none
 Warnings: none

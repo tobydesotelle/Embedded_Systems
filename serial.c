@@ -6,7 +6,7 @@ extern volatile unsigned short serial_bits;
 
 volatile unsigned int usb_rx_ring_wr;
 volatile char USB_Char_Rx[SMALL_RING_SIZE];
-
+char temp;
 //char process_buf_back[32];
 //char process_buf_front[32];
 char process_buf_rx[PROCESS_BUF_LENGTH];
@@ -188,41 +188,23 @@ __interrupt void EUSCI_A0_ISR(void){
   }
 }
 #pragma vector=EUSCI_A1_VECTOR
-__interrupt void EUSCI_A1_ISR(void){
+  __interrupt void EUSCI_A1_ISR(void){
   switch(__even_in_range(UCA1IV,0x08)){
-//  case 0: // Vector 0 - no interrupt
-//    break;
-//  case 2: // Vector 2 - RXIFG
-//    serial_bits = SERIAL_RX;
-//    *RX_write = UCA1RXBUF;
-//    RX_write++;
-//    if(RX_write-RING_BUF_A0==10||*(RX_write-1)=='\0'){
-//      strncpy(process_buf,RING_BUF_A0,11);
-//      RING_BUF_A0_CUR_BUF++;
-//      if(RING_BUF_A0_CUR_BUF==NUM_PROCESS_BUF)
-//        RING_BUF_A0_CUR_BUF=RESET;
-//      RX_write=RING_BUF_A0;
-//    }
-//    
-//    break;
-//  case 4: // Vector 4 – TXIFG
-//    serial_bits = SERIAL_TX;
-//    if(*TX_char=='\0'){
-//      UCA1IE &= ~UCTXIE;
-//      //TX_char=TX_A1;
-//      TX_A1_CUR_BUF++;
-//      if(TX_A1_CUR_BUF==NUM_PROCESS_BUF)
-//        TX_A1_CUR_BUF=RESET;
-//      TX_char=process_buf;
-//    }
-//      else{
-//        UCA1TXBUF = *TX_char;
-//        TX_char++;
-//      }
-//    break;
-//  default: break;
+  case 0: // Vector 0 - no interrupt
+  break;
+  case 2: // Vector 2 - RXIFG
+  temp =  UCA1RXBUF;
+  UCA1TXBUF = temp;
+  serial_bits |= Serial_off;
+  break;
+  case 4: // Vector 4 – TXIFG
+  if(serial_bits & Serial_off){//check to see if we recived something first
+  break;
+  }else{
+    
   }
-}
+  }
+  }
 //      switch(baud){
 //      case BAUD115200:
 //        change_display_line( BAUD115200_STRING,DISPLAY2);
