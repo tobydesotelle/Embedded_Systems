@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:04:09
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  23:47:59
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWBAA0.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWB92C.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -243,21 +243,20 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   00002C   B240A8619603 MOV.W   #0x61a8, &0x396
      33            TB0CCTL2 &= ~CCIFG;         // CCR0 clear flag
    \   000032   92C38603     BIC.W   #0x1, &0x386
-     34            TB0CCTL2 |= CCIE;           // CCR2 enable interrupt
-   \   000036   B2D010008603 BIS.W   #0x10, &0x386
+     34            //TB0CCTL2 |= CCIE;           // CCR2 enable interrupt
      35            
      36            TB0CTL &= ~TBIE; // Disable Overflow Interrupt
-   \   00003C   A2C38003     BIC.W   #0x2, &0x380
+   \   000036   A2C38003     BIC.W   #0x2, &0x380
      37            TB0CTL &= ~TBIFG; // Clear Overflow Interrupt flag
-   \   000040   92C38003     BIC.W   #0x1, &0x380
+   \   00003A   92C38003     BIC.W   #0x1, &0x380
      38          }
-   \   000044   1001         RETA
-   \   000046                REQUIRE _A_TB0CTL_L
-   \   000046                REQUIRE _A_TB0EX0_L
-   \   000046                REQUIRE _A_TB0CCR0_L
-   \   000046                REQUIRE _A_TB0CCTL0_L
-   \   000046                REQUIRE _A_TB0CCR2_L
-   \   000046                REQUIRE _A_TB0CCTL2_L
+   \   00003E   1001         RETA
+   \   000040                REQUIRE _A_TB0CTL_L
+   \   000040                REQUIRE _A_TB0EX0_L
+   \   000040                REQUIRE _A_TB0CCR0_L
+   \   000040                REQUIRE _A_TB0CCTL0_L
+   \   000040                REQUIRE _A_TB0CCR2_L
+   \   000040                REQUIRE _A_TB0CCTL2_L
 
    \                                 In  segment CODE, align 2
      39          void Init_Timer_B1(void){
@@ -429,7 +428,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      70  Init_Timer_B0
+      64  Init_Timer_B0
       66  Init_Timer_B1
       62  Init_Timer_B2
       82  Init_Timer_B3
@@ -466,10 +465,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_TB3CTL_L
 
  
- 298 bytes in segment CODE
+ 292 bytes in segment CODE
   60 bytes in segment DATA16_AN
  
- 298 bytes of CODE memory
+ 292 bytes of CODE memory
    0 bytes of DATA memory (+ 60 bytes shared)
 
 Errors: none

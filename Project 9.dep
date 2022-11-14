@@ -55,6 +55,7 @@
             <file>$PROJ_DIR$\Debug\Obj\timers_isr.r43</file>
             <file>$PROJ_DIR$\Debug\Obj\analogtodigital.xcl</file>
             <file>$PROJ_DIR$\Debug\Obj\serial.r43</file>
+            <file>$PROJ_DIR$\Debug\List\main.lst</file>
             <file>$TOOLKIT_DIR$\inc\dlib\c\time.h</file>
             <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
             <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
@@ -77,13 +78,15 @@
             <file>$PROJ_DIR$\Debug\List\serial.lst</file>
             <file>$TOOLKIT_DIR$\config\linker\multiplier32.xcl</file>
             <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
+            <file>$PROJ_DIR$\Debug\List\timers.lst</file>
+            <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
         </outputs>
         <file>
             <name>[ROOT_NODE]</name>
             <outputs>
                 <tool>
                     <name>XLINK</name>
-                    <file> 46 68</file>
+                    <file> 46 69</file>
                 </tool>
                 <tool>
                     <name>ULP430</name>
@@ -148,13 +151,19 @@
             <outputs>
                 <tool>
                     <name>ICC430</name>
-                    <file> 40</file>
+                    <file> 50 40</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
                     <file> 20</file>
                 </tool>
             </outputs>
+            <inputs>
+                <tool>
+                    <name>ICC430</name>
+                    <file> 2 64 65 66 61 58 59 67 51 54 55 60 53 52 56 57 62 63 74</file>
+                </tool>
+            </inputs>
         </file>
         <file>
             <name>$PROJ_DIR$\init.c</name>
@@ -174,13 +183,19 @@
             <outputs>
                 <tool>
                     <name>ICC430</name>
-                    <file> 30</file>
+                    <file> 73 30</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
                     <file> 39</file>
                 </tool>
             </outputs>
+            <inputs>
+                <tool>
+                    <name>ICC430</name>
+                    <file> 2 64 65 66 61 58 59 67 51 54 55 60 53 52 56 57 62 63 74</file>
+                </tool>
+            </inputs>
         </file>
         <file>
             <name>$PROJ_DIR$\timers_isr.c</name>
@@ -200,7 +215,7 @@
             <outputs>
                 <tool>
                     <name>ICC430</name>
-                    <file> 69 49</file>
+                    <file> 70 49</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
@@ -210,7 +225,7 @@
             <inputs>
                 <tool>
                     <name>ICC430</name>
-                    <file> 2 63 64 65 60 57 58 66 50 53 54 59 52 51 55 56 61 62</file>
+                    <file> 2 64 65 66 61 58 59 67 51 54 55 60 53 52 56 57 62 63 74</file>
                 </tool>
             </inputs>
         </file>
@@ -297,13 +312,13 @@
             <outputs>
                 <tool>
                     <name>XLINK</name>
-                    <file> 68</file>
+                    <file> 69</file>
                 </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>XLINK</name>
-                    <file> 67 70 13 14 16 31 24 18 21 40 27 26 41 49 44 30 47 42 71</file>
+                    <file> 68 71 13 14 16 31 24 18 21 40 27 26 41 49 44 30 47 42 72</file>
                 </tool>
             </inputs>
         </file>

@@ -44,13 +44,17 @@ volatile unsigned short serial_bits;
 volatile unsigned short display_bits;
 
 unsigned char baud; 
-
+int *test;
 void main(void){
   PM5CTL0 &= ~LOCKLPM5;// Disable the GPIO power-on default high-impedance mode to activate
   Master_Init();
   BACKLIGHT = 30000;
   while(!((display_bits) & (Splash_bit))){
   }
+  //test=(int *)malloc(sizeof(int)*10000);
+  //int test[1000];
+  //test[0]=1;
+//  malloc(10);
   //serial_bits= 1;
   while(ALWAYS){
     menu_state_machine();

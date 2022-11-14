@@ -8,21 +8,29 @@ volatile unsigned int usb_rx_ring_wr;
 volatile char USB_Char_Rx[SMALL_RING_SIZE];
 char temp[2];
 
-char process_buf_tx[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];// 
+char process_buf[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];// 
 int count=0;
-char RING_BUF_A0[SMALL_RING_SIZE];
+char RING_BUF[SMALL_RING_SIZE];
 char *rx_start;
 char TX_A1[SMALL_RING_SIZE];
 //char *TX_char=process_buf_rx; 
 
-char *RX_write=RING_BUF_A0;
+char *RX_write=RING_BUF;
 char *RX_read;
-
+unsigned Process_in_cur;
+unsigned Process_out_cur;
+char *Commad_start;
+char *Command_end;
 char *Tx_String;
 unsigned int i;
 
 #define Send_UCA0        (0x00)
 #define Send_UCA1        (0x01)
+#define Command_bit      (0x80)
+
+#define Command_Char     ('^')
+#define Command_End      (0x0D)
+#define Command_LF       ('\n')
 void send(char *string, char port){
   i=0;
   Tx_String = string;
@@ -146,50 +154,20 @@ void Init_Serial_UCA1(char speed){
   //------------------------------------------------------------------------------
 }
 char test_output[11];
-#pragma vector=EUSCI_A0_VECTOR
+#pragma vector=EUSCI_A0_VECTOR//To IOT
 __interrupt void EUSCI_A0_ISR(void){
   
   switch(__even_in_range(UCA0IV,0x08)){ // Bruh IDK what I did here needs to be fixed
   case 0: // Vector 0 - no interrupt
     break;
   case 2: // Vector 2 - RXIFG
-    temp[0] =  UCA1RXBUF;
-    send(temp,Send_UCA1);
+    
+    process_buf[1][Process_out_cur] =  UCA0RXBUF;
+    if(process_buf[1][Process_out_cur]== Command_LF)send(process_buf[1],Send_UCA1);
+    Process_out_cur++;
     
     
-    //    serial_bits = SERIAL_RX;
-    //    *RX_write = UCA0RXBUF;// Writes UCA0RXBUF to current RING_BUF_A0 location
-    //    count++;
-    //    if(*RX_write != '\0' && rx_start == NULL){
-    //      rx_start = RX_write;
-    //      count = 0;
-    //    }
-    //    RX_write++;
-    //    if(*(RX_write-1) == '\n' || count == 10){
-    //      RX_write--;
-    //      for(int i=0; i<SMALL_RING_SIZE; i++){
-    //        if(rx_start == RX_write && i < PROCESS_BUF_LENGTH){
-    //          process_buf_rx[i] = ' ';
-    //        }
-    //        else if(rx_start == RX_write){
-    //          process_buf_rx[i] = '\0';
-    //        } 
-    //        else{
-    //          if(rx_start == RING_BUF_A0+SMALL_RING_SIZE){
-    //            rx_start = RING_BUF_A0;
-    //          }
-    //          process_buf_rx[i] = *(rx_start);
-    //          rx_start++;
-    //        }
-    //      }
-    //      serial_bits &= ~rx_buff_update;
-    //      rx_start = NULL;
-    //      RX_write++;
-    //    }
-    //    if(RX_write == RING_BUF_A0+SMALL_RING_SIZE){
-    //      RX_write = RING_BUF_A0;
-    //    }
-    //    
+      
     break;
   case 4: // Vector 4 – TXIFG
     if(Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
@@ -198,32 +176,32 @@ __interrupt void EUSCI_A0_ISR(void){
     }else{// keep chars going
       UCA0TXBUF = Tx_String[i++];
     }
-    //    serial_bits = SERIAL_TX;
-    //    if(*TX_char=='\0'){
-    //      UCA0TXBUF = '\n';
-    //      UCA0IE &= ~UCTXIE;
-    //      //TX_char=TX_A1;
-    //      serial_bits |= tx_buff_update;
-    //      TX_char=process_buf_rx;
-    //    }
-    //      else{
-    //        //UCA0IE &= ~UCTXIE; //<=====
-    //        UCA0TXBUF = *TX_char;
-    //        TX_char++;
-    //      }
     break;
   default: break;
   }
 }
-#pragma vector=EUSCI_A1_VECTOR
+#pragma vector=EUSCI_A1_VECTOR//PC Communication
 __interrupt void EUSCI_A1_ISR(void){
   switch(__even_in_range(UCA1IV,0x08)){
   case 0: // Vector 0 - no interrupt
     break;
   case 2: // Vector 2 - RXIFG
     //Need to save the rx to send to the UCA0 (IOT)
-    temp[0] =  UCA1RXBUF;
-    send(temp,Send_UCA0);
+    *RX_write =  UCA1RXBUF;
+    RX_read = RX_write;
+    RX_write++;
+    if(RX_write - RING_BUF == SMALL_RING_SIZE) RX_write = RING_BUF;//processing Ring_buf overflow seting it back to start
+    if(*RX_read == Command_Char)serial_bits |= Command_bit;//If command Start is found
+    if((*RX_read == Command_End || *RX_read == Command_LF) && serial_bits & Command_bit ){//if Command end is found
+      serial_bits &= ~Command_bit;
+      Process_in_cur = 0;
+      send(process_buf[0],Send_UCA0);
+    }  
+    if(serial_bits & Command_bit){//processing command when it is found
+      process_buf[0][Process_in_cur] = *RX_read;
+        Process_in_cur++;
+    }
+    
     //UCA0TXBUF = temp;
     serial_bits |= Serial_off;
     break;
@@ -238,79 +216,3 @@ __interrupt void EUSCI_A1_ISR(void){
   
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//This is a git test
-//      switch(baud){
-//      case BAUD115200:
-//        change_display_line( BAUD115200_STRING,DISPLAY2);
-//        //sw2 buton press switch to 460800
-//        //sw1 button press transmit current process buffer
-//        if(SW1_AND_TOGGLED){
-//          SW1_CLEAR;
-//          serial_bits = SERIAL_TX; // Sets the flag to chage current buffer in main.
-//          //x   strcpy(process_buf_tx,process_buf_rx);
-//          UCA0IE |= UCTXIE;
-//          //UCA0TXBUF = '\0';
-//          //move rx string to tx position
-//        }
-//        if(SW2_AND_TOGGLED){
-//          SW2_CLEAR;
-//          baud=BAUD460800;
-//          Init_Serial_UCA0(BAUD460800);
-//        }
-//        break;
-//      case BAUD460800:
-//        change_display_line( BAUD460800_STRING,DISPLAY2);
-//        if(SW1_AND_TOGGLED){
-//          SW1_CLEAR;
-//          UCA0IE |= UCTXIE;
-//          //UCA0TXBUF = '\0';
-//        }
-//        if(SW2_AND_TOGGLED){
-//          SW2_CLEAR;
-//          baud=BAUD115200;
-//          Init_Serial_UCA0(BAUD115200);
-//        }
-//        break;
-//        
-//      }
-//      // have two buffer a display buffer and a write buffer.
-//      if(update_display==UPDATED){
-//        switch(serial_bits&0x7){
-//        case SERIAL_WAITING:
-//          
-//          waiting_animation();
-//          
-//          break;
-//        case SERIAL_RX:
-//          change_display_line(RECIVED,DISPLAY0);
-//          clear_line(DISPLAY1);
-//          change_display_line(process_buf_rx,DISPLAY3);
-//          break;
-//        case SERIAL_TX:
-//          change_display_line(TRASMIT,DISPLAY0);
-//          clear_line(DISPLAY3);
-//          change_display_line(process_buf_rx,DISPLAY1);
-//          break;
-//        default:
-//          serial_bits = SERIAL_WAITING;
-//          break;
-//        }
-//      }
-//    

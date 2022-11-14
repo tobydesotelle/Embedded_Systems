@@ -14,6 +14,8 @@
 #include  "pid.h"
 #include  "time.h"
 #include <string.h>
+#include <stdlib.h>
+
 
 #define ALWAYS                  (1)
 #define CHANGED                 (1)
@@ -43,9 +45,9 @@
 
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
-#define SMALL_RING_SIZE (16)
+#define SMALL_RING_SIZE (32)
 #define NUM_PROCESS_BUF (3)
-#define PROCESS_BUF_LENGTH  (11)
+#define PROCESS_BUF_LENGTH  (32)
 
 
 // ===========================Menu==============================================

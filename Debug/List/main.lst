@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:04:09
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  23:43:59
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWB942.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWFC3.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -145,7 +145,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      46          unsigned char baud; 
    \                     baud:
    \   000000                DS8 1
-     47          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     47          int *test;
+   \                     test:
+   \   000000                DS8 2
 
    \                                 In  segment CODE, align 2
      48          void main(void){
@@ -161,25 +166,29 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   00000E   92B3....     BIT.W   #0x1, &display_bits
    \   000012   FD2B         JNC     ??main_0
      53            }
-     54            //serial_bits= 1;
-     55            while(ALWAYS){
-     56              menu_state_machine();
+     54            //test=(int *)malloc(sizeof(int)*10000);
+     55            //int test[1000];
+     56            //test[0]=1;
+     57          //  malloc(10);
+     58            //serial_bits= 1;
+     59            while(ALWAYS){
+     60              menu_state_machine();
    \                     ??main_1:
    \   000014   ........     CALLA   #menu_state_machine
-     57              process_switches();
+     61              process_switches();
    \   000018   ........     CALLA   #process_switches
-     58              Display_Process();
+     62              Display_Process();
    \   00001C   ........     CALLA   #Display_Process
-     59              if(serial_bits & UCA1_TX){
+     63              if(serial_bits & UCA1_TX){
    \   000020   B2B04000.... BIT.W   #0x40, &serial_bits
    \   000026   0528         JNC     ??main_2
-     60                serial_bits &= UCA1_TX;
+     64                serial_bits &= UCA1_TX;
    \   000028   B2F04000.... AND.W   #0x40, &serial_bits
-     61                UCA1TXBUF = '\0';
+     65                UCA1TXBUF = '\0';
    \   00002E   82438E05     MOV.W   #0x0, &0x58e
-     62              }
-     63                
-     64              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+     66              }
+     67                
+     68              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
    \                     ??main_2:
    \   000032   D2E32202     XOR.B   #0x1, &0x222
    \   000036   EE3F         JMP     ??main_1
@@ -188,11 +197,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   00003A                REQUIRE _A_TB3CCR5_L
    \   00003A                REQUIRE _A_UCA1TXBUF_L
    \   00003A                REQUIRE _A_PBOUT_L
-     65              //Wheels_Process();         //State machine for line following 
-     66            }
-     67          }
-     68          
-     69            
+     69              //Wheels_Process();         //State machine for line following 
+     70            }
+     71          }
+     72          
+     73            
 
    Maximum stack usage in bytes:
 
@@ -220,16 +229,17 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  serial_bits
        1  state
        1  switch_control
+       2  test
        2  time_interval50
        2  timer_bits
 
  
  58 bytes in segment CODE
   8 bytes in segment DATA16_AN
- 13 bytes in segment DATA16_Z
+ 15 bytes in segment DATA16_Z
  
  58 bytes of CODE memory
- 13 bytes of DATA memory (+ 8 bytes shared)
+ 15 bytes of DATA memory (+ 8 bytes shared)
 
 Errors: none
 Warnings: none
