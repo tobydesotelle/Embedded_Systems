@@ -44,7 +44,7 @@
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
 #define SMALL_RING_SIZE (16)
-#define NUM_PROCESS_BUF (1)
+#define NUM_PROCESS_BUF (3)
 #define PROCESS_BUF_LENGTH  (11)
 
 

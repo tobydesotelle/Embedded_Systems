@@ -1,4 +1,4 @@
-#Generating source browse information for project homework 9
+#Generating source browse information for project Project 9
 
 
 #Abbreviations
@@ -35,11 +35,11 @@ build switches.pbi : index switches.xcl
 build timers.pbi : index timers.xcl
 build timers_isr.pbi : index timers_isr.xcl
 build wheel_control.pbi : index wheel_control.xcl
-build homework$ 9_part0.pbi : link analogtodigital.pbi cases.pbi clocks.pbi display.pbi
-build homework$ 9_part1.pbi : link init.pbi line_detection.pbi main.pbi menu.pbi
-build homework$ 9_part2.pbi : link pid.pbi ports.pbi serial.pbi switches.pbi
-build homework$ 9_part3.pbi : link timers.pbi timers_isr.pbi wheel_control.pbi
-build homework$ 9.pbd : link homework$ 9_part0.pbi homework$ 9_part1.pbi homework$ 9_part2.pbi homework$ 9_part3.pbi
-build homework$ 9.pbw : browsedata homework$ 9.pbd
+build Project$ 9_part0.pbi : link analogtodigital.pbi cases.pbi clocks.pbi display.pbi
+build Project$ 9_part1.pbi : link init.pbi line_detection.pbi main.pbi menu.pbi
+build Project$ 9_part2.pbi : link pid.pbi ports.pbi serial.pbi switches.pbi
+build Project$ 9_part3.pbi : link timers.pbi timers_isr.pbi wheel_control.pbi
+build Project$ 9.pbd : link Project$ 9_part0.pbi Project$ 9_part1.pbi Project$ 9_part2.pbi Project$ 9_part3.pbi
+build Project$ 9.pbw : browsedata Project$ 9.pbd
 
 

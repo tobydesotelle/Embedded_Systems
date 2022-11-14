@@ -2316,6 +2316,9 @@
         <name>$PROJ_DIR$\display.c</name>
     </file>
     <file>
+        <name>$PROJ_DIR$\functions.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\init.c</name>
     </file>
     <file>
