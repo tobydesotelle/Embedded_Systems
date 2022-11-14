@@ -39,6 +39,7 @@
 #define tx_buff_update  (0x08)
 #define rx_buff_update  (0x10)
 #define Serial_off      (0x20)
+#define UCA1_TX         (0x40)
 
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)

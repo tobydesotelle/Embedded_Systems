@@ -20,6 +20,26 @@ char *TX_char=process_buf_rx;
 char *RX_write=RING_BUF_A0;
 char *RX_read;
 
+char *Tx_String;
+unsigned int i;
+
+#define Send_UCA0        (0x00)
+#define Send_UCA1        (0x01)
+void send(char *string, char port){
+  i=0;
+  Tx_String = string;
+  switch(port){
+  case Send_UCA0:
+    UCA0IE |= UCTXIE;
+    break;
+  case Send_UCA1:
+    UCA1IE |= UCTXIE;
+    //UCA1TXBUF = Tx_String[i];
+    break;
+  }
+  
+}
+
 void Init_Serial_UCA0(char speed){
 
   switch(speed){
@@ -121,7 +141,7 @@ void Init_Serial_UCA1(char speed){
   UCA1BRW = 17 ;
   UCA1MCTLW = 0x4A00 ;
   UCA1CTLW0 &= ~UCSWRST ; // release from reset
-  //UCA1TXBUF = 0x00; // Prime the Pump
+  UCA1TXBUF = 0x00; // Prime the Pump
   UCA1IE |= UCRXIE; // Enable RX interrupt
   break;
   }
@@ -188,23 +208,33 @@ __interrupt void EUSCI_A0_ISR(void){
   }
 }
 #pragma vector=EUSCI_A1_VECTOR
-  __interrupt void EUSCI_A1_ISR(void){
+__interrupt void EUSCI_A1_ISR(void){
   switch(__even_in_range(UCA1IV,0x08)){
   case 0: // Vector 0 - no interrupt
-  break;
+    break;
   case 2: // Vector 2 - RXIFG
-  temp =  UCA1RXBUF;
-  UCA1TXBUF = temp;
-  serial_bits |= Serial_off;
-  break;
+    temp =  UCA1RXBUF;
+    UCA1TXBUF = temp;
+    serial_bits |= Serial_off;
+    break;
   case 4: // Vector 4 – TXIFG
-  if(serial_bits & Serial_off){//check to see if we recived something first
-  break;
-  }else{
-    
+    if(Tx_String[i]=='\0'){
+        UCA1TXBUF = '\n';
+        UCA1IE &= ~UCTXIE;
+    }else{
+      UCA1TXBUF = Tx_String[i++];
+    }
+//    if(send_this[i]=='\0'){
+//      i++;
+//      UCA1TXBUF = send_this[i];
+//    }else{
+//      i = 0;
+//      UCA1TXBUF = '\n';
+//    }
+    break;
+  
   }
-  }
-  }
+}
 //This is a git test
 //      switch(baud){
 //      case BAUD115200:

@@ -56,6 +56,11 @@ void main(void){
     menu_state_machine();
     process_switches();
     Display_Process();
+    if(serial_bits & UCA1_TX){
+      serial_bits &= UCA1_TX;
+      UCA1TXBUF = '\0';
+    }
+      
     P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
     //Wheels_Process();         //State machine for line following 
   }

@@ -29,9 +29,9 @@ void Init_Timer_B0(void){
   //TB0CCTL1 &= ~CCIFG;         // CCR0 enable interrupt
   //TB0CCTL1 |= CCIE;           // CCR1 enable interrupt
   
-  //TB0CCR2 = TB0CCR2_INTERVAL; // CCR2 
-  //TB0CCTL2 &= ~CCIFG;         // CCR0 clear flag
-  //TB0CCTL2 |= CCIE;           // CCR2 enable interrupt
+  TB0CCR2 = TB0CCR2_INTERVAL; // CCR2 
+  TB0CCTL2 &= ~CCIFG;         // CCR0 clear flag
+  TB0CCTL2 |= CCIE;           // CCR2 enable interrupt
   
   TB0CTL &= ~TBIE; // Disable Overflow Interrupt
   TB0CTL &= ~TBIFG; // Clear Overflow Interrupt flag

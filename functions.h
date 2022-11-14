@@ -54,6 +54,7 @@ void diplay_IR();
 void adc_menu();
 void pid_menu();
 void settings_menu();
+void send(char *string, char port);
 //===========================Wheel Control Functions============================
 void process_wheels(unsigned short movement_bits);
 void stop(void);

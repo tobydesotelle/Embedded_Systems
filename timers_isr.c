@@ -12,11 +12,12 @@
 extern volatile unsigned char update_display;
 
 extern volatile unsigned int time_interval50;//50ms
-
+unsigned int time_interval_200;
 
 extern volatile unsigned short display_bits;
 extern volatile unsigned short timer_bits;
 extern volatile unsigned short motor_control_bits;
+extern volatile unsigned short serial_bits;
 extern volatile unsigned char switch_control;
 extern unsigned short line_detection;
 unsigned int timer200=0;
@@ -26,6 +27,9 @@ extern volatile unsigned int sw2_timer;
 extern unsigned int time100;
 extern unsigned int right_speed;
 extern unsigned int left_speed;
+
+
+int cur=0;
 
 //==================================Timer 0=====================================
 /* Timer 0 Refreance
@@ -45,7 +49,7 @@ extern unsigned int left_speed;
 #pragma vector = TIMER0_B0_VECTOR
 __interrupt void Timer0_B0_ISR(void){
   TB0CCR0 += TB0CCR0_INTERVAL;
-  process_detectors();
+  //process_detectors();
     ADCCTL0 |= ADCENC; //Enable Conversions
     ADCCTL0 |= ADCSC;  //Start next sample
   time_interval50++;
@@ -70,12 +74,18 @@ __interrupt void TIMER0_B1_ISR(void){
     }
     break;
   case CCR2: 
-    if(motor_control_bits&!R_MOTOR_STATE){
-      motor_control_bits |= R_MOTOR_STATE;
+    time_interval_200++;
+    if((time_interval_200 >= 5 )&& serial_bits & Serial_off){
+      send("hello im testing the length of stings that can be sent",1);
+      time_interval_200 = 0;
+//      serial_bits |= UCA1_TX;
     }
-    if(motor_control_bits&!L_MOTOR_STATE){
-      motor_control_bits |= L_MOTOR_STATE;
-    }
+//    if(motor_control_bits&!R_MOTOR_STATE){
+//      motor_control_bits |= R_MOTOR_STATE;
+//    }
+//    if(motor_control_bits&!L_MOTOR_STATE){
+//      motor_control_bits |= L_MOTOR_STATE;
+//    }
     TB0CCR2 += TB0CCR2_INTERVAL;
     break;
   case TIMER_OVERFLOW: // overflow

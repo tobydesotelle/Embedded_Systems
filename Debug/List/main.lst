@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          11/Nov/2022  23:33:19
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:04:09
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9001.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWB942.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -75,6 +75,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                                 In  segment DATA16_AN, at 0x45c
    \   union <unnamed> _A_TB3CCR5_L
    \                     _A_TB3CCR5_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x58e
+   \   union <unnamed> _A_UCA1TXBUF_L
+   \                     _A_UCA1TXBUF_L:
    \   000000                DS8 2
      23          
      24          // Global Variables
@@ -165,18 +170,29 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000018   ........     CALLA   #process_switches
      58              Display_Process();
    \   00001C   ........     CALLA   #Display_Process
-     59              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
-   \   000020   D2E32202     XOR.B   #0x1, &0x222
-   \   000024   F73F         JMP     ??main_1
-   \   000026   0343         NOP
-   \   000028                REQUIRE _A_PM5CTL0_L
-   \   000028                REQUIRE _A_TB3CCR5_L
-   \   000028                REQUIRE _A_PBOUT_L
-     60              //Wheels_Process();         //State machine for line following 
-     61            }
-     62          }
-     63          
-     64            
+     59              if(serial_bits & UCA1_TX){
+   \   000020   B2B04000.... BIT.W   #0x40, &serial_bits
+   \   000026   0528         JNC     ??main_2
+     60                serial_bits &= UCA1_TX;
+   \   000028   B2F04000.... AND.W   #0x40, &serial_bits
+     61                UCA1TXBUF = '\0';
+   \   00002E   82438E05     MOV.W   #0x0, &0x58e
+     62              }
+     63                
+     64              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+   \                     ??main_2:
+   \   000032   D2E32202     XOR.B   #0x1, &0x222
+   \   000036   EE3F         JMP     ??main_1
+   \   000038   0343         NOP
+   \   00003A                REQUIRE _A_PM5CTL0_L
+   \   00003A                REQUIRE _A_TB3CCR5_L
+   \   00003A                REQUIRE _A_UCA1TXBUF_L
+   \   00003A                REQUIRE _A_PBOUT_L
+     65              //Wheels_Process();         //State machine for line following 
+     66            }
+     67          }
+     68          
+     69            
 
    Maximum stack usage in bytes:
 
@@ -196,9 +212,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_PBOUT_L
        2  _A_PM5CTL0_L
        2  _A_TB3CCR5_L
+       2  _A_UCA1TXBUF_L
        1  baud
        2  display_bits
-      40  main
+      58  main
        2  motor_control_bits
        2  serial_bits
        1  state
@@ -207,12 +224,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  timer_bits
 
  
- 40 bytes in segment CODE
-  6 bytes in segment DATA16_AN
+ 58 bytes in segment CODE
+  8 bytes in segment DATA16_AN
  13 bytes in segment DATA16_Z
  
- 40 bytes of CODE memory
- 13 bytes of DATA memory (+ 6 bytes shared)
+ 58 bytes of CODE memory
+ 13 bytes of DATA memory (+ 8 bytes shared)
 
 Errors: none
 Warnings: none
