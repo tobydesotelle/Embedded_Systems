@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:04:09
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          14/Nov/2022  20:24:31
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,17 +16,16 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\menu.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWB943.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW608C.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\menu.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -On --multiplier=32
+#        ./ --core=430X --data_model=small -Ohs --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -57,77 +56,116 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     menu_state:
    \   000000                DS8 1
 
-   \                                 In  segment CODE, align 2
+   \                                 In  segment CODE, align 2, keep-with-next
       8          void menu_state_machine(){
    \                     menu_state_machine:
       9            switch(menu_state){
    \   000000   5E42....     MOV.B   &menu_state, R14
    \   000004   4E83         SUB.B   #0x0, R14
-   \   000006   0924         JEQ     ??menu_state_machine_1
+   \   000006   0924         JEQ     ??menu_state_machine_7
    \   000008   5E83         SUB.B   #0x1, R14
-   \   00000A   0A24         JEQ     ??menu_state_machine_2
+   \   00000A   0824         JEQ     ??menu_state_machine_8
    \   00000C   5E83         SUB.B   #0x1, R14
-   \   00000E   0B24         JEQ     ??menu_state_machine_3
+   \   00000E   2224         JEQ     ??menu_state_machine_9
    \   000010   5E83         SUB.B   #0x1, R14
-   \   000012   0C24         JEQ     ??menu_state_machine_4
+   \   000012   2A24         JEQ     ??menu_state_machine_5
    \   000014   5E83         SUB.B   #0x1, R14
-   \   000016   0D24         JEQ     ??menu_state_machine_5
-   \   000018   0F3C         JMP     ??menu_state_machine_0
+   \   000016   2824         JEQ     ??menu_state_machine_5
+   \   000018   323C         JMP     ??menu_state_machine_6
      10            case Start_menu://start menu will have bat voltage and othe general info
      11              start_menu();
-   \                     ??menu_state_machine_1:
-   \   00001A   ........     CALLA   #start_menu
+   \                     ??menu_state_machine_7:
+   \   00001A   ....         JMP     ?Subroutine3
      12              break;
-   \   00001E   1001         RETA
      13            case Main_menu:
      14              main_menu();
-   \                     ??menu_state_machine_2:
-   \   000020   ........     CALLA   #main_menu
+   \                     ??menu_state_machine_8:
+   \   00001C   5C42....     MOV.B   &V_Thumb + 1, R12
+   \   000020   5C05         RRAM.W  #0x2, R12
+   \   000022   ........     CALLA   #main_menu_display
+   \   000026   F2B01000.... BIT.B   #0x10, &switch_control
+   \   00002C   2A24         JEQ     ??menu_state_machine_2
+   \   00002E   F2C01000.... BIC.B   #0x10, &switch_control
+   \   000034   5E42....     MOV.B   &V_Thumb + 1, R14
+   \   000038   5E05         RRAM.W  #0x2, R14
+   \   00003A   4E83         SUB.B   #0x0, R14
+   \   00003C   0A24         JEQ     ??menu_state_machine_10
+   \   00003E   5E83         SUB.B   #0x1, R14
+   \   000040   0724         JEQ     ??menu_state_machine_11
+   \   000042   5E83         SUB.B   #0x1, R14
+   \   000044   0224         JEQ     ??menu_state_machine_1
+   \   000046   5E83         SUB.B   #0x1, R14
+   \   000048   1C20         JNE     ??menu_state_machine_2
+   \                     ??menu_state_machine_1:
+   \   00004A   E242....     MOV.B   #0x4, &menu_state
+   \   00004E   1001         RETA
+   \                     ??menu_state_machine_11:
+   \   000050   ....         JMP     ?Subroutine1
+   \                     ??menu_state_machine_10:
+   \   000052   ....         JMP     ?Subroutine2
      15              break;
-   \   000024   1001         RETA
      16            case Settings:
      17              settings_menu();
-   \                     ??menu_state_machine_3:
-   \   000026   ........     CALLA   #settings_menu
+   \                     ??menu_state_machine_9:
+   \   000054   F2B02000.... BIT.B   #0x20, &switch_control
+   \   00005A   1324         JEQ     ??menu_state_machine_2
+   \   00005C   F2C02000.... BIC.B   #0x20, &switch_control
+   \   000062   D243....     MOV.B   #0x1, &menu_state
+   \   000066   1001         RETA
      18              break;
-   \   00002A   1001         RETA
      19            case ADC_menu:
      20              adc_menu();
-   \                     ??menu_state_machine_4:
-   \   00002C   ........     CALLA   #adc_menu
      21              break;
-   \   000030   1001         RETA
      22            case PID_menu:
      23              pid_menu();
    \                     ??menu_state_machine_5:
-   \   000032   ........     CALLA   #pid_menu
+   \   000068   F2B02000.... BIT.B   #0x20, &switch_control
+   \   00006E   0924         JEQ     ??menu_state_machine_2
+   \   000070   F2C02000.... BIC.B   #0x20, &switch_control
+   \   000076   D243....     MOV.B   #0x1, &menu_state
+   \   00007A   ........     BRA     #lcd_4line
      24              break;
-   \   000036   1001         RETA
      25            default:
      26              menu_state = Main_menu;
-   \                     ??menu_state_machine_0:
-   \   000038   D243....     MOV.B   #0x1, &menu_state
+   \                     ??menu_state_machine_6:
+   \   00007E   D243....     MOV.B   #0x1, &menu_state
      27              break;
      28            }
      29            
      30          }
-   \   00003C   1001         RETA
+   \                     ??menu_state_machine_2:
+   \   000082   1001         RETA
+
+   \                                 In  segment CODE, align 2, keep-with-next
+   \                     ?Subroutine2:
+   \   000000   E243....     MOV.B   #0x2, &menu_state
+   \   000004   1001         RETA
+
+   \                                 In  segment CODE, align 2, keep-with-next
+   \                     ?Subroutine1:
+   \   000000   F2400300.... MOV.B   #0x3, &menu_state
+   \   000006   1001         RETA
      31          
 
-   \                                 In  segment CODE, align 2
+   \                                 In  segment CODE, align 2, keep-with-next
      32          void start_menu(){
    \                     start_menu:
      33            Init_Display_1();
+   \   000000                REQUIRE ?Subroutine3
+   \   000000                // Fall through to label ?Subroutine3
+
+   \                                 In  segment CODE, align 2, keep-with-next
+   \                     ?Subroutine3:
    \   000000   ........     CALLA   #Init_Display_1
      34            while(!(SW1_AND_TOGGLED)  && !(SW2_AND_TOGGLED)){
-   \                     ??start_menu_0:
+   \                     ??menu_state_machine_0:
    \   000004   F2B01000.... BIT.B   #0x10, &switch_control
-   \   00000A   042C         JC      ??start_menu_1
+   \   00000A   0420         JNE     ??menu_state_machine_3
    \   00000C   F2B02000.... BIT.B   #0x20, &switch_control
-   \   000012   F82B         JNC     ??start_menu_0
+   \   000012   F827         JEQ     ??menu_state_machine_0
      35            }
      36            SW1_CLEAR;
-   \                     ??start_menu_1:
+   \                     ??menu_state_machine_3:
    \   000014   F2C01000.... BIC.B   #0x10, &switch_control
      37            SW2_CLEAR;
    \   00001A   F2C02000.... BIC.B   #0x20, &switch_control
@@ -136,71 +174,62 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      39            lcd_4line();
    \   000024   ........     CALLA   #lcd_4line
      40            clear_display();
-   \   000028   ........     CALLA   #clear_display
+   \   000028   ........     BRA     #clear_display
      41          }
-   \   00002C   1001         RETA
 
    \                                 In  segment CODE, align 2
      42          void main_menu(){
    \                     main_menu:
      43            main_menu_display(menu_options_3);
-   \   000000   1C42....     MOV.W   &V_Thumb, R12
-   \   000004   8C10         SWPB    R12
-   \   000006   3CF0FF00     AND.W   #0xff, R12
-   \   00000A   0C11         RRA.W   R12
-   \   00000C   0C11         RRA.W   R12
-   \   00000E   ........     CALLA   #main_menu_display
+   \   000000   5C42....     MOV.B   &V_Thumb + 1, R12
+   \   000004   5C05         RRAM.W  #0x2, R12
+   \   000006   ........     CALLA   #main_menu_display
      44            //add change state logic
      45            if(SW1_AND_TOGGLED){
-   \   000012   F2B01000.... BIT.B   #0x10, &switch_control
-   \   000018   1C28         JNC     ??main_menu_0
+   \   00000A   F2B01000.... BIT.B   #0x10, &switch_control
+   \   000010   1324         JEQ     ??main_menu_0
      46              SW1_CLEAR;
-   \   00001A   F2C01000.... BIC.B   #0x10, &switch_control
+   \   000012   F2C01000.... BIC.B   #0x10, &switch_control
      47              switch(menu_options_3){
-   \   000020   1E42....     MOV.W   &V_Thumb, R14
-   \   000024   8E10         SWPB    R14
-   \   000026   3EF0FF00     AND.W   #0xff, R14
-   \   00002A   0E11         RRA.W   R14
-   \   00002C   0E11         RRA.W   R14
-   \   00002E   4E83         SUB.B   #0x0, R14
-   \   000030   0724         JEQ     ??main_menu_1
-   \   000032   5E83         SUB.B   #0x1, R14
-   \   000034   0824         JEQ     ??main_menu_2
-   \   000036   5E83         SUB.B   #0x1, R14
-   \   000038   0A24         JEQ     ??main_menu_3
-   \   00003A   5E83         SUB.B   #0x1, R14
-   \   00003C   0824         JEQ     ??main_menu_3
-   \   00003E   1001         RETA
+   \   000018   5E42....     MOV.B   &V_Thumb + 1, R14
+   \   00001C   5E05         RRAM.W  #0x2, R14
+   \   00001E   4E83         SUB.B   #0x0, R14
+   \   000020   0724         JEQ     ??main_menu_1
+   \   000022   5E83         SUB.B   #0x1, R14
+   \   000024   0624         JEQ     ??main_menu_2
+   \   000026   5E83         SUB.B   #0x1, R14
+   \   000028   0524         JEQ     ??main_menu_3
+   \   00002A   5E83         SUB.B   #0x1, R14
+   \   00002C   0324         JEQ     ??main_menu_3
+   \   00002E   1001         RETA
      48              case CASE_0:
      49                menu_state = Settings;
    \                     ??main_menu_1:
-   \   000040   E243....     MOV.B   #0x2, &menu_state
+   \   000030   ....         JMP     ?Subroutine2
      50                break;
-   \   000044   1001         RETA
      51              case CASE_1:
      52                menu_state = ADC_menu;
    \                     ??main_menu_2:
-   \   000046   F2400300.... MOV.B   #0x3, &menu_state
+   \   000032   ....         JMP     ?Subroutine1
      53                break;
-   \   00004C   1001         RETA
      54              case CASE_3:
      55              case CASE_2:
      56                menu_state = PID_menu;
    \                     ??main_menu_3:
-   \   00004E   E242....     MOV.B   #0x4, &menu_state
+   \   000034   E242....     MOV.B   #0x4, &menu_state
      57                break;
      58              }
      59            }
      60          }
    \                     ??main_menu_0:
-   \   000052   1001         RETA
+   \   000038   1001         RETA
 
    \                                 In  segment CODE, align 2
      61          void settings_menu(){
    \                     settings_menu:
      62            if(SW2_AND_TOGGLED){
    \   000000   F2B02000.... BIT.B   #0x20, &switch_control
-   \   000006   0528         JNC     ??settings_menu_0
+   \   000006   0524         JEQ     ??settings_menu_0
      63              SW2_CLEAR;
    \   000008   F2C02000.... BIC.B   #0x20, &switch_control
      64              menu_state = Main_menu;
@@ -210,12 +239,17 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     ??settings_menu_0:
    \   000012   1001         RETA
 
-   \                                 In  segment CODE, align 2
+   \                                 In  segment CODE, align 2, keep-with-next
      67          void adc_menu(){
    \                     adc_menu:
      68            if(SW2_AND_TOGGLED){
+   \   000000                REQUIRE ?Subroutine0
+   \   000000                // Fall through to label ?Subroutine0
+
+   \                                 In  segment CODE, align 2, keep-with-next
+   \                     ?Subroutine0:
    \   000000   F2B02000.... BIT.B   #0x20, &switch_control
-   \   000006   0728         JNC     ??adc_menu_0
+   \   000006   0724         JEQ     ??adc_menu_0
      69              SW2_CLEAR;
    \   000008   F2C02000.... BIC.B   #0x20, &switch_control
      70              menu_state = Main_menu;
@@ -232,19 +266,14 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      75          void pid_menu(){
    \                     pid_menu:
      76            if(SW2_AND_TOGGLED){
-   \   000000   F2B02000.... BIT.B   #0x20, &switch_control
-   \   000006   0728         JNC     ??pid_menu_0
+   \   000000   ....         JMP     ?Subroutine0
+   \   000002   0343         NOP
      77              SW2_CLEAR;
-   \   000008   F2C02000.... BIC.B   #0x20, &switch_control
      78              menu_state = Main_menu;
-   \   00000E   D243....     MOV.B   #0x1, &menu_state
      79              lcd_4line();
-   \   000012   ........     CALLA   #lcd_4line
      80            }
      81            
      82          }
-   \                     ??pid_menu_0:
-   \   000016   1001         RETA
 
    \                                 In  segment CODE, align 2
      83          void v_thumb_process(){
@@ -253,50 +282,44 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   1F42....     MOV.W   &V_Thumb, R15
    \   000004   5F0F         RRUM.W  #0x4, R15
    \   000006   829F....     CMP.W   R15, &prev_thumb
-   \   00000A   082C         JC      ??v_thumb_process_0
+   \   00000A   052C         JC      ??v_thumb_process_0
      85              prev_thumb=V_Thumb>>4;
-   \   00000C   1F42....     MOV.W   &V_Thumb, R15
-   \   000010   5F0F         RRUM.W  #0x4, R15
-   \   000012   824F....     MOV.W   R15, &prev_thumb
+   \   00000C   824F....     MOV.W   R15, &prev_thumb
      86              display_bits |= Song_char_changed; 
-   \   000016   A2D3....     BIS.W   #0x2, &display_bits
-   \   00001A   1001         RETA
+   \   000010   A2D3....     BIS.W   #0x2, &display_bits
+   \   000014   1001         RETA
      87            }
      88            else if(prev_thumb>V_Thumb>>4){
    \                     ??v_thumb_process_0:
-   \   00001C   1F42....     MOV.W   &V_Thumb, R15
-   \   000020   5F0F         RRUM.W  #0x4, R15
-   \   000022   1F92....     CMP.W   &prev_thumb, R15
-   \   000026   052C         JC      ??v_thumb_process_1
+   \   000016   1F92....     CMP.W   &prev_thumb, R15
+   \   00001A   022C         JC      ??v_thumb_process_1
      89              prev_thumb=V_Thumb>>4;
-   \   000028   1F42....     MOV.W   &V_Thumb, R15
-   \   00002C   5F0F         RRUM.W  #0x4, R15
-   \   00002E   824F....     MOV.W   R15, &prev_thumb
+   \   00001C   824F....     MOV.W   R15, &prev_thumb
      90            }
      91          }
    \                     ??v_thumb_process_1:
-   \   000032   1001         RETA
+   \   000020   1001         RETA
 
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
-      4   adc_menu
+      0   adc_menu
         4   -> lcd_4line
       4   main_menu
         4   -> main_menu_display
       4   menu_state_machine
-        4   -> adc_menu
-        4   -> main_menu
-        4   -> pid_menu
-        4   -> settings_menu
-        4   -> start_menu
+        4   -> Init_Display_1
+        0   -> clear_display
+        0   -> lcd_4line
+        4   -> lcd_4line
+        4   -> main_menu_display
       4   pid_menu
         4   -> lcd_4line
       4   settings_menu
-      4   start_menu
+      0   start_menu
         4   -> Init_Display_1
-        4   -> clear_display
+        0   -> clear_display
         4   -> lcd_4line
       4   v_thumb_process
 
@@ -305,21 +328,25 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      24  adc_menu
-      84  main_menu
+      24  ?Subroutine0
+       8  ?Subroutine1
+       6  ?Subroutine2
+      44  ?Subroutine3
+       0  adc_menu
+      58  main_menu
        1  menu_state
-      62  menu_state_machine
-      24  pid_menu
+     132  menu_state_machine
+       4  pid_menu
        2  prev_thumb
       20  settings_menu
-      46  start_menu
-      52  v_thumb_process
+       0  start_menu
+      34  v_thumb_process
 
  
- 312 bytes in segment CODE
+ 330 bytes in segment CODE
    3 bytes in segment DATA16_Z
  
- 312 bytes of CODE memory
+ 330 bytes of CODE memory
    3 bytes of DATA memory
 
 Errors: none

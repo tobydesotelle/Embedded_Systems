@@ -104,7 +104,7 @@ P2IE |= SW2; // P4.2 interrupt enabled
 
 P2SEL0 &= ~IOT_RUN_CPU; // IOT_RUN_CPU GPIO operation
 P2SEL1 &= ~IOT_RUN_CPU; // IOT_RUN_CPU GPIO operation
-P2OUT &= ~IOT_RUN_CPU; // Initial Value = Low / Off
+P2OUT |= IOT_RUN_CPU; // Initial Value = Low / Off
 P2DIR |= IOT_RUN_CPU; // Direction = input
 
 P2SEL0 &= ~DAC_ENB; // DAC_ENB GPIO operation
@@ -166,13 +166,13 @@ void Init_Port3(char smclk){
 
   P3SEL0 &= ~IOT_LINK_CPU;
   P3SEL1 &= ~IOT_LINK_CPU;
-  P3OUT &= ~IOT_LINK_CPU;
-  P3DIR &= ~IOT_LINK_CPU;
+  P3OUT |= IOT_LINK_CPU;
+  P3DIR |= IOT_LINK_CPU;
 
   P3SEL0 &= ~IOT_EN_CPU;
   P3SEL1 &= ~IOT_EN_CPU;
   P3OUT &= ~IOT_EN_CPU;
-  P3DIR &= ~IOT_EN_CPU;
+  P3DIR |= IOT_EN_CPU;
 }
 void Init_Port4(void){ 
 //------------------------------------------------------------------------------

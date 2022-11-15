@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  23:43:59
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          14/Nov/2022  21:49:02
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,17 +16,16 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWFC3.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWC09C.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -On --multiplier=32
+#        ./ --core=430X --data_model=small -Ohs --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -164,44 +163,46 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      52            while(!((display_bits) & (Splash_bit))){
    \                     ??main_0:
    \   00000E   92B3....     BIT.W   #0x1, &display_bits
-   \   000012   FD2B         JNC     ??main_0
+   \   000012   FD27         JEQ     ??main_0
      53            }
-     54            //test=(int *)malloc(sizeof(int)*10000);
-     55            //int test[1000];
-     56            //test[0]=1;
-     57          //  malloc(10);
-     58            //serial_bits= 1;
-     59            while(ALWAYS){
-     60              menu_state_machine();
+     54            P3OUT |= IOT_EN_CPU;
+   \   000014   F2D080002202 BIS.B   #0x80, &0x222
+     55            //test=(int *)malloc(sizeof(int)*10000);
+     56            //int test[1000];
+     57            //test[0]=1;
+     58          //  malloc(10);
+     59            //serial_bits= 1;
+     60            while(ALWAYS){
+     61              menu_state_machine();
    \                     ??main_1:
-   \   000014   ........     CALLA   #menu_state_machine
-     61              process_switches();
-   \   000018   ........     CALLA   #process_switches
-     62              Display_Process();
-   \   00001C   ........     CALLA   #Display_Process
-     63              if(serial_bits & UCA1_TX){
-   \   000020   B2B04000.... BIT.W   #0x40, &serial_bits
-   \   000026   0528         JNC     ??main_2
-     64                serial_bits &= UCA1_TX;
-   \   000028   B2F04000.... AND.W   #0x40, &serial_bits
-     65                UCA1TXBUF = '\0';
-   \   00002E   82438E05     MOV.W   #0x0, &0x58e
-     66              }
-     67                
-     68              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+   \   00001A   ........     CALLA   #menu_state_machine
+     62              process_switches();
+   \   00001E   ........     CALLA   #process_switches
+     63              Display_Process();
+   \   000022   ........     CALLA   #Display_Process
+     64              if(serial_bits & UCA1_TX){
+   \   000026   B2B04000.... BIT.W   #0x40, &serial_bits
+   \   00002C   0524         JEQ     ??main_2
+     65                serial_bits &= UCA1_TX;
+   \   00002E   B2F04000.... AND.W   #0x40, &serial_bits
+     66                UCA1TXBUF = '\0';
+   \   000034   82438E05     MOV.W   #0x0, &0x58e
+     67              }
+     68                
+     69              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
    \                     ??main_2:
-   \   000032   D2E32202     XOR.B   #0x1, &0x222
-   \   000036   EE3F         JMP     ??main_1
-   \   000038   0343         NOP
-   \   00003A                REQUIRE _A_PM5CTL0_L
-   \   00003A                REQUIRE _A_TB3CCR5_L
-   \   00003A                REQUIRE _A_UCA1TXBUF_L
-   \   00003A                REQUIRE _A_PBOUT_L
-     69              //Wheels_Process();         //State machine for line following 
-     70            }
-     71          }
-     72          
-     73            
+   \   000038   D2E32202     XOR.B   #0x1, &0x222
+   \   00003C   EE3F         JMP     ??main_1
+   \   00003E   0343         NOP
+   \   000040                REQUIRE _A_PM5CTL0_L
+   \   000040                REQUIRE _A_TB3CCR5_L
+   \   000040                REQUIRE _A_PBOUT_L
+   \   000040                REQUIRE _A_UCA1TXBUF_L
+     70              //Wheels_Process();         //State machine for line following 
+     71            }
+     72          }
+     73          
+     74            
 
    Maximum stack usage in bytes:
 
@@ -224,7 +225,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_UCA1TXBUF_L
        1  baud
        2  display_bits
-      58  main
+      64  main
        2  motor_control_bits
        2  serial_bits
        1  state
@@ -234,11 +235,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  timer_bits
 
  
- 58 bytes in segment CODE
+ 64 bytes in segment CODE
   8 bytes in segment DATA16_AN
  15 bytes in segment DATA16_Z
  
- 58 bytes of CODE memory
+ 64 bytes of CODE memory
  15 bytes of DATA memory (+ 8 bytes shared)
 
 Errors: none

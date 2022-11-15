@@ -51,6 +51,7 @@ void main(void){
   BACKLIGHT = 30000;
   while(!((display_bits) & (Splash_bit))){
   }
+  P3OUT |= IOT_EN_CPU;
   //test=(int *)malloc(sizeof(int)*10000);
   //int test[1000];
   //test[0]=1;

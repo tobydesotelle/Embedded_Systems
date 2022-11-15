@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:19:18
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          14/Nov/2022  20:24:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,17 +16,16 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers_isr.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9C0C.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW61EA.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers_isr.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -On --multiplier=32
+#        ./ --core=430X --data_model=small -Ohs --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -190,45 +189,45 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000002   1F42AE03     MOV.W   &0x3ae, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for TIMER0_B1_ISR>_0`:
-   \   000008   2B3C         JMP     ??TIMER0_B1_ISR_2
-   \   00000A   063C         JMP     ??TIMER0_B1_ISR_5
-   \   00000C   153C         JMP     ??TIMER0_B1_ISR_6
-   \   00000E   283C         JMP     ??TIMER0_B1_ISR_2
-   \   000010   273C         JMP     ??TIMER0_B1_ISR_2
-   \   000012   263C         JMP     ??TIMER0_B1_ISR_2
-   \   000014   253C         JMP     ??TIMER0_B1_ISR_2
-   \   000016   243C         JMP     ??TIMER0_B1_ISR_2
+   \   000008   2B3C         JMP     ??TIMER0_B1_ISR_0
+   \   00000A   063C         JMP     ??TIMER0_B1_ISR_3
+   \   00000C   153C         JMP     ??TIMER0_B1_ISR_4
+   \   00000E   283C         JMP     ??TIMER0_B1_ISR_0
+   \   000010   273C         JMP     ??TIMER0_B1_ISR_0
+   \   000012   263C         JMP     ??TIMER0_B1_ISR_0
+   \   000014   253C         JMP     ??TIMER0_B1_ISR_0
+   \   000016   243C         JMP     ??TIMER0_B1_ISR_0
      65            case TIMER_CASE_0: break; // No interrupt
      66            case CCR1:
      67              TB0CCTL1 &= ~CCIFG;
-   \                     ??TIMER0_B1_ISR_5:
+   \                     ??TIMER0_B1_ISR_3:
    \   000018   92C38403     BIC.W   #0x1, &0x384
      68              TB0CCR1 += TB0CCR1_INTERVAL;
    \   00001C   B2506A189403 ADD.W   #0x186a, &0x394
      69              if(switch_control&SW1_PRESSED){
    \   000022   D2B3....     BIT.B   #0x1, &switch_control
-   \   000026   0228         JNC     ??TIMER0_B1_ISR_3
+   \   000026   0224         JEQ     ??TIMER0_B1_ISR_1
      70                sw1_timer++;
    \   000028   9253....     ADD.W   #0x1, &sw1_timer
      71              }
      72              if(switch_control&SW2_PRESSED){
-   \                     ??TIMER0_B1_ISR_3:
+   \                     ??TIMER0_B1_ISR_1:
    \   00002C   E2B3....     BIT.B   #0x2, &switch_control
-   \   000030   1728         JNC     ??TIMER0_B1_ISR_2
+   \   000030   1724         JEQ     ??TIMER0_B1_ISR_0
      73                sw2_timer++;
    \   000032   9253....     ADD.W   #0x1, &sw2_timer
+   \   000036   143C         JMP     ??TIMER0_B1_ISR_0
      74              }
      75              break;
-   \   000036   143C         JMP     ??TIMER0_B1_ISR_2
      76            case CCR2: 
      77              time_interval_200++;
-   \                     ??TIMER0_B1_ISR_6:
+   \                     ??TIMER0_B1_ISR_4:
    \   000038   9253....     ADD.W   #0x1, &time_interval_200
      78              if((time_interval_200 >= 5 )&& serial_bits & Serial_off){
    \   00003C   B2900500.... CMP.W   #0x5, &time_interval_200
-   \   000042   0B28         JNC     ??TIMER0_B1_ISR_4
+   \   000042   0B28         JNC     ??TIMER0_B1_ISR_2
    \   000044   B2B02000.... BIT.W   #0x20, &serial_bits
-   \   00004A   0728         JNC     ??TIMER0_B1_ISR_4
+   \   00004A   0724         JEQ     ??TIMER0_B1_ISR_2
      79                send("hello im testing the length of stings that can be sent",1);
    \   00004C   5D43         MOV.B   #0x1, R13
    \   00004E   3C40....     MOV.W   #`?<Constant "hello im testing the ...">`, R12
@@ -244,7 +243,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      87          //      motor_control_bits |= L_MOTOR_STATE;
      88          //    }
      89              TB0CCR2 += TB0CCR2_INTERVAL;
-   \                     ??TIMER0_B1_ISR_4:
+   \                     ??TIMER0_B1_ISR_2:
    \   00005A   B250A8619603 ADD.W   #0x61a8, &0x396
      90              break;
      91            case TIMER_OVERFLOW: // overflow
@@ -252,7 +251,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      93            default: break; 
      94            }
      95          }
-   \                     ??TIMER0_B1_ISR_2:
+   \                     ??TIMER0_B1_ISR_0:
    \   000060   3C17         POPM.W  #0x4, R15
    \   000062   0013         RETI
    \   000064                REQUIRE _A_TB0CCTL1_L
@@ -285,12 +284,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   3F15         PUSHM.W #0x4, R15
     116            if(!(display_bits&Splash_bit)){
    \   000002   92B3....     BIT.W   #0x1, &display_bits
-   \   000006   0D2C         JC      ??Timer1_B0_ISR_0
+   \   000006   0D20         JNE     ??Timer1_B0_ISR_1
     117              timer200++;
    \   000008   9253....     ADD.W   #0x1, &timer200
     118              if(timer200>=START_DELAY){
    \   00000C   B2900500.... CMP.W   #0x5, &timer200
-   \   000012   0728         JNC     ??Timer1_B0_ISR_0
+   \   000012   0728         JNC     ??Timer1_B0_ISR_1
     119                display_bits |= Splash_bit;
    \   000014   92D3....     BIS.W   #0x1, &display_bits
     120                clear_line(0);
@@ -301,14 +300,14 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     122              }
     123            }
     124            if(timer_bits & DELAY_2_SEC){
-   \                     ??Timer1_B0_ISR_0:
+   \                     ??Timer1_B0_ISR_1:
    \   000022   A2B2....     BIT.W   #0x4, &timer_bits
-   \   000026   0C28         JNC     ??Timer1_B0_ISR_1
+   \   000026   0C24         JEQ     ??Timer1_B0_ISR_0
     125              timer200++;
    \   000028   9253....     ADD.W   #0x1, &timer200
     126              if(timer200>=START_DELAY){
    \   00002C   B2900500.... CMP.W   #0x5, &timer200
-   \   000032   0628         JNC     ??Timer1_B0_ISR_1
+   \   000032   0628         JNC     ??Timer1_B0_ISR_0
     127                
     128                timer_bits |= DELAYED_2_SEC;
    \   000034   B2D2....     BIS.W   #0x8, &timer_bits
@@ -333,7 +332,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     145          //    TB1CCR0+=TB1CCR0_INTERVAL;
     146          //  }
     147          }
-   \                     ??Timer1_B0_ISR_1:
+   \                     ??Timer1_B0_ISR_0:
    \   000040   3C17         POPM.W  #0x4, R15
    \   000042   0013         RETI
     148          #pragma vector=TIMER1_B1_VECTOR
@@ -346,26 +345,26 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000002   1F42EE03     MOV.W   &0x3ee, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for TIMER1_B1_ISR>_0`:
-   \   000008   113C         JMP     ??TIMER1_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER1_B1_ISR_2
-   \   00000C   0C3C         JMP     ??TIMER1_B1_ISR_3
-   \   00000E   0E3C         JMP     ??TIMER1_B1_ISR_1
-   \   000010   0D3C         JMP     ??TIMER1_B1_ISR_1
-   \   000012   0C3C         JMP     ??TIMER1_B1_ISR_1
-   \   000014   0B3C         JMP     ??TIMER1_B1_ISR_1
-   \   000016   0A3C         JMP     ??TIMER1_B1_ISR_1
+   \   000008   113C         JMP     ??TIMER1_B1_ISR_0
+   \   00000A   063C         JMP     ??TIMER1_B1_ISR_1
+   \   00000C   0C3C         JMP     ??TIMER1_B1_ISR_2
+   \   00000E   0E3C         JMP     ??TIMER1_B1_ISR_0
+   \   000010   0D3C         JMP     ??TIMER1_B1_ISR_0
+   \   000012   0C3C         JMP     ??TIMER1_B1_ISR_0
+   \   000014   0B3C         JMP     ??TIMER1_B1_ISR_0
+   \   000016   0A3C         JMP     ??TIMER1_B1_ISR_0
     151            case TIMER_CASE_0: break; // No interrupt
     152            case CCR1://use for lentgth of movement
     153              TB1CCR1+=TB1CCR1_INTERVAL;
-   \                     ??TIMER1_B1_ISR_2:
+   \                     ??TIMER1_B1_ISR_1:
    \   000018   B250E204D403 ADD.W   #0x4e2, &0x3d4
     154              timer_bits |= TB1CCR1_BIT;
    \   00001E   B2D01000.... BIS.W   #0x10, &timer_bits
     155              break;
-   \   000024   033C         JMP     ??TIMER1_B1_ISR_1
+   \   000024   033C         JMP     ??TIMER1_B1_ISR_0
     156            case CCR2: 
     157              TB1CCR1+=TB1CCR2_INTERVAL;
-   \                     ??TIMER1_B1_ISR_3:
+   \                     ??TIMER1_B1_ISR_2:
    \   000026   B250E204D403 ADD.W   #0x4e2, &0x3d4
     158              
     159              break;
@@ -374,7 +373,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     162            default: break; 
     163            }
     164          }
-   \                     ??TIMER1_B1_ISR_1:
+   \                     ??TIMER1_B1_ISR_0:
    \   00002C   3F41         POP.W   R15
    \   00002E   0013         RETI
    \   000030                REQUIRE _A_TB1CCR1_L
@@ -412,16 +411,6 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   0F12         PUSH.W  R15
     188            switch(__even_in_range(TB2IV,14)){
    \   000002   1F422E04     MOV.W   &0x42e, R15
-   \   000006   E00F         ADDA    R15, PC
-   \                     `?<Jumptable for TIMER2_B1_ISR>_0`:
-   \   000008   073C         JMP     ??TIMER2_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER2_B1_ISR_1
-   \   00000C   053C         JMP     ??TIMER2_B1_ISR_1
-   \   00000E   043C         JMP     ??TIMER2_B1_ISR_1
-   \   000010   033C         JMP     ??TIMER2_B1_ISR_1
-   \   000012   023C         JMP     ??TIMER2_B1_ISR_1
-   \   000014   013C         JMP     ??TIMER2_B1_ISR_1
-   \   000016   003C         JMP     ??TIMER2_B1_ISR_1
     189            case TIMER_CASE_0: break; // No interrupt
     190            case CCR1:
     191              break;
@@ -433,10 +422,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     197            }
     198            //----------------------------------------------------------------------------
     199          }
-   \                     ??TIMER2_B1_ISR_1:
-   \   000018   3F41         POP.W   R15
-   \   00001A   0013         RETI
-   \   00001C                REQUIRE _A_TB2IV_L
+   \   000006   3F41         POP.W   R15
+   \   000008   0013         RETI
+   \   00000A                REQUIRE _A_TB2IV_L
     200          
     201          //==================================Timer 3=====================================
     202          /* Timer 3 Refreance
@@ -469,16 +457,6 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   0F12         PUSH.W  R15
     222            switch(__even_in_range(TB3IV,14)){
    \   000002   1F426E04     MOV.W   &0x46e, R15
-   \   000006   E00F         ADDA    R15, PC
-   \                     `?<Jumptable for TIMER3_B1_ISR>_0`:
-   \   000008   073C         JMP     ??TIMER3_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER3_B1_ISR_1
-   \   00000C   053C         JMP     ??TIMER3_B1_ISR_1
-   \   00000E   043C         JMP     ??TIMER3_B1_ISR_1
-   \   000010   033C         JMP     ??TIMER3_B1_ISR_1
-   \   000012   023C         JMP     ??TIMER3_B1_ISR_1
-   \   000014   013C         JMP     ??TIMER3_B1_ISR_1
-   \   000016   003C         JMP     ??TIMER3_B1_ISR_1
     223            case TIMER_CASE_0: break;   // No interrupt
     224            case CCR1:   // R_FORWARD
     225              break; 
@@ -499,10 +477,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     240            default: break;
     241            }
     242          } 
-   \                     ??TIMER3_B1_ISR_1:
-   \   000018   3F41         POP.W   R15
-   \   00001A   0013         RETI
-   \   00001C                REQUIRE _A_TB3IV_L
+   \   000006   3F41         POP.W   R15
+   \   000008   0013         RETI
+   \   00000A                REQUIRE _A_TB3IV_L
 
    \                                 In  segment INTVEC, offset 0x48, root
    \                     `??TIMER3_B1_ISR::??INTVEC 72`:
@@ -584,9 +561,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  TIMER0_B1_ISR::??INTVEC 84
       48  TIMER1_B1_ISR
        2  TIMER1_B1_ISR::??INTVEC 80
-      28  TIMER2_B1_ISR
+      10  TIMER2_B1_ISR
        2  TIMER2_B1_ISR::??INTVEC 76
-      28  TIMER3_B1_ISR
+      10  TIMER3_B1_ISR
        2  TIMER3_B1_ISR::??INTVEC 72
       34  Timer0_B0_ISR
        2  Timer0_B0_ISR::??INTVEC 86
@@ -615,9 +592,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
   55 bytes in segment DATA16_C
    6 bytes in segment DATA16_Z
   16 bytes in segment INTVEC
- 310 bytes in segment ISR_CODE
+ 274 bytes in segment ISR_CODE
  
- 310 bytes of CODE  memory
+ 274 bytes of CODE  memory
   55 bytes of CONST memory (+ 16 bytes shared)
    6 bytes of DATA  memory (+ 20 bytes shared)
 

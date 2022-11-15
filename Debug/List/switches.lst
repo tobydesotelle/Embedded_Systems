@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          13/Nov/2022  21:04:09
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          14/Nov/2022  20:24:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,17 +16,16 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\switches.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWBA22.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW617B.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\switches.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -On --multiplier=32
+#        ./ --core=430X --data_model=small -Ohs --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -88,7 +87,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     switchP4_interrupt:
      20            if (P4IFG & SW1) {
    \   000000   E2B33D02     BIT.B   #0x2, &0x23d
-   \   000004   0C28         JNC     ??switchP4_interrupt_0
+   \   000004   0C24         JEQ     ??switchP4_interrupt_0
      21              P4IFG &= ~SW1; // IFG SW1 cleared
    \   000006   E2C33D02     BIC.B   #0x2, &0x23d
      22              switch_control |= SW1_PRESSED;
@@ -115,7 +114,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      32            
      33            if (P2IFG & SW2) {
    \   000000   F2B21D02     BIT.B   #0x8, &0x21d
-   \   000004   0C28         JNC     ??switchP2_interrupt_0
+   \   000004   0C24         JEQ     ??switchP2_interrupt_0
      34              P2IFG &= ~SW2; // IFG SW1 cleared
    \   000006   F2C21D02     BIC.B   #0x8, &0x21d
      35              switch_control |= SW2_PRESSED;
@@ -140,7 +139,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     process_switches:
      44            if(sw1_timer>=TIME20){
    \   000000   B2901400.... CMP.W   #0x14, &sw1_timer
-   \   000006   0628         JNC     ??process_switches_0
+   \   000006   0628         JNC     ??process_switches_1
      45              sw1_timer = RESET_STATE;
    \   000008   8243....     MOV.W   #0x0, &sw1_timer
      46              switch_control &= ~SW1_PRESSED;
@@ -149,9 +148,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000010   E2D2....     BIS.B   #0x4, &switch_control
      48            }
      49            if(sw2_timer>=TIME20){
-   \                     ??process_switches_0:
+   \                     ??process_switches_1:
    \   000014   B2901400.... CMP.W   #0x14, &sw2_timer
-   \   00001A   0628         JNC     ??process_switches_1
+   \   00001A   0628         JNC     ??process_switches_2
      50              sw2_timer = RESET_STATE;
    \   00001C   8243....     MOV.W   #0x0, &sw2_timer
      51              switch_control &= ~SW2_PRESSED;
@@ -161,9 +160,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      53              
      54            }
      55            if(switch_control==0){
-   \                     ??process_switches_1:
+   \                     ??process_switches_2:
    \   000028   C293....     CMP.B   #0x0, &switch_control
-   \   00002C   0420         JNE     ??process_switches_2
+   \   00002C   0420         JNE     ??process_switches_3
      56              switch_control |= SW1_RELEASED;
    \   00002E   E2D2....     BIS.B   #0x4, &switch_control
      57              switch_control |= SW2_RELEASED;
@@ -179,16 +178,16 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      66          //  }
      67            
      68            if((switch_control&SW1_RELEASED)&&(switch_control&SW2_RELEASED)){
-   \                     ??process_switches_2:
+   \                     ??process_switches_3:
    \   000036   E2B2....     BIT.B   #0x4, &switch_control
-   \   00003A   0628         JNC     ??process_switches_3
+   \   00003A   0624         JEQ     ??process_switches_0
    \   00003C   F2B2....     BIT.B   #0x8, &switch_control
-   \   000040   0328         JNC     ??process_switches_3
+   \   000040   0324         JEQ     ??process_switches_0
      69              TB0CCTL1 &= ~CCIE; //Turn off debounce 
    \   000042   B2C010008403 BIC.W   #0x10, &0x384
      70            }
      71          }
-   \                     ??process_switches_3:
+   \                     ??process_switches_0:
    \   000048   1001         RETA
    \   00004A                REQUIRE _A_TB0CCTL1_L
 

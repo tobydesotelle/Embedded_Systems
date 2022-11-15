@@ -43,6 +43,8 @@
 #define Serial_off      (0x20)
 #define UCA1_TX         (0x40)
 
+#define Process_command (0x100)
+
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
 #define SMALL_RING_SIZE (32)

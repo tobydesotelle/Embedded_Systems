@@ -41,15 +41,14 @@ unsigned int i;
 #define Slow_Command 	 ("^S")
 void send(char *string, char port){
   i=0;
-  Tx_String = &string[0];
+  Tx_String = &string;
   switch(port){
   case Send_UCA0:
     UCA0IE |= UCTXIE;
     break;
   case Send_UCA1:
     UCA1IE |= UCTXIE;
-    
-    UCA1TXBUF = Tx_String[i++];
+    //UCA1TXBUF = Tx_String[i];
     break;
   }
   
@@ -174,21 +173,20 @@ __interrupt void EUSCI_A0_ISR(void){
     break;
   case 2: // Vector 2 - RXIFG
     
-  UCA1TXBUF=UCA0RXBUF;
-//    process_buf[1][Process_out_cur] =  UCA0RXBUF;
-//    if(process_buf[1][Process_out_cur]== Command_LF){
-//      send(process_buf[1],Send_UCA1);
-//      Process_out_cur = 0;
-//    }else Process_out_cur++;
-      
+    process_buf[1][Process_out_cur] =  UCA0RXBUF;
+    if(process_buf[1][Process_out_cur]== Command_LF){
+      send(process_buf[1],Send_UCA1);
+      Process_out_cur = 0;
+       
+    }
+      Process_out_cur++;
     
     
       
     break;
   case 4: // Vector 4 – TXIFG
-    if( Tx_String[i]=='\n'){//If the end of a string add line feed and turn off Tx
-      UCA0TXBUF = '\r';
-    }else if(Tx_String[i]=='\r'){
+    if(Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
+      //UCA0TXBUF = '\n';
       UCA0IE &= ~UCTXIE;
     }else{// keep chars going
       UCA0TXBUF = Tx_String[i++];
@@ -197,9 +195,6 @@ __interrupt void EUSCI_A0_ISR(void){
   default: break;
   }
 }
-
-
-
 #pragma vector=EUSCI_A1_VECTOR//PC Communication
 __interrupt void EUSCI_A1_ISR(void){
   switch(__even_in_range(UCA1IV,0x08)){
@@ -219,22 +214,20 @@ __interrupt void EUSCI_A1_ISR(void){
       serial_bits |= Process_command;	//SET PROCESS COMMAND BIT
       //send(process_buf[0],Send_UCA0);
     }  
-    else if(serial_bits & Command_bit){//processing command when it is found
+    if(serial_bits & Command_bit){//processing command when it is found
       process_buf[0][Process_in_cur] = *RX_read;
         Process_in_cur++;
-    }else if(*RX_read != '\0' /*|| *RX_read !=*/ ){
+    }else{
       UCA0TXBUF = *RX_read;
       //send(IOT_char[0],Send_UCA0);
-    }else{
-      UCA0TXBUF = '\r';
     }
     
     //UCA0TXBUF = temp;
     serial_bits |= Serial_off;
     break;
   case 4: // Vector 4 – TXIFG
-    if(Tx_String[i]=='\0' /*|| Tx_String[i]=='\n'*/ ){//If the end of a string add line feed and turn off Tx
-        UCA1TXBUF = '\n';
+    if(Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
+        //UCA1TXBUF = '\n';
         UCA1IE &= ~UCTXIE;
     }else{// keep chars going
       UCA1TXBUF = Tx_String[i++];
