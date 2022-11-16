@@ -31,8 +31,9 @@ void menu_state_machine(){
 
 void start_menu(){
   Init_Display_1();
-  while(!(SW1_AND_TOGGLED)  && !(SW2_AND_TOGGLED)){
-  }
+  //while(!(SW1_AND_TOGGLED)  && !(SW2_AND_TOGGLED)){
+  //}
+  
   SW1_CLEAR;
   SW2_CLEAR;
   menu_state = Main_menu;

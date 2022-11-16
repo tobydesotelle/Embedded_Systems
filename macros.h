@@ -44,12 +44,19 @@
 #define UCA1_TX         (0x40)
 
 #define Process_command (0x100)
+#define Process_buffer_0 (0x200)
+#define Process_buffer_1 (0x400)
+#define Send_next_command (0x800)
+
+
+#define Send_UCA0        (0x00)
+#define Send_UCA1        (0x01)
 
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
 #define SMALL_RING_SIZE (32)
-#define NUM_PROCESS_BUF (3)
-#define PROCESS_BUF_LENGTH  (32)
+#define NUM_PROCESS_BUF (4)
+#define PROCESS_BUF_LENGTH  (64)
 
 
 // ===========================Menu==============================================
@@ -287,6 +294,9 @@
 #define WAITING1                ("Waiting.  ")
 #define WAITING2                ("Waiting.. ")
 #define WAITING3                ("Waiting...")
+#define Connecting1             ("Connecting")
+#define Connecting2                ("Waiting.. ")
+#define Connecting3                ("Waiting...")
 #define RECIVED                 ("Recived rx")
 #define TRASMIT                 (" Transmit ")
 #define CHAR_0                  (0x30)

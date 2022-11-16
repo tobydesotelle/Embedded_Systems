@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          14/Nov/2022  21:49:02
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:34
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWC09C.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4FCB.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -167,42 +167,46 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      53            }
      54            P3OUT |= IOT_EN_CPU;
    \   000014   F2D080002202 BIS.B   #0x80, &0x222
-     55            //test=(int *)malloc(sizeof(int)*10000);
-     56            //int test[1000];
-     57            //test[0]=1;
-     58          //  malloc(10);
-     59            //serial_bits= 1;
-     60            while(ALWAYS){
-     61              menu_state_machine();
+     55            
+     56            //test=(int *)malloc(sizeof(int)*10000);
+     57            //int test[1000];
+     58            //test[0]=1;
+     59          //  malloc(10);
+     60            //serial_bits= 1;
+     61            while(ALWAYS){
+     62              menu_state_machine();
    \                     ??main_1:
    \   00001A   ........     CALLA   #menu_state_machine
-     62              process_switches();
-   \   00001E   ........     CALLA   #process_switches
-     63              Display_Process();
-   \   000022   ........     CALLA   #Display_Process
-     64              if(serial_bits & UCA1_TX){
-   \   000026   B2B04000.... BIT.W   #0x40, &serial_bits
-   \   00002C   0524         JEQ     ??main_2
-     65                serial_bits &= UCA1_TX;
-   \   00002E   B2F04000.... AND.W   #0x40, &serial_bits
-     66                UCA1TXBUF = '\0';
-   \   000034   82438E05     MOV.W   #0x0, &0x58e
-     67              }
-     68                
-     69              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+     63              iot_wifi_connect();
+   \   00001E   ........     CALLA   #iot_wifi_connect
+     64              
+     65              process_switches();
+   \   000022   ........     CALLA   #process_switches
+     66              Display_Process();
+   \   000026   ........     CALLA   #Display_Process
+     67              if(serial_bits & UCA1_TX){
+   \   00002A   B2B04000.... BIT.W   #0x40, &serial_bits
+   \   000030   0524         JEQ     ??main_2
+     68                serial_bits &= UCA1_TX;
+   \   000032   B2F04000.... AND.W   #0x40, &serial_bits
+     69                UCA1TXBUF = '\0';
+   \   000038   82438E05     MOV.W   #0x0, &0x58e
+     70              }
+     71                
+     72              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
    \                     ??main_2:
-   \   000038   D2E32202     XOR.B   #0x1, &0x222
-   \   00003C   EE3F         JMP     ??main_1
-   \   00003E   0343         NOP
-   \   000040                REQUIRE _A_PM5CTL0_L
-   \   000040                REQUIRE _A_TB3CCR5_L
-   \   000040                REQUIRE _A_PBOUT_L
-   \   000040                REQUIRE _A_UCA1TXBUF_L
-     70              //Wheels_Process();         //State machine for line following 
-     71            }
-     72          }
-     73          
-     74            
+   \   00003C   D2E32202     XOR.B   #0x1, &0x222
+   \   000040   EC3F         JMP     ??main_1
+   \   000042   0343         NOP
+   \   000044                REQUIRE _A_PM5CTL0_L
+   \   000044                REQUIRE _A_TB3CCR5_L
+   \   000044                REQUIRE _A_PBOUT_L
+   \   000044                REQUIRE _A_UCA1TXBUF_L
+     73              //Wheels_Process();         //State machine for line following 
+     74            }
+     75          }
+     76          
+     77            
 
    Maximum stack usage in bytes:
 
@@ -211,6 +215,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   main
         4   -> Display_Process
         4   -> Master_Init
+        4   -> iot_wifi_connect
         4   -> menu_state_machine
         4   -> process_switches
 
@@ -225,7 +230,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_UCA1TXBUF_L
        1  baud
        2  display_bits
-      64  main
+      68  main
        2  motor_control_bits
        2  serial_bits
        1  state
@@ -235,11 +240,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  timer_bits
 
  
- 64 bytes in segment CODE
+ 68 bytes in segment CODE
   8 bytes in segment DATA16_AN
  15 bytes in segment DATA16_Z
  
- 64 bytes of CODE memory
+ 68 bytes of CODE memory
  15 bytes of DATA memory (+ 8 bytes shared)
 
 Errors: none

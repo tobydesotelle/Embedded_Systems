@@ -2180,6 +2180,9 @@
         <name>$PROJ_DIR$\init.c</name>
     </file>
     <file>
+        <name>$PROJ_DIR$\iot.c</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\line_detection.c</name>
     </file>
     <file>

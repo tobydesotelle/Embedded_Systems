@@ -9,28 +9,29 @@ volatile char USB_Char_Rx[SMALL_RING_SIZE];
 char temp[2];
 
 char process_buf[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];
+char process_buf_0[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];
+char Ring_buf_0[SMALL_RING_SIZE];
+char *Rx_write_0=Ring_buf_0;
+char *Rx_read_0;
+int line;
+int cur_0;
 //process 0 is for reciving PC
 //process 1 is for reciving IOT
 //Process 2 is for Command buffer
-int count=0;
-char RING_BUF[SMALL_RING_SIZE];
-char *rx_start;
-char TX_A1[SMALL_RING_SIZE];
-//char *TX_char=process_buf_rx; 
 
+char RING_BUF[SMALL_RING_SIZE];
 char *RX_write=RING_BUF;
 char *RX_read;
 unsigned Process_in_cur;
-unsigned Process_out_cur;
+
 char *Commad_start;
 char *Command_end;
 char *Tx_String;
-char IOT_char;
-//char Command[]
+
+int process_line;
 unsigned int i;
 
-#define Send_UCA0        (0x00)
-#define Send_UCA1        (0x01)
+
 #define Command_bit      (0x80)
 
 #define Command_Char     ('^')
@@ -39,16 +40,24 @@ unsigned int i;
 #define Test_Command	 ("^^")
 #define Fast_Command 	 ("^F")
 #define Slow_Command 	 ("^S")
+
+
+#define CR		 ("\r")
+#define NL		 ("\n")
+
+
+//process_buf_0;
+
 void send(char *string, char port){
   i=0;
   Tx_String = &string[0];
   switch(port){
   case Send_UCA0:
     UCA0IE |= UCTXIE;
+    UCA0TXBUF = Tx_String[i++];
     break;
   case Send_UCA1:
     UCA1IE |= UCTXIE;
-    
     UCA1TXBUF = Tx_String[i++];
     break;
   }
@@ -58,6 +67,46 @@ void process_command(char *command){// maybe have a process queue buffer that fe
   //if()
 }
 
+void process_buffer_0(char *look_for){
+  if(serial_bits & Process_buffer_0){
+    if(strcmp(process_buf_0[process_line] , look_for) == 0){
+      serial_bits |= Send_next_command;
+    }
+    serial_bits &= ~Process_buffer_0;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
+}
+void clear_buffer(){
+  for(int j = 0;j<PROCESS_BUF_LENGTH;j++){
+    process_buf_0[process_line][j]=RESET;
+  }
+}
+char IP_Addy[16];
+char *IP;
+char *get_IP(){
+  if(serial_bits & Process_buffer_0){
+    
+      if((IP = strstr(process_buf_0[process_line] , "\""))!=NULL){
+	
+	IP++;
+	
+	serial_bits |= Send_next_command;
+	int j=0;    
+	while(*IP != '\"'){
+	  IP_Addy[j]=*IP;
+	  IP++;
+	  j++;
+	}
+      }
+	  serial_bits &= ~Process_buffer_0;
+	  clear_buffer();
+	  process_line++;
+	  if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
+	  return IP_Addy;
+}
 void Init_Serial_UCA0(char speed){
 
   switch(speed){
@@ -174,22 +223,38 @@ __interrupt void EUSCI_A0_ISR(void){
     break;
   case 2: // Vector 2 - RXIFG
     
-  UCA1TXBUF=UCA0RXBUF;
-//    process_buf[1][Process_out_cur] =  UCA0RXBUF;
-//    if(process_buf[1][Process_out_cur]== Command_LF){
-//      send(process_buf[1],Send_UCA1);
-//      Process_out_cur = 0;
-//    }else Process_out_cur++;
+  //UCA1TXBUF=UCA0RXBUF;
+  *Rx_write_0 = UCA0RXBUF;
+  Rx_read_0 = Rx_write_0;
+  Rx_write_0++;
+  UCA1TXBUF = *Rx_read_0;
+  if(Rx_write_0-Ring_buf_0 == SMALL_RING_SIZE)Rx_write_0 = Ring_buf_0;
+  if(*Rx_read_0 == '\n'){
+    process_buf_0[line][cur_0++]=*Rx_read_0;
+    *Rx_read_0 = RESET;
+    line++;
+    cur_0 = 0;
+    serial_bits |= Process_buffer_0;
+    if(line == NUM_PROCESS_BUF)line = 0;
+  }else{
+    process_buf_0[line][cur_0++]=*Rx_read_0;
+    *Rx_read_0 = RESET;
+  }
+  
+  
+  
+	//we want to capture in a process buf if something found
       
     
     
       
     break;
   case 4: // Vector 4 – TXIFG
-    if( Tx_String[i]=='\n'){//If the end of a string add line feed and turn off Tx
-      UCA0TXBUF = '\r';
-    }else if(Tx_String[i]=='\r'){
+    if( Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
       UCA0IE &= ~UCTXIE;
+      //UCA0TXBUF = '\r';
+    //}//else if(Tx_String[i]=='\r'){
+      //UCA0IE &= ~UCTXIE;
     }else{// keep chars going
       UCA0TXBUF = Tx_String[i++];
     }
@@ -228,7 +293,6 @@ __interrupt void EUSCI_A1_ISR(void){
     }else{
       UCA0TXBUF = '\r';
     }
-    
     //UCA0TXBUF = temp;
     serial_bits |= Serial_off;
     break;

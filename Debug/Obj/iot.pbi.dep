@@ -1,5 +1,5 @@
-main.pbi: \
-  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems\main.c \
+iot.pbi: \
+  C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems\iot.c \
   C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems/macros.h \
   C:\Users\Tobias\ Desotelle\OneDrive\ -\ UNC\ Asheville\Documents\GitHub\Embedded_Systems/functions.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430.h \

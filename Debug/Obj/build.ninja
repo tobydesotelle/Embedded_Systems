@@ -25,6 +25,7 @@ build cases.pbi : index cases.xcl
 build clocks.pbi : index clocks.xcl
 build display.pbi : index display.xcl
 build init.pbi : index init.xcl
+build iot.pbi : index iot.xcl
 build line_detection.pbi : index line_detection.xcl
 build main.pbi : index main.xcl
 build menu.pbi : index menu.xcl
@@ -36,9 +37,9 @@ build timers.pbi : index timers.xcl
 build timers_isr.pbi : index timers_isr.xcl
 build wheel_control.pbi : index wheel_control.xcl
 build Project$ 9_part0.pbi : link analogtodigital.pbi cases.pbi clocks.pbi display.pbi
-build Project$ 9_part1.pbi : link init.pbi line_detection.pbi main.pbi menu.pbi
-build Project$ 9_part2.pbi : link pid.pbi ports.pbi serial.pbi switches.pbi
-build Project$ 9_part3.pbi : link timers.pbi timers_isr.pbi wheel_control.pbi
+build Project$ 9_part1.pbi : link init.pbi iot.pbi line_detection.pbi main.pbi
+build Project$ 9_part2.pbi : link menu.pbi pid.pbi ports.pbi serial.pbi
+build Project$ 9_part3.pbi : link switches.pbi timers.pbi timers_isr.pbi wheel_control.pbi
 build Project$ 9.pbd : link Project$ 9_part0.pbi Project$ 9_part1.pbi Project$ 9_part2.pbi Project$ 9_part3.pbi
 build Project$ 9.pbw : browsedata Project$ 9.pbd
 
