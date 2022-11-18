@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:34
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:36
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\iot.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4FAA.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW200B.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\iot.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -25,7 +25,7 @@
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohs --multiplier=32
+#        ./ --core=430X --data_model=small -Ohz --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -39,122 +39,199 @@
 
 C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\iot.c
       1          #include "macros.h"
+
+   \                                 In  segment DATA16_AN, at 0x222
+   \   union <unnamed> _A_PBOUT_L
+   \                     _A_PBOUT_L:
+   \   000000                DS8 2
       2          extern volatile unsigned short serial_bits;
-      3          
-      4          #define System_Store0	 ("AT+SYSSTORE=0\r\n")
-      5          #define CIPMUX1		 ("AT+CIPMUX=1\r\n")
-      6          #define CIPSERVER1	 ("AT+CIPSERVER=1,4200\r\n")
-      7          #define Find_IP		 ("AT+CIFSR\r\n")
-      8          
-      9          #define OK		("OK\r\n")
-     10          #define IP_found	("WIFI GOT IP\r\n")
+      3          extern volatile unsigned short display_bits;
+      4          extern volatile unsigned char switch_control;
+      5          extern unsigned char menu_state;
+      6          extern char IP_Addy[21];
+      7          extern char SSID[11];
+      8          #define System_Store0	 ("AT+SYSSTORE=0\r\n")
+      9          #define CIPMUX1		 ("AT+CIPMUX=1\r\n")
+     10          #define SSID_Find	 ("AT+CWJAP?\r\n")
+     11          #define CIPSERVER1	 ("AT+CIPSERVER=1,4200\r\n")
+     12          #define Find_IP		 ("AT+CIFSR\r\n")
+     13          
+     14          #define OK		("OK\r\n")
+     15          #define IP_found	("WIFI GOT IP\r\n")
 
    \                                 In  segment DATA16_Z, align 1, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     11          char IOT_state=0;
+     16          char IOT_state=0;
    \                     IOT_state:
    \   000000                DS8 1
 
    \                                 In  segment DATA16_Z, align 1, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     12          char IOT_state_mem;
+     17          char IOT_state_mem;
    \                     IOT_state_mem:
    \   000000                DS8 1
 
    \                                 In  segment CODE, align 2
-     13          void iot_wifi_connect(){
+     18          void IOT_main(){
+   \                     IOT_main:
+     19              P3OUT |= IOT_EN_CPU;
+   \   000000   F2D080002202 BIS.B   #0x80, &0x222
+   \   000006   063C         JMP     ??IOT_main_2
+     20            while(!(SW1_AND_TOGGLED) && !(SW2_AND_TOGGLED) ){
+     21              Connecting_machine();
+   \                     ??IOT_main_0:
+   \   000008   ........     CALLA   #Connecting_machine
+     22              iot_wifi_connect();
+   \   00000C   ........     CALLA   #iot_wifi_connect
+     23              Display_Process();
+   \   000010   ........     CALLA   #Display_Process
+     24            }
+   \                     ??IOT_main_2:
+   \   000014   F2B01000.... BIT.B   #0x10, &switch_control
+   \   00001A   0420         JNE     ??IOT_main_1
+   \   00001C   F2B02000.... BIT.B   #0x20, &switch_control
+   \   000022   F227         JEQ     ??IOT_main_0
+     25            SW1_CLEAR;
+   \                     ??IOT_main_1:
+   \   000024   F2C01000.... BIC.B   #0x10, &switch_control
+     26            SW2_CLEAR;
+   \   00002A   F2C02000.... BIC.B   #0x20, &switch_control
+     27            menu_state = Main_menu;
+   \   000030   D243....     MOV.B   #0x1, &menu_state
+     28          }
+   \   000034   1001         RETA
+   \   000036                REQUIRE _A_PBOUT_L
+     29          
+
+   \                                 In  segment CODE, align 2
+     30          void iot_wifi_connect(){
    \                     iot_wifi_connect:
-     14            if(serial_bits & Send_next_command){
+     31            if(serial_bits & Send_next_command){
    \   000000   B2B00008.... BIT.W   #0x800, &serial_bits
    \   000006   0524         JEQ     ??iot_wifi_connect_0
-     15              IOT_state++;
+     32              IOT_state++;
    \   000008   D253....     ADD.B   #0x1, &IOT_state
-     16              serial_bits &= ~Send_next_command;
+     33              serial_bits &= ~Send_next_command;
    \   00000C   B2C00008.... BIC.W   #0x800, &serial_bits
-     17            }
-     18            switch(IOT_state){
+     34            }
+     35            switch(IOT_state){
    \                     ??iot_wifi_connect_0:
    \   000012   5E42....     MOV.B   &IOT_state, R14
    \   000016   4E83         SUB.B   #0x0, R14
-   \   000018   1124         JEQ     ??iot_wifi_connect_2
+   \   000018   1924         JEQ     ??iot_wifi_connect_2
    \   00001A   5E83         SUB.B   #0x1, R14
-   \   00001C   1324         JEQ     ??iot_wifi_connect_3
+   \   00001C   1B24         JEQ     ??iot_wifi_connect_3
    \   00001E   5E83         SUB.B   #0x1, R14
-   \   000020   2124         JEQ     ??iot_wifi_connect_4
+   \   000020   3524         JEQ     ??iot_wifi_connect_4
    \   000022   5E83         SUB.B   #0x1, R14
-   \   000024   1324         JEQ     ??iot_wifi_connect_5
+   \   000024   1B24         JEQ     ??iot_wifi_connect_5
    \   000026   5E83         SUB.B   #0x1, R14
-   \   000028   1D24         JEQ     ??iot_wifi_connect_4
+   \   000028   3124         JEQ     ??iot_wifi_connect_4
    \   00002A   5E83         SUB.B   #0x1, R14
-   \   00002C   1724         JEQ     ??iot_wifi_connect_6
+   \   00002C   1F24         JEQ     ??iot_wifi_connect_6
    \   00002E   5E83         SUB.B   #0x1, R14
-   \   000030   1924         JEQ     ??iot_wifi_connect_4
+   \   000030   2D24         JEQ     ??iot_wifi_connect_4
    \   000032   5E83         SUB.B   #0x1, R14
-   \   000034   1B24         JEQ     ??iot_wifi_connect_7
+   \   000034   1F24         JEQ     ??iot_wifi_connect_7
    \   000036   5E83         SUB.B   #0x1, R14
-   \   000038   1D24         JEQ     ??iot_wifi_connect_8
-   \   00003A   1001         RETA
-     19            case 0://add timerfor timing out finding
-     20              process_buffer_0(IP_found);
+   \   000038   2124         JEQ     ??iot_wifi_connect_8
+   \   00003A   5E83         SUB.B   #0x1, R14
+   \   00003C   2124         JEQ     ??iot_wifi_connect_9
+   \   00003E   5E83         SUB.B   #0x1, R14
+   \   000040   2324         JEQ     ??iot_wifi_connect_10
+   \   000042   5E83         SUB.B   #0x1, R14
+   \   000044   2324         JEQ     ??iot_wifi_connect_4
+   \   000046   5E83         SUB.B   #0x1, R14
+   \   000048   2524         JEQ     ??iot_wifi_connect_11
+   \   00004A   1001         RETA
+     36            case 0://add timerfor timing out finding
+     37              process_buffer_0(IP_found);
    \                     ??iot_wifi_connect_2:
-   \   00003C   3C40....     MOV.W   #`?<Constant "WIFI GOT IP\\r\\n">`, R12
-   \   000040   ........     BRA     #process_buffer_0
-     21              break;
-     22            case 1:
-     23              send(System_Store0,Send_UCA0);
+   \   00004C   3C40....     MOV.W   #`?<Constant "WIFI GOT IP\\r\\n">`, R12
+   \   000050   ........     BRA     #process_buffer_0
+     38              break;
+     39            case 1:
+     40              send(System_Store0,Send_UCA0);
    \                     ??iot_wifi_connect_3:
-   \   000044   4D43         MOV.B   #0x0, R13
-   \   000046   3C40....     MOV.W   #`?<Constant "AT+SYSSTORE=0\\r\\n">`, R12
-   \   00004A   033C         JMP     ??iot_wifi_connect_1
-     24              IOT_state++;
-     25              break;
-     26            case 2://check for okay process
-     27              process_buffer_0(OK);
-     28              break;
-     29            case 3:
-     30              send(CIPMUX1,Send_UCA0);
-   \                     ??iot_wifi_connect_5:
-   \   00004C   4D43         MOV.B   #0x0, R13
-   \   00004E   3C40....     MOV.W   #`?<Constant "AT+CIPMUX=1\\r\\n">`, R12
-   \                     ??iot_wifi_connect_1:
-   \   000052   ........     CALLA   #send
-     31              IOT_state++;
-   \   000056   D253....     ADD.B   #0x1, &IOT_state
-     32              break;
-   \   00005A   1001         RETA
-     33            case 4:
-     34              process_buffer_0(OK);
-     35              break;
-     36            case 5:
-     37              send(CIPSERVER1,Send_UCA0);
-   \                     ??iot_wifi_connect_6:
-   \   00005C   4D43         MOV.B   #0x0, R13
-   \   00005E   3C40....     MOV.W   #`?<Constant "AT+CIPSERVER=1,4200\\r\\n">`, R12
-   \   000062   F73F         JMP     ??iot_wifi_connect_1
-     38              IOT_state++;
-     39              break;
-     40              case 6:
-     41              process_buffer_0(OK);
-   \                     ??iot_wifi_connect_4:
-   \   000064   3C40....     MOV.W   #`?<Constant "OK\\r\\n">`, R12
-   \   000068   ........     BRA     #process_buffer_0
+   \   000054   4D43         MOV.B   #0x0, R13
+   \   000056   3C40....     MOV.W   #`?<Constant "AT+SYSSTORE=0\\r\\n">`, R12
+   \   00005A   033C         JMP     ??iot_wifi_connect_1
+     41              IOT_state++;
      42              break;
-     43              case 7:
-     44              send(Find_IP,Send_UCA0);
-   \                     ??iot_wifi_connect_7:
-   \   00006C   4D43         MOV.B   #0x0, R13
-   \   00006E   3C40....     MOV.W   #`?<Constant "AT+CIFSR\\r\\n">`, R12
-   \   000072   EF3F         JMP     ??iot_wifi_connect_1
-     45              IOT_state++;
-     46              break;
-     47            case 8:
-     48              get_IP();
-   \                     ??iot_wifi_connect_8:
-   \   000074   ........     BRA     #get_IP
+     43            case 2://check for okay process
+     44              process_buffer_0(OK);
+     45              break;
+     46            case 3:
+     47              send(CIPMUX1,Send_UCA0);
+   \                     ??iot_wifi_connect_5:
+   \   00005C   4D43         MOV.B   #0x0, R13
+   \   00005E   3C40....     MOV.W   #`?<Constant "AT+CIPMUX=1\\r\\n">`, R12
+   \                     ??iot_wifi_connect_1:
+   \   000062   ........     CALLA   #send
+     48              IOT_state++;
+   \   000066   D253....     ADD.B   #0x1, &IOT_state
      49              break;
-     50            }
-     51            
-     52          }
+   \   00006A   1001         RETA
+     50            case 4:
+     51              process_buffer_0(OK);
+     52              break;
+     53            case 5:
+     54              send(CIPSERVER1,Send_UCA0);
+   \                     ??iot_wifi_connect_6:
+   \   00006C   4D43         MOV.B   #0x0, R13
+   \   00006E   3C40....     MOV.W   #`?<Constant "AT+CIPSERVER=1,4200\\r\\n">`, R12
+   \   000072   F73F         JMP     ??iot_wifi_connect_1
+     55              IOT_state++;
+     56              break;
+     57            case 6:
+     58              process_buffer_0(OK);
+     59              break;
+     60            case 7:
+     61              send(SSID_Find,Send_UCA0);
+   \                     ??iot_wifi_connect_7:
+   \   000074   4D43         MOV.B   #0x0, R13
+   \   000076   3C40....     MOV.W   #`?<Constant "AT+CWJAP?\\r\\n">`, R12
+   \   00007A   F33F         JMP     ??iot_wifi_connect_1
+     62              IOT_state++;
+     63              break;
+     64            case 8:
+     65              get_SSID();
+   \                     ??iot_wifi_connect_8:
+   \   00007C   ........     BRA     #get_SSID
+     66              break;
+     67            case 9:
+     68              send(Find_IP,Send_UCA0);
+   \                     ??iot_wifi_connect_9:
+   \   000080   4D43         MOV.B   #0x0, R13
+   \   000082   3C40....     MOV.W   #`?<Constant "AT+CIFSR\\r\\n">`, R12
+   \   000086   ED3F         JMP     ??iot_wifi_connect_1
+     69              IOT_state++;
+     70              break;
+     71            case 10:
+     72              get_IP();
+   \                     ??iot_wifi_connect_10:
+   \   000088   ........     BRA     #get_IP
+     73              break;
+     74            case 11:
+     75              process_buffer_0(OK);
+   \                     ??iot_wifi_connect_4:
+   \   00008C   3C40....     MOV.W   #`?<Constant "OK\\r\\n">`, R12
+   \   000090   ........     BRA     #process_buffer_0
+     76              break;
+     77            case 12:
+     78              P3OUT |= IOT_LINK_CPU;
+   \                     ??iot_wifi_connect_11:
+   \   000094   F2D040002202 BIS.B   #0x40, &0x222
+     79              display_bits |= Display_IP;
+   \   00009A   A2D2....     BIS.W   #0x4, &display_bits
+     80              menu_state = IP_Display;
+   \   00009E   F2400500.... MOV.B   #0x5, &menu_state
+     81              break;
+     82            }
+     83            
+     84          }
+   \   0000A4   1001         RETA
+   \   0000A6                REQUIRE _A_PBOUT_L
 
    \                                 In  segment DATA16_C, align 1, align-sorted
    \                     `?<Constant "WIFI GOT IP\\r\\n">`:
@@ -186,6 +263,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \            300D0A00    
 
    \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+CWJAP?\\r\\n">`:
+   \   000000   41542B43574A DC8 "AT+CWJAP?\015\012"
+   \            41503F0D0A00
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
    \                     `?<Constant "AT+CIFSR\\r\\n">`:
    \   000000   41542B434946 DC8 "AT+CIFSR\015\012"
    \            53520D0A00  
@@ -194,8 +276,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    CSTACK Function
    ------ --------
+      4   IOT_main
+        4   -> Connecting_machine
+        4   -> Display_Process
+        4   -> iot_wifi_connect
       4   iot_wifi_connect
         0   -> get_IP
+        0   -> get_SSID
         0   -> process_buffer_0
         4   -> send
 
@@ -207,21 +294,25 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       11  ?<Constant "AT+CIFSR\r\n">
       14  ?<Constant "AT+CIPMUX=1\r\n">
       22  ?<Constant "AT+CIPSERVER=1,4200\r\n">
+      12  ?<Constant "AT+CWJAP?\r\n">
       16  ?<Constant "AT+SYSSTORE=0\r\n">
        5  ?<Constant "OK\r\n">
       14  ?<Constant "WIFI GOT IP\r\n">
+      54  IOT_main
        1  IOT_state
        1  IOT_state_mem
-     120  iot_wifi_connect
+       2  _A_PBOUT_L
+     166  iot_wifi_connect
 
  
- 120 bytes in segment CODE
-  82 bytes in segment DATA16_C
+ 220 bytes in segment CODE
+   2 bytes in segment DATA16_AN
+  94 bytes in segment DATA16_C
    2 bytes in segment DATA16_Z
  
- 120 bytes of CODE  memory
-  82 bytes of CONST memory
-   2 bytes of DATA  memory
+ 220 bytes of CODE  memory
+  94 bytes of CONST memory
+   2 bytes of DATA  memory (+ 2 bytes shared)
 
 Errors: none
 Warnings: none

@@ -55,7 +55,7 @@
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
 #define SMALL_RING_SIZE (32)
-#define NUM_PROCESS_BUF (4)
+#define NUM_PROCESS_BUF (8)
 #define PROCESS_BUF_LENGTH  (64)
 
 
@@ -70,6 +70,7 @@
 #define Settings                (0x02)
 #define ADC_menu                (0x03)
 #define PID_menu                (0x04)
+#define IP_Display		(0X05)
 
 #define Settings_dis             ("  Settings")
 #define Adc_disp                 ("  ADC Vals")
@@ -136,6 +137,8 @@
 
 #define Splash_bit              (0x01)
 #define Song_char_changed         (0x02)
+#define Display_IP		(0x04)
+		
 
 #define GET_V_THUMB     (0x00)
 #define GET_L_DETECT    (0x01)

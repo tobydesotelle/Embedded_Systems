@@ -18,7 +18,7 @@ int cur_0;
 //process 0 is for reciving PC
 //process 1 is for reciving IOT
 //Process 2 is for Command buffer
-
+//process_buf_0;
 char RING_BUF[SMALL_RING_SIZE];
 char *RX_write=RING_BUF;
 char *RX_read;
@@ -30,6 +30,14 @@ char *Tx_String;
 
 int process_line;
 unsigned int i;
+char IP_Addy[21];
+char SSID[11];
+char *char_buf;
+volatile unsigned int Num_bufs_to_process;
+#define NUM_Commands		(10)
+#define NUM_Command_chars	(16)
+char Commands[NUM_Commands][NUM_Command_chars];
+unsigned int write_command_line;
 
 
 #define Command_bit      (0x80)
@@ -63,16 +71,40 @@ void send(char *string, char port){
   }
   
 }
-void process_command(char *command){// maybe have a process queue buffer that feeds into a small command.
-  //if()
+
+void get_command(){
+  if(Num_bufs_to_process > 0){
+    if((char_buf = strstr(process_buf_0[process_line] , "^"))!=NULL){
+      char_buf++;
+      //serial_bits |= Send_next_command;
+      int j=0;    
+      while(*char_buf != '\n'){//HAVE A COMMAND QUEUE
+	Commands[write_command_line][j]=*char_buf;
+	char_buf++;
+	if(*char_buf == '^')write_command_line++;
+	if(write_command_line > NUM_Commands-1) write_command_line = RESET;
+	j++;
+      }
+      write_command_line++;
+    }
+    
+    //serial_bits |= ~Send_next_command;
+    Num_bufs_to_process--;
+    //serial_bits &= ~Process_buffer_0;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
+  //return void;
 }
 
 void process_buffer_0(char *look_for){
-  if(serial_bits & Process_buffer_0){
+  if(Num_bufs_to_process > 0){
     if(strcmp(process_buf_0[process_line] , look_for) == 0){
       serial_bits |= Send_next_command;
     }
-    serial_bits &= ~Process_buffer_0;
+    Num_bufs_to_process--;
+    //serial_bits &= ~Process_buffer_0;
     clear_buffer();
     process_line++;
     if(process_line == NUM_PROCESS_BUF)process_line =RESET;
@@ -83,29 +115,47 @@ void clear_buffer(){
     process_buf_0[process_line][j]=RESET;
   }
 }
-char IP_Addy[16];
-char *IP;
-char *get_IP(){
-  if(serial_bits & Process_buffer_0){
-    
-      if((IP = strstr(process_buf_0[process_line] , "\""))!=NULL){
-	
-	IP++;
-	
-	serial_bits |= Send_next_command;
-	int j=0;    
-	while(*IP != '\"'){
-	  IP_Addy[j]=*IP;
-	  IP++;
-	  j++;
-	}
+char *get_SSID(){
+  if(Num_bufs_to_process > 0){
+    if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
+      char_buf++;
+      serial_bits |= Send_next_command;
+      int j=0;    
+      while(*char_buf != '\"'){
+	if(j<10)SSID[j]=*char_buf;
+	char_buf++;
+	j++;
       }
-	  serial_bits &= ~Process_buffer_0;
-	  clear_buffer();
-	  process_line++;
-	  if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+    }
+    //serial_bits |= ~Send_next_command;
+    Num_bufs_to_process--;
+    //serial_bits &= ~Process_buffer_0;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
   }
-	  return IP_Addy;
+  return SSID;
+}
+char *get_IP(){
+  if(Num_bufs_to_process > 0){
+    if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
+      char_buf++;
+      serial_bits |= Send_next_command;
+      int j=0;    
+      while(*char_buf != '\"'){
+	IP_Addy[j]=*char_buf;
+	char_buf++;
+	j++;
+      }
+    }
+    //serial_bits |= ~Send_next_command;
+    Num_bufs_to_process--;
+    //serial_bits &= ~Process_buffer_0;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
+  return IP_Addy;
 }
 void Init_Serial_UCA0(char speed){
 
@@ -227,15 +277,16 @@ __interrupt void EUSCI_A0_ISR(void){
   *Rx_write_0 = UCA0RXBUF;
   Rx_read_0 = Rx_write_0;
   Rx_write_0++;
-  UCA1TXBUF = *Rx_read_0;
+  UCA1TXBUF = *Rx_read_0;// echoing to pc 
   if(Rx_write_0-Ring_buf_0 == SMALL_RING_SIZE)Rx_write_0 = Ring_buf_0;
   if(*Rx_read_0 == '\n'){
     process_buf_0[line][cur_0++]=*Rx_read_0;
     *Rx_read_0 = RESET;
     line++;
     cur_0 = 0;
-    serial_bits |= Process_buffer_0;
-    if(line == NUM_PROCESS_BUF)line = 0;
+    Num_bufs_to_process++;
+    //serial_bits |= Process_buffer_0;
+    if(line >= NUM_PROCESS_BUF)line = 0;
   }else{
     process_buf_0[line][cur_0++]=*Rx_read_0;
     *Rx_read_0 = RESET;
@@ -262,9 +313,6 @@ __interrupt void EUSCI_A0_ISR(void){
   default: break;
   }
 }
-
-
-
 #pragma vector=EUSCI_A1_VECTOR//PC Communication
 __interrupt void EUSCI_A1_ISR(void){
   switch(__even_in_range(UCA1IV,0x08)){

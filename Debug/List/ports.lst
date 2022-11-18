@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:34
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:37
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW507A.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW2119.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -25,7 +25,7 @@
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohs --multiplier=32
+#        ./ --core=430X --data_model=small -Ohz --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -159,44 +159,14 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      15            Init_Port2();
    \   000004   ........     CALLA   #Init_Port2
      16            Init_Port3(USE_GPIO);
-   \   000008   C2432202     MOV.B   #0x0, &0x222
-   \   00000C   C2432402     MOV.B   #0x0, &0x224
-   \   000010   D2C32A02     BIC.B   #0x1, &0x22a
-   \   000014   D2C32C02     BIC.B   #0x1, &0x22c
-   \   000018   D2D32202     BIS.B   #0x1, &0x222
-   \   00001C   D2D32402     BIS.B   #0x1, &0x224
-   \   000020   E2D32A02     BIS.B   #0x2, &0x22a
-   \   000024   E2D32C02     BIS.B   #0x2, &0x22c
-   \   000028   E2D22A02     BIS.B   #0x4, &0x22a
-   \   00002C   E2D22C02     BIS.B   #0x4, &0x22c
-   \   000030   F2D22A02     BIS.B   #0x8, &0x22a
-   \   000034   F2D22C02     BIS.B   #0x8, &0x22c
-   \   000038   F2C010002A02 BIC.B   #0x10, &0x22a
-   \   00003E   F2C010002C02 BIC.B   #0x10, &0x22c
-   \   000044   F2C010002202 BIC.B   #0x10, &0x222
-   \   00004A   F2D010002402 BIS.B   #0x10, &0x224
-   \   000050   F2C020002A02 BIC.B   #0x20, &0x22a
-   \   000056   F2C020002C02 BIC.B   #0x20, &0x22c
-   \   00005C   F2C020002202 BIC.B   #0x20, &0x222
-   \   000062   F2C020002402 BIC.B   #0x20, &0x224
-   \   000068   F2C040002A02 BIC.B   #0x40, &0x22a
-   \   00006E   F2C040002C02 BIC.B   #0x40, &0x22c
-   \   000074   F2D040002202 BIS.B   #0x40, &0x222
-   \   00007A   F2D040002402 BIS.B   #0x40, &0x224
-   \   000080   F2C080002A02 BIC.B   #0x80, &0x22a
-   \   000086   F2C080002C02 BIC.B   #0x80, &0x22c
-   \   00008C   F2C080002202 BIC.B   #0x80, &0x222
-   \   000092   F2D080002402 BIS.B   #0x80, &0x224
+   \   000008   4C43         MOV.B   #0x0, R12
+   \   00000A   ........     CALLA   #Init_Port3
      17            Init_Port4();
-   \   000098   ........     CALLA   #Init_Port4
+   \   00000E   ........     CALLA   #Init_Port4
      18            Init_Port5();
-   \   00009C   ........     CALLA   #Init_Port5
+   \   000012   ........     CALLA   #Init_Port5
      19            Init_Port6();
-   \   0000A0   ........     BRA     #Init_Port6
-   \   0000A4                REQUIRE _A_PBOUT_L
-   \   0000A4                REQUIRE _A_PBDIR_L
-   \   0000A4                REQUIRE _A_PBSEL0_L
-   \   0000A4                REQUIRE _A_PBSEL1_L
+   \   000016   ........     BRA     #Init_Port6
      20          }
 
    \                                 In  segment CODE, align 2
@@ -457,8 +427,8 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000078   F2C040002A02 BIC.B   #0x40, &0x22a
     168            P3SEL1 &= ~IOT_LINK_CPU;
    \   00007E   F2C040002C02 BIC.B   #0x40, &0x22c
-    169            P3OUT |= IOT_LINK_CPU;
-   \   000084   F2D040002202 BIS.B   #0x40, &0x222
+    169            P3OUT &= IOT_LINK_CPU;
+   \   000084   F2F040002202 AND.B   #0x40, &0x222
     170            P3DIR |= IOT_LINK_CPU;
    \   00008A   F2D040002402 BIS.B   #0x40, &0x224
     171          
@@ -706,6 +676,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   Init_Ports
         4   -> Init_Port1
         4   -> Init_Port2
+        4   -> Init_Port3
         4   -> Init_Port4
         4   -> Init_Port5
         0   -> Init_Port6
@@ -721,7 +692,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      134  Init_Port4
       98  Init_Port5
      146  Init_Port6
-     164  Init_Ports
+      26  Init_Ports
        2  _A_PADIR_L
        2  _A_PAIES_L
        2  _A_PAIE_L
@@ -744,10 +715,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_PCSEL1_L
 
  
- 972 bytes in segment CODE
+ 834 bytes in segment CODE
   40 bytes in segment DATA16_AN
  
- 972 bytes of CODE memory
+ 834 bytes of CODE memory
    0 bytes of DATA memory (+ 40 bytes shared)
 
 Errors: none

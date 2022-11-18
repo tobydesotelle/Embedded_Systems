@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:34
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:36
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\line_detection.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4FBA.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW202B.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\line_detection.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -25,7 +25,7 @@
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohs --multiplier=32
+#        ./ --core=430X --data_model=small -Ohz --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -99,7 +99,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      35          
      36          
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      37          void set_line_bit(unsigned short level_detection){
    \                     set_line_bit:
      38            if(level_detection>L_CLEAR)line_detection &= L_CLEAR;
@@ -114,75 +114,63 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      40            line_detection |= level_detection;
    \                     ??set_line_bit_0:
    \   000014   0FDC         BIS.W   R12, R15
-   \   000016   ....         JMP     ??Subroutine0_0
+   \   000016   824F....     MOV.W   R15, &line_detection
      41          }
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine0:
-   \   000000   3FF00F00     AND.W   #0xf, R15
-   \   000004   1E42....     MOV.W   &ADC_Left_Detect, R14
-   \   000008   3E901500     CMP.W   #0x15, R14
-   \   00000C   032C         JC      ??Subroutine0_1
-   \   00000E   3FD01000     BIS.W   #0x10, R15
-   \   000012   0E3C         JMP     ??Subroutine0_0
-   \                     ??Subroutine0_1:
-   \   000014   3E901F00     CMP.W   #0x1f, R14
-   \   000018   032C         JC      ??Subroutine0_2
-   \   00001A   3FD02000     BIS.W   #0x20, R15
-   \   00001E   083C         JMP     ??Subroutine0_0
-   \                     ??Subroutine0_2:
-   \   000020   3E906500     CMP.W   #0x65, R14
-   \   000024   032C         JC      ??Subroutine0_3
-   \   000026   3FD04000     BIS.W   #0x40, R15
-   \   00002A   023C         JMP     ??Subroutine0_0
-   \                     ??Subroutine0_3:
-   \   00002C   3FD08000     BIS.W   #0x80, R15
-   \                     ??Subroutine0_0:
-   \   000030   824F....     MOV.W   R15, &line_detection
-   \   000034   1001         RETA
+   \   00001A   1001         RETA
      42          
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      43          void left_detector_process(){
    \                     left_detector_process:
      44            if(ADC_Right_Detect<=BASE_READING)set_line_bit(R_BASE);
-   \   000000   5F42....     MOV.B   &line_detection, R15
-   \   000004   3FF0F000     AND.W   #0xf0, R15
-   \   000008   1E42....     MOV.W   &ADC_Right_Detect, R14
-   \   00000C   3E901500     CMP.W   #0x15, R14
-   \   000010   022C         JC      ??left_detector_process_1
-   \   000012   1FD3         BIS.W   #0x1, R15
-   \   000014   0B3C         JMP     ??left_detector_process_0
+   \   000000   1F42....     MOV.W   &ADC_Right_Detect, R15
+   \   000004   3F901500     CMP.W   #0x15, R15
+   \   000008   032C         JC      ??left_detector_process_0
+   \   00000A   1C43         MOV.W   #0x1, R12
+   \   00000C   ........     BRA     #set_line_bit
      45            else if(ADC_Right_Detect<=SLIGHT_DETECTION)set_line_bit(R_SLIGHT);
-   \                     ??left_detector_process_1:
-   \   000016   3E901F00     CMP.W   #0x1f, R14
-   \   00001A   022C         JC      ??left_detector_process_2
-   \   00001C   2FD3         BIS.W   #0x2, R15
-   \   00001E   063C         JMP     ??left_detector_process_0
-     46            else if(ADC_Right_Detect<=STRONG_DETECTION)set_line_bit(R_STRONG);
-   \                     ??left_detector_process_2:
-   \   000020   3E906500     CMP.W   #0x65, R14
-   \   000024   022C         JC      ??left_detector_process_3
-   \   000026   2FD2         BIS.W   #0x4, R15
-   \   000028   013C         JMP     ??left_detector_process_0
-     47            else if(ADC_Right_Detect>STRONG_DETECTION)set_line_bit(R_FULL);
-   \                     ??left_detector_process_3:
-   \   00002A   3FD2         BIS.W   #0x8, R15
    \                     ??left_detector_process_0:
-   \   00002C   ....         JMP     ??Subroutine0_0
-   \   00002E   0343         NOP
+   \   000010   3F901F00     CMP.W   #0x1f, R15
+   \   000014   032C         JC      ??left_detector_process_1
+   \   000016   2C43         MOV.W   #0x2, R12
+   \   000018   ........     BRA     #set_line_bit
+     46            else if(ADC_Right_Detect<=STRONG_DETECTION)set_line_bit(R_STRONG);
+   \                     ??left_detector_process_1:
+   \   00001C   3F906500     CMP.W   #0x65, R15
+   \   000020   032C         JC      ??left_detector_process_2
+   \   000022   2C42         MOV.W   #0x4, R12
+   \   000024   ........     BRA     #set_line_bit
+     47            else if(ADC_Right_Detect>STRONG_DETECTION)set_line_bit(R_FULL);
+   \                     ??left_detector_process_2:
+   \   000028   3C42         MOV.W   #0x8, R12
+   \   00002A   ........     BRA     #set_line_bit
      48          }
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      49          void right_detector_process(){
    \                     right_detector_process:
      50            if(ADC_Left_Detect<=BASE_READING)set_line_bit(L_BASE);
-   \   000000   5F42....     MOV.B   &line_detection, R15
-   \   000004   ....         JMP     ?Subroutine0
-   \   000006   0343         NOP
+   \   000000   1F42....     MOV.W   &ADC_Left_Detect, R15
+   \   000004   3F901500     CMP.W   #0x15, R15
+   \   000008   042C         JC      ??right_detector_process_0
+   \   00000A   3C401000     MOV.W   #0x10, R12
+   \   00000E   ........     BRA     #set_line_bit
      51            else if(ADC_Left_Detect<=SLIGHT_DETECTION)set_line_bit(L_SLIGHT);
+   \                     ??right_detector_process_0:
+   \   000012   3F901F00     CMP.W   #0x1f, R15
+   \   000016   042C         JC      ??right_detector_process_1
+   \   000018   3C402000     MOV.W   #0x20, R12
+   \   00001C   ........     BRA     #set_line_bit
      52            else if(ADC_Left_Detect<=STRONG_DETECTION)set_line_bit(L_STRONG);
+   \                     ??right_detector_process_1:
+   \   000020   3F906500     CMP.W   #0x65, R15
+   \   000024   042C         JC      ??right_detector_process_2
+   \   000026   3C404000     MOV.W   #0x40, R12
+   \   00002A   ........     BRA     #set_line_bit
      53            else if(ADC_Left_Detect>STRONG_DETECTION)set_line_bit(L_FULL);
+   \                     ??right_detector_process_2:
+   \   00002E   3C408000     MOV.W   #0x80, R12
+   \   000032   ........     BRA     #set_line_bit
      54          }
      55          
 
@@ -190,29 +178,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      56          void process_detectors(){
    \                     process_detectors:
      57            left_detector_process();
-   \   000000   5F42....     MOV.B   &line_detection, R15
-   \   000004   7FF0F000     AND.B   #0xf0, R15
-   \   000008   1E42....     MOV.W   &ADC_Right_Detect, R14
-   \   00000C   3E901500     CMP.W   #0x15, R14
-   \   000010   022C         JC      ??process_detectors_1
-   \   000012   5FD3         BIS.B   #0x1, R15
-   \   000014   0B3C         JMP     ??process_detectors_0
-   \                     ??process_detectors_1:
-   \   000016   3E901F00     CMP.W   #0x1f, R14
-   \   00001A   022C         JC      ??process_detectors_2
-   \   00001C   6FD3         BIS.B   #0x2, R15
-   \   00001E   063C         JMP     ??process_detectors_0
-   \                     ??process_detectors_2:
-   \   000020   3E906500     CMP.W   #0x65, R14
-   \   000024   022C         JC      ??process_detectors_3
-   \   000026   6FD2         BIS.B   #0x4, R15
-   \   000028   013C         JMP     ??process_detectors_0
-   \                     ??process_detectors_3:
-   \   00002A   7FD2         BIS.B   #0x8, R15
-   \                     ??process_detectors_0:
-   \   00002C   ....         JMP     ?Subroutine0
-   \   00002E   0343         NOP
+   \   000000   ........     CALLA   #left_detector_process
      58            right_detector_process();
+   \   000004   ........     BRA     #right_detector_process
      59          }
      60          
 
@@ -236,11 +204,15 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    CSTACK Function
    ------ --------
       4   left_detector_process
+        0   -> set_line_bit
       8   measurment
         8 _Cast32uto32f
         8 _Sub32f
       4   process_detectors
+        4   -> left_detector_process
+        0   -> right_detector_process
       4   right_detector_process
+        0   -> set_line_bit
       4   set_line_bit
       4   strong_detect
 
@@ -249,20 +221,19 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      54  ?Subroutine0
-      48  left_detector_process
+      46  left_detector_process
        2  line_detection
       42  measurment
-      48  process_detectors
-       8  right_detector_process
-      24  set_line_bit
+       8  process_detectors
+      54  right_detector_process
+      28  set_line_bit
       14  strong_detect
 
  
- 238 bytes in segment CODE
+ 192 bytes in segment CODE
    2 bytes in segment DATA16_Z
  
- 238 bytes of CODE memory
+ 192 bytes of CODE memory
    2 bytes of DATA memory
 
 Errors: none

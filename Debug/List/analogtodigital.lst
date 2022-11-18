@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:33
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:36
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\analogtodigital.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW4DD1.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW1F0F.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\analogtodigital.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -25,7 +25,7 @@
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohs --multiplier=32
+#        ./ --core=430X --data_model=small -Ohz --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -296,70 +296,69 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     HEXtoBCD:
     108            unsigned int value;
     109            for(int i=RESET_STATE; i < adc_num_chars; i++) {
-   \   000000   7E403000     MOV.B   #0x30, R14
+   \   000000   0E43         MOV.W   #0x0, R14
+   \   000002   7D403000     MOV.B   #0x30, R13
     110              adc_char[i] = CHAR_0;
-   \   000004   C24E....     MOV.B   R14, &adc_char
-   \   000008   C24E....     MOV.B   R14, &adc_char + 1
-   \   00000C   C24E....     MOV.B   R14, &adc_char + 2
-   \   000010   C24E....     MOV.B   R14, &adc_char + 3
-    111            }
-   \   000014   3C90E803     CMP.W   #0x3e8, R12
-   \   000018   0A28         JNC     ??HEXtoBCD_3
-    112            while (hex_value > Above_999){
-    113              hex_value = hex_value - (Above_999+add_one);
    \                     ??HEXtoBCD_0:
-   \   00001A   3C5018FC     ADD.W   #0xfc18, R12
+   \   000006   CE4D....     MOV.B   R13, adc_char(R14)
+    111            }
+   \   00000A   1E53         ADD.W   #0x1, R14
+   \   00000C   2E92         CMP.W   #0x4, R14
+   \   00000E   FB3B         JL      ??HEXtoBCD_0
+    112            while (hex_value > Above_999){
+   \                     ??HEXtoBCD_1:
+   \   000010   3C90E803     CMP.W   #0x3e8, R12
+   \   000014   0828         JNC     ??HEXtoBCD_6
+    113              hex_value = hex_value - (Above_999+add_one);
+   \   000016   3C5018FC     ADD.W   #0xfc18, R12
     114              value = value + add_one;
-   \   00001E   1F53         ADD.W   #0x1, R15
+   \   00001A   1F53         ADD.W   #0x1, R15
     115              adc_char[adc_c_0] = CHAR_0 + value;
-   \   000020   4D4F         MOV.B   R15, R13
-   \   000022   4D5E         ADD.B   R14, R13
-   \   000024   C24D....     MOV.B   R13, &adc_char
+   \   00001C   4E4F         MOV.B   R15, R14
+   \   00001E   4E5D         ADD.B   R13, R14
+   \   000020   C24E....     MOV.B   R14, &adc_char
+   \   000024   F53F         JMP     ??HEXtoBCD_1
     116            }
-   \   000028   3C90E803     CMP.W   #0x3e8, R12
-   \   00002C   F62F         JC      ??HEXtoBCD_0
     117            value = RESET_STATE;
-   \                     ??HEXtoBCD_3:
-   \   00002E   0F43         MOV.W   #0x0, R15
-   \   000030   3C906400     CMP.W   #0x64, R12
-   \   000034   0A28         JNC     ??HEXtoBCD_4
+   \                     ??HEXtoBCD_6:
+   \   000026   0F43         MOV.W   #0x0, R15
+   \   000028   073C         JMP     ??HEXtoBCD_4
     118            while (hex_value > Above_99){
     119              hex_value = hex_value - (Above_99+add_one);
-   \                     ??HEXtoBCD_1:
-   \   000036   3C509CFF     ADD.W   #0xff9c, R12
+   \                     ??HEXtoBCD_2:
+   \   00002A   3C509CFF     ADD.W   #0xff9c, R12
     120              value = value + add_one;
-   \   00003A   1F53         ADD.W   #0x1, R15
+   \   00002E   1F53         ADD.W   #0x1, R15
     121              adc_char[adc_c_1] = CHAR_0 + value;
-   \   00003C   4D4F         MOV.B   R15, R13
-   \   00003E   4D5E         ADD.B   R14, R13
-   \   000040   C24D....     MOV.B   R13, &adc_char + 1
+   \   000030   4E4F         MOV.B   R15, R14
+   \   000032   4E5D         ADD.B   R13, R14
+   \   000034   C24E....     MOV.B   R14, &adc_char + 1
     122            }
-   \   000044   3C906400     CMP.W   #0x64, R12
-   \   000048   F62F         JC      ??HEXtoBCD_1
-    123            value = RESET_STATE;
    \                     ??HEXtoBCD_4:
-   \   00004A   0F43         MOV.W   #0x0, R15
-   \   00004C   3C900A00     CMP.W   #0xa, R12
-   \   000050   0A28         JNC     ??HEXtoBCD_5
+   \   000038   3C906400     CMP.W   #0x64, R12
+   \   00003C   F62F         JC      ??HEXtoBCD_2
+    123            value = RESET_STATE;
+   \   00003E   0F43         MOV.W   #0x0, R15
+   \   000040   073C         JMP     ??HEXtoBCD_5
     124            while (hex_value > Above_9){
     125              hex_value = hex_value - (Above_9+add_one);
-   \                     ??HEXtoBCD_2:
-   \   000052   3C50F6FF     ADD.W   #0xfff6, R12
+   \                     ??HEXtoBCD_3:
+   \   000042   3C50F6FF     ADD.W   #0xfff6, R12
     126              value = value + add_one;
-   \   000056   1F53         ADD.W   #0x1, R15
+   \   000046   1F53         ADD.W   #0x1, R15
     127              adc_char[adc_c_2] = CHAR_0 + value;
-   \   000058   4D4F         MOV.B   R15, R13
-   \   00005A   4D5E         ADD.B   R14, R13
-   \   00005C   C24D....     MOV.B   R13, &adc_char + 2
+   \   000048   4E4F         MOV.B   R15, R14
+   \   00004A   4E5D         ADD.B   R13, R14
+   \   00004C   C24E....     MOV.B   R14, &adc_char + 2
     128            }
-   \   000060   3C900A00     CMP.W   #0xa, R12
-   \   000064   F62F         JC      ??HEXtoBCD_2
-    129            adc_char[adc_c_3] = CHAR_0 + hex_value;
    \                     ??HEXtoBCD_5:
-   \   000066   4C5E         ADD.B   R14, R12
-   \   000068   C24C....     MOV.B   R12, &adc_char + 3
+   \   000050   3C900A00     CMP.W   #0xa, R12
+   \   000054   F62F         JC      ??HEXtoBCD_3
+    129            adc_char[adc_c_3] = CHAR_0 + hex_value;
+   \   000056   4C5D         ADD.B   R13, R12
+   \   000058   C24C....     MOV.B   R12, &adc_char + 3
     130          }
-   \   00006C   1001         RETA
+   \   00005C   1001         RETA
 
    \                                 In  segment INTVEC, offset 0x3a, root
    \                     `??ADC_ISR::??INTVEC 58`:
@@ -384,7 +383,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  ADC_ISR::??INTVEC 58
        2  ADC_Left_Detect
        2  ADC_Right_Detect
-     110  HEXtoBCD
+      94  HEXtoBCD
      108  Init_ADC
        2  V_Thumb
        2  _A_ADCCTL0_L
@@ -398,13 +397,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        4  adc_char
 
  
- 218 bytes in segment CODE
+ 202 bytes in segment CODE
   16 bytes in segment DATA16_AN
   12 bytes in segment DATA16_Z
    2 bytes in segment INTVEC
  126 bytes in segment ISR_CODE
  
- 344 bytes of CODE  memory
+ 328 bytes of CODE  memory
    0 bytes of CONST memory (+  2 bytes shared)
   12 bytes of DATA  memory (+ 16 bytes shared)
 

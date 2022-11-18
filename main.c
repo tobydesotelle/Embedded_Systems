@@ -51,17 +51,11 @@ void main(void){
   BACKLIGHT = 30000;
   while(!((display_bits) & (Splash_bit))){
   }
-  P3OUT |= IOT_EN_CPU;
-  
-  //test=(int *)malloc(sizeof(int)*10000);
-  //int test[1000];
-  //test[0]=1;
-//  malloc(10);
-  //serial_bits= 1;
+  IOT_main();
   while(ALWAYS){
     menu_state_machine();
-    iot_wifi_connect();
-    
+    //iot_wifi_connect();
+    get_command();
     process_switches();
     Display_Process();
     if(serial_bits & UCA1_TX){

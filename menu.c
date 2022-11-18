@@ -10,6 +10,12 @@ void menu_state_machine(){
   case Start_menu://start menu will have bat voltage and othe general info
     start_menu();
     break;
+//  case Connneting_menu:
+//    connecting_screen();
+//    break;
+  case IP_Display:
+    display_IP();
+    break;
   case Main_menu:
     main_menu();
     break;
@@ -22,22 +28,15 @@ void menu_state_machine(){
   case PID_menu:
     pid_menu();
     break;
+    
   default:
     menu_state = Main_menu;
     break;
   }
   
 }
-
 void start_menu(){
   Init_Display_1();
-  //while(!(SW1_AND_TOGGLED)  && !(SW2_AND_TOGGLED)){
-  //}
-  
-  SW1_CLEAR;
-  SW2_CLEAR;
-  menu_state = Main_menu;
-  lcd_4line();
   clear_display();
 }
 void main_menu(){

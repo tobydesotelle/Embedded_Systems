@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          15/Nov/2022  23:16:34
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:37
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW5129.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW21F7.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -25,7 +25,7 @@
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohs --multiplier=32
+#        ./ --core=430X --data_model=small -Ohz --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -199,105 +199,20 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     _A_TB3CCR4_L:
    \   000000                DS8 2
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      11          void Init_Timers(void){
    \                     Init_Timers:
      12            Init_Timer_B0();
-   \   000000   3F400002     MOV.W   #0x200, R15
-   \   000004   824F8003     MOV.W   R15, &0x380
-   \   000008   A2D28003     BIS.W   #0x4, &0x380
-   \   00000C   B2D020008003 BIS.W   #0x20, &0x380
-   \   000012   B2D0C0008003 BIS.W   #0xc0, &0x380
-   \   000018   B2400700A003 MOV.W   #0x7, &0x3a0
-   \   00001E   B2406A189203 MOV.W   #0x186a, &0x392
-   \   000024   92C38203     BIC.W   #0x1, &0x382
-   \   000028   B2D010008203 BIS.W   #0x10, &0x382
-   \   00002E   3E40A861     MOV.W   #0x61a8, R14
-   \   000032   824E9603     MOV.W   R14, &0x396
-   \   000036   92C38603     BIC.W   #0x1, &0x386
-   \   00003A   A2C38003     BIC.W   #0x2, &0x380
-   \   00003E   92C38003     BIC.W   #0x1, &0x380
+   \   000000   ........     CALLA   #Init_Timer_B0
      13            Init_Timer_B1();
-   \   000042   824FC003     MOV.W   R15, &0x3c0
-   \   000046   A2D2C003     BIS.W   #0x4, &0x3c0
-   \   00004A   B2D02000C003 BIS.W   #0x20, &0x3c0
-   \   000050   B2D0C000C003 BIS.W   #0xc0, &0x3c0
-   \   000056   B2400700E003 MOV.W   #0x7, &0x3e0
-   \   00005C   824ED203     MOV.W   R14, &0x3d2
-   \   000060   92C3C203     BIC.W   #0x1, &0x3c2
-   \   000064   B2D01000C203 BIS.W   #0x10, &0x3c2
-   \   00006A   824ED603     MOV.W   R14, &0x3d6
-   \   00006E   B2D01000C603 BIS.W   #0x10, &0x3c6
-   \   000074   A2C3C003     BIC.W   #0x2, &0x3c0
-   \   000078   92C3C003     BIC.W   #0x1, &0x3c0
+   \   000004   ........     CALLA   #Init_Timer_B1
      14            Init_Timer_B2();
-   \   00007C   824F0004     MOV.W   R15, &0x400
-   \   000080   A2D20004     BIS.W   #0x4, &0x400
-   \   000084   B2D020000004 BIS.W   #0x20, &0x400
-   \   00008A   B2D0C0000004 BIS.W   #0xc0, &0x400
-   \   000090   B24007002004 MOV.W   #0x7, &0x420
-   \   000096   B2406A181204 MOV.W   #0x186a, &0x412
-   \   00009C   B2406A181404 MOV.W   #0x186a, &0x414
-   \   0000A2   824E1604     MOV.W   R14, &0x416
-   \   0000A6   B2D010000604 BIS.W   #0x10, &0x406
-   \   0000AC   A2C30004     BIC.W   #0x2, &0x400
-   \   0000B0   92C30004     BIC.W   #0x1, &0x400
+   \   000008   ........     CALLA   #Init_Timer_B2
      15            Init_Timer_B3();
-   \   0000B4   824F4004     MOV.W   R15, &0x440
-   \   0000B8                REQUIRE ?Subroutine0
-   \   0000B8                REQUIRE _A_TB0CTL_L
-   \   0000B8                REQUIRE _A_TB0EX0_L
-   \   0000B8                REQUIRE _A_TB0CCR0_L
-   \   0000B8                REQUIRE _A_TB0CCTL0_L
-   \   0000B8                REQUIRE _A_TB0CCR2_L
-   \   0000B8                REQUIRE _A_TB0CCTL2_L
-   \   0000B8                REQUIRE _A_TB1CTL_L
-   \   0000B8                REQUIRE _A_TB1EX0_L
-   \   0000B8                REQUIRE _A_TB1CCR0_L
-   \   0000B8                REQUIRE _A_TB1CCTL0_L
-   \   0000B8                REQUIRE _A_TB1CCR2_L
-   \   0000B8                REQUIRE _A_TB1CCTL2_L
-   \   0000B8                REQUIRE _A_TB2CTL_L
-   \   0000B8                REQUIRE _A_TB2EX0_L
-   \   0000B8                REQUIRE _A_TB2CCR0_L
-   \   0000B8                REQUIRE _A_TB2CCR1_L
-   \   0000B8                REQUIRE _A_TB2CCR2_L
-   \   0000B8                REQUIRE _A_TB2CCTL2_L
-   \   0000B8                REQUIRE _A_TB3CTL_L
-   \   0000B8                REQUIRE _A_TB3CCR0_L
-   \   0000B8                REQUIRE _A_TB3CCTL0_L
-   \   0000B8                REQUIRE _A_TB3CCTL1_L
-   \   0000B8                REQUIRE _A_TB3CCR2_L
-   \   0000B8                REQUIRE _A_TB3CCTL2_L
-   \   0000B8                REQUIRE _A_TB3CCR4_L
-   \   0000B8                REQUIRE _A_TB3CCTL3_L
-   \   0000B8                REQUIRE _A_TB3CCR1_L
-   \   0000B8                REQUIRE _A_TB3CCTL4_L
-   \   0000B8                REQUIRE _A_TB3CCR3_L
-   \   0000B8                REQUIRE _A_TB3CCTL5_L
-   \   0000B8                // Fall through to label ?Subroutine0
+   \   00000C   ........     BRA     #Init_Timer_B3
      16          }
 
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine0:
-   \   000000   A2D24004     BIS.W   #0x4, &0x440
-   \   000004   B2D010004004 BIS.W   #0x10, &0x440
-   \   00000A   B24024F45204 MOV.W   #0xf424, &0x452
-   \   000010   B2D010004204 BIS.W   #0x10, &0x442
-   \   000016   3F40E000     MOV.W   #0xe0, R15
-   \   00001A   824F4404     MOV.W   R15, &0x444
-   \   00001E   B2D010004404 BIS.W   #0x10, &0x444
-   \   000024   82435604     MOV.W   #0x0, &0x456
-   \   000028   824F4604     MOV.W   R15, &0x446
-   \   00002C   82435A04     MOV.W   #0x0, &0x45a
-   \   000030   824F4804     MOV.W   R15, &0x448
-   \   000034   82435404     MOV.W   #0x0, &0x454
-   \   000038   824F4A04     MOV.W   R15, &0x44a
-   \   00003C   82435804     MOV.W   #0x0, &0x458
-   \   000040   824F4C04     MOV.W   R15, &0x44c
-   \   000044   1001         RETA
-
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      17          void Init_Timer_B0(void){
    \                     Init_Timer_B0:
      18            TB0CTL = TBSSEL__SMCLK;       // SMCLK source
@@ -341,7 +256,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000040                REQUIRE _A_TB0CCR2_L
    \   000040                REQUIRE _A_TB0CCTL2_L
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      39          void Init_Timer_B1(void){
    \                     Init_Timer_B1:
      40            TB1CTL = TBSSEL__SMCLK; // SMCLK source
@@ -386,7 +301,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000042                REQUIRE _A_TB1CCR2_L
    \   000042                REQUIRE _A_TB1CCTL2_L
 
-   \                                 In  segment CODE, align 2, keep-with-next
+   \                                 In  segment CODE, align 2
      62          void Init_Timer_B2(void){
    \                     Init_Timer_B2:
      63            TB2CTL = TBSSEL__SMCLK; // SMCLK source
@@ -439,43 +354,57 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      89            TB3CTL = TBSSEL__SMCLK; // SMCLK 
    \   000000   B24000024004 MOV.W   #0x200, &0x440
      90            TB3CTL |= TBCLR;        // Resets TB3R, clock divider, count direction
-   \   000006   ....         JMP     ?Subroutine0
-   \   000008   0343         NOP
-   \   00000A                REQUIRE _A_TB3CTL_L
-   \   00000A                REQUIRE _A_TB3CCR0_L
-   \   00000A                REQUIRE _A_TB3CCTL0_L
-   \   00000A                REQUIRE _A_TB3CCTL1_L
-   \   00000A                REQUIRE _A_TB3CCR2_L
-   \   00000A                REQUIRE _A_TB3CCTL2_L
-   \   00000A                REQUIRE _A_TB3CCR4_L
-   \   00000A                REQUIRE _A_TB3CCTL3_L
-   \   00000A                REQUIRE _A_TB3CCR1_L
-   \   00000A                REQUIRE _A_TB3CCTL4_L
-   \   00000A                REQUIRE _A_TB3CCR3_L
-   \   00000A                REQUIRE _A_TB3CCTL5_L
+   \   000006   A2D24004     BIS.W   #0x4, &0x440
      91            //TB3CTL |= ID__8;
      92            TB3CTL |= MC__UP;       // Up Mode
+   \   00000A   B2D010004004 BIS.W   #0x10, &0x440
      93            
      94            
      95            TB3CCR0 = WHEEL_PERIOD;   // PWM Period
+   \   000010   B24024F45204 MOV.W   #0xf424, &0x452
      96            TB3CCTL0 |= CCIE;         // Enable interrupt
+   \   000016   B2D010004204 BIS.W   #0x10, &0x442
      97            
      98            TB3CCTL1 = OUTMOD_7;             // CCR1 reset/set
+   \   00001C   3F40E000     MOV.W   #0xe0, R15
+   \   000020   824F4404     MOV.W   R15, &0x444
      99            TB3CCTL1 |= CCIE;         // Enable interrupt
+   \   000024   B2D010004404 BIS.W   #0x10, &0x444
     100            RIGHT_FORWARD_SPEED = WHEEL_OFF; // P6.0 Right Forward off
+   \   00002A   82435604     MOV.W   #0x0, &0x456
     101            
     102            TB3CCTL2 = OUTMOD_7;             // CCR2 reset/set
+   \   00002E   824F4604     MOV.W   R15, &0x446
     103            LEFT_FORWARD_SPEED = WHEEL_OFF;  // P6.1 Left Forward off
+   \   000032   82435A04     MOV.W   #0x0, &0x45a
     104            
     105            TB3CCTL3 = OUTMOD_7;             // CCR3 reset/set
+   \   000036   824F4804     MOV.W   R15, &0x448
     106            RIGHT_REVERSE_SPEED = WHEEL_OFF; // P6.2 Right Reverse off
+   \   00003A   82435404     MOV.W   #0x0, &0x454
     107            
     108            TB3CCTL4 = OUTMOD_7;             // CCR4 reset/set
+   \   00003E   824F4A04     MOV.W   R15, &0x44a
     109            LEFT_REVERSE_SPEED = WHEEL_OFF;  // P6.3 Left Reverse off
+   \   000042   82435804     MOV.W   #0x0, &0x458
     110            
     111            TB3CCTL5 = OUTMOD_7;             // CCR4 reset/set
+   \   000046   824F4C04     MOV.W   R15, &0x44c
     112            
     113          }
+   \   00004A   1001         RETA
+   \   00004C                REQUIRE _A_TB3CTL_L
+   \   00004C                REQUIRE _A_TB3CCR0_L
+   \   00004C                REQUIRE _A_TB3CCTL0_L
+   \   00004C                REQUIRE _A_TB3CCTL1_L
+   \   00004C                REQUIRE _A_TB3CCR2_L
+   \   00004C                REQUIRE _A_TB3CCTL2_L
+   \   00004C                REQUIRE _A_TB3CCR4_L
+   \   00004C                REQUIRE _A_TB3CCTL3_L
+   \   00004C                REQUIRE _A_TB3CCR1_L
+   \   00004C                REQUIRE _A_TB3CCTL4_L
+   \   00004C                REQUIRE _A_TB3CCR3_L
+   \   00004C                REQUIRE _A_TB3CCTL5_L
     114          
     115          
 
@@ -488,18 +417,21 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   Init_Timer_B2
       4   Init_Timer_B3
       4   Init_Timers
+        4   -> Init_Timer_B0
+        4   -> Init_Timer_B1
+        4   -> Init_Timer_B2
+        0   -> Init_Timer_B3
 
 
    Segment part sizes:
 
    Bytes  Function/Label
    -----  --------------
-      70  ?Subroutine0
       64  Init_Timer_B0
       66  Init_Timer_B1
       62  Init_Timer_B2
-      10  Init_Timer_B3
-     184  Init_Timers
+      76  Init_Timer_B3
+      16  Init_Timers
        2  _A_TB0CCR0_L
        2  _A_TB0CCR2_L
        2  _A_TB0CCTL0_L
@@ -532,10 +464,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_TB3CTL_L
 
  
- 456 bytes in segment CODE
+ 284 bytes in segment CODE
   60 bytes in segment DATA16_AN
  
- 456 bytes of CODE memory
+ 284 bytes of CODE memory
    0 bytes of DATA memory (+ 60 bytes shared)
 
 Errors: none

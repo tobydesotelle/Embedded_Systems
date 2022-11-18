@@ -166,7 +166,7 @@ void Init_Port3(char smclk){
 
   P3SEL0 &= ~IOT_LINK_CPU;
   P3SEL1 &= ~IOT_LINK_CPU;
-  P3OUT |= IOT_LINK_CPU;
+  P3OUT &= IOT_LINK_CPU;
   P3DIR |= IOT_LINK_CPU;
 
   P3SEL0 &= ~IOT_EN_CPU;

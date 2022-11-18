@@ -12,8 +12,25 @@ extern volatile unsigned char update_display;
 extern volatile unsigned char display_changed;
 extern char display_line[DISPLAYLINES][DISPLAYCHARS];
 extern volatile unsigned short display_bits;
+char ani_state;
+unsigned char connect_state;
+extern char IP_Addy[21];
+extern char SSID[11];
 
 
+#define Trying_to_connect	(0x00)
+void Connecting_machine(){
+  switch(connect_state){
+  case Trying_to_connect:
+    Connecting_Display();
+    if(display_bits & Display_IP)connect_state = IP_Display;
+    break;
+  case IP_Display:
+    display_IP();
+    break;
+  }
+  
+}
 void Init_Display(void){
     strcpy(display_line[DISPLAY0], "  MSP 430 ");
     strcpy(display_line[DISPLAY1], "Powered on");
@@ -25,10 +42,19 @@ void Init_Display(void){
   
 }
 void Init_Display_1(void){
-    lcd_BIG_mid();
-    strcpy(display_line[DISPLAY0], "Tobias    ");
-    strcpy(display_line[DISPLAY1], "Homework 9");
-    strcpy(display_line[DISPLAY2], "Desotelle ");
+    //lcd_BIG_mid();
+    strcpy(display_line[DISPLAY0], "Connecting");
+    strcpy(display_line[DISPLAY1], "          ");
+    //strcpy(display_line[DISPLAY2], "Desotelle ");
+  display_changed = TRUE;
+  update_display=UPDATED;
+  Display_Process();
+}
+void Connecting_Display(void){
+    //lcd_BIG_mid();
+    strcpy(display_line[DISPLAY0], "Connecting");
+    strcpy(display_line[DISPLAY1], "          ");
+    //strcpy(display_line[DISPLAY2], "Desotelle ");
   display_changed = TRUE;
   update_display=UPDATED;
   Display_Process();
@@ -42,7 +68,25 @@ void Display_Process(void){
     }
   }
 }
-char ani_state;
+void display_IP(){
+  if(display_bits & Display_IP){
+    	char temp_ip[11];
+	//strncpy(temp_ip,SSID,10);
+	change_display_line("connected ",DISPLAY0);
+    	change_display_line(SSID,DISPLAY1);
+  	strncpy(temp_ip,IP_Addy,10);
+	change_display_line(temp_ip,DISPLAY2);
+	strncpy(temp_ip,&IP_Addy[10],10);
+	change_display_line(temp_ip,DISPLAY3);
+	
+  }
+  else{
+    change_display_line("connecting",DISPLAY0);
+  }
+  display_changed = TRUE;
+  update_display=UPDATED;
+  Display_Process();
+}
 void waiting_animation(){
   switch(ani_state){
   case 0:
