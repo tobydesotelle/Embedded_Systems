@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          18/Nov/2022  00:08:17
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:50
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\serial.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW636A.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAE68.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\serial.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -261,67 +261,65 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      36          volatile unsigned int Num_bufs_to_process;
    \                     Num_bufs_to_process:
    \   000000                DS8 2
-     37          #define NUM_Commands		(10)
-     38          #define NUM_Command_chars	(16)
+     37          
 
    \                                 In  segment DATA16_Z, align 1, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     39          char Commands[NUM_Commands][NUM_Command_chars];
+     38          char Commands[NUM_Commands][NUM_Command_chars];
    \                     Commands:
    \   000000                DS8 160
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     40          unsigned int write_command_line;
+     39          unsigned int write_command_line;
    \                     write_command_line:
    \   000000                DS8 2
+     40          
      41          
      42          
-     43          #define Command_bit      (0x80)
-     44          
-     45          #define Command_Char     ('^')
-     46          #define Command_End      (0x0D)
-     47          #define Command_LF       ('\n')
-     48          #define Test_Command	 ("^^")
-     49          #define Fast_Command 	 ("^F")
-     50          #define Slow_Command 	 ("^S")
-     51          
+     43          
+     44          #define Command_Char     ('^')
+     45          #define Command_End      (0x0D)
+     46          #define Command_LF       ('\n')
+     47          #define Test_Command	 ("^^")
+     48          #define Fast_Command 	 ("^F")
+     49          #define Slow_Command 	 ("^S")
+     50          
+     51          #define Am_I_connected	 ("CONNECT")
      52          
-     53          #define CR		 ("\r")
-     54          #define NL		 ("\n")
-     55          
+     53          
+     54          
+     55          //process_buf_0;
      56          
-     57          //process_buf_0;
-     58          
 
    \                                 In  segment CODE, align 2, keep-with-next
-     59          void send(char *string, char port){
+     57          void send(char *string, char port){
    \                     send:
-     60            i=0;
+     58            i=0;
    \   000000   8243....     MOV.W   #0x0, &i
-     61            Tx_String = &string[0];
+     59            Tx_String = &string[0];
    \   000004   824C....     MOV.W   R12, &Tx_String
-     62            switch(port){
+     60            switch(port){
    \   000008   4D83         SUB.B   #0x0, R13
    \   00000A   0324         JEQ     ??send_0
    \   00000C   5D83         SUB.B   #0x1, R13
    \   00000E   0924         JEQ     ??send_1
    \   000010   1001         RETA
-     63            case Send_UCA0:
-     64              UCA0IE |= UCTXIE;
+     61            case Send_UCA0:
+     62              UCA0IE |= UCTXIE;
    \                     ??send_0:
    \   000012   A2D31A05     BIS.W   #0x2, &0x51a
-     65              UCA0TXBUF = Tx_String[i++];
+     63              UCA0TXBUF = Tx_String[i++];
    \   000016   1F42....     MOV.W   &Tx_String, R15
    \   00001A   6F4F         MOV.B   @R15, R15
    \   00001C   824F0E05     MOV.W   R15, &0x50e
    \   000020   ....         JMP     ?Subroutine0
-     66              break;
-     67            case Send_UCA1:
-     68              UCA1IE |= UCTXIE;
+     64              break;
+     65            case Send_UCA1:
+     66              UCA1IE |= UCTXIE;
    \                     ??send_1:
    \   000022   A2D39A05     BIS.W   #0x2, &0x59a
-     69              UCA1TXBUF = Tx_String[i++];
+     67              UCA1TXBUF = Tx_String[i++];
    \   000026   1F42....     MOV.W   &Tx_String, R15
    \   00002A   6F4F         MOV.B   @R15, R15
    \   00002C   824F8E05     MOV.W   R15, &0x58e
@@ -331,83 +329,93 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000030                REQUIRE _A_UCA1IE_L
    \   000030                REQUIRE _A_UCA1TXBUF_L
    \   000030                // Fall through to label ?Subroutine0
-     70              break;
-     71            }
-     72            
-     73          }
+     68              break;
+     69            }
+     70            
+     71          }
 
    \                                 In  segment CODE, align 2
    \                     ?Subroutine0:
    \   000000   9243....     MOV.W   #0x1, &i
    \   000004   1001         RETA
-     74          
 
    \                                 In  segment CODE, align 2
-     75          void get_command(){
+     72          void get_command(){
    \                     get_command:
-     76            if(Num_bufs_to_process > 0){
+     73            if(Num_bufs_to_process > 0){
    \   000000   8293....     CMP.W   #0x0, &Num_bufs_to_process
-   \   000004   2A24         JEQ     ??get_command_1
-     77              if((char_buf = strstr(process_buf_0[process_line] , "^"))!=NULL){
+   \   000004   2824         JEQ     ??get_command_1
+     74              if((char_buf = strstr(process_buf_0[process_line] , "^"))!=NULL){
    \   000006   3D40....     MOV.W   #`?<Constant "^">`, R13
-   \   00000A   ........     CALLA   #??Subroutine9_0
-   \                     ??CrossCallReturnLabel_8:
-   \   00000E   2324         JEQ     ??get_command_4
-     78                char_buf++;
+   \   00000A   ........     CALLA   #??Subroutine11_0
+   \                     ??CrossCallReturnLabel_9:
+   \   00000E   2124         JEQ     ??get_command_4
+     75                char_buf++;
    \   000010   9253....     ADD.W   #0x1, &char_buf
-     79                //serial_bits |= Send_next_command;
-     80                int j=0;    
+     76                //serial_bits |= Send_next_command;
+     77                int j=0;    
    \   000014   0F43         MOV.W   #0x0, R15
-   \   000016   173C         JMP     ??get_command_3
-     81                while(*char_buf != '\n'){//HAVE A COMMAND QUEUE
-     82          	Commands[write_command_line][j]=*char_buf;
+   \   000016   133C         JMP     ??get_command_7
+     78                while(*char_buf != '\n'){//HAVE A COMMAND QUEUE
+     79          	if(*char_buf == '^'){
    \                     ??get_command_0:
-   \   000018   1D42....     MOV.W   &write_command_line, R13
-   \   00001C   5D0E         RLAM.W  #0x4, R13
-   \   00001E   0D5F         ADD.W   R15, R13
-   \   000020   CD4E....     MOV.B   R14, Commands(R13)
-     83          	char_buf++;
-   \   000024   9253....     ADD.W   #0x1, &char_buf
-     84          	if(*char_buf == '^')write_command_line++;
-   \   000028   1E42....     MOV.W   &char_buf, R14
-   \   00002C   6E4E         MOV.B   @R14, R14
-   \   00002E   7E905E00     CMP.B   #0x5e, R14
-   \   000032   0220         JNE     ??get_command_5
-   \   000034   9253....     ADD.W   #0x1, &write_command_line
+   \   000018   7E905E00     CMP.B   #0x5e, R14
+   \   00001C   0320         JNE     ??get_command_8
+     80          	  write_command_line++;
+   \   00001E   9253....     ADD.W   #0x1, &write_command_line
+     81          	  j=0;
+   \   000022   0F43         MOV.W   #0x0, R15
+     82          	}
+     83          	Commands[write_command_line][j]=*char_buf;
+   \                     ??get_command_8:
+   \   000024   1E42....     MOV.W   &char_buf, R14
+   \   000028   1D42....     MOV.W   &write_command_line, R13
+   \   00002C   5D0E         RLAM.W  #0x4, R13
+   \   00002E   0D5F         ADD.W   R15, R13
+   \   000030   ED4E....     MOV.B   @R14, Commands(R13)
+     84          	char_buf++;
+   \   000034   9253....     ADD.W   #0x1, &char_buf
      85          	if(write_command_line > NUM_Commands-1) write_command_line = RESET;
-   \                     ??get_command_5:
-   \   000038   B2900A00.... CMP.W   #0xa, &write_command_line
-   \   00003E   0228         JNC     ??get_command_6
-   \   000040   8243....     MOV.W   #0x0, &write_command_line
+   \   000038   ........     CALLA   #?Subroutine6
      86          	j++;
-   \                     ??get_command_6:
-   \   000044   1F53         ADD.W   #0x1, R15
+   \                     ??CrossCallReturnLabel_2:
+   \   00003C   1F53         ADD.W   #0x1, R15
+   \                     ??get_command_7:
+   \   00003E   1E42....     MOV.W   &char_buf, R14
+   \   000042   6E4E         MOV.B   @R14, R14
+   \   000044   7E900A00     CMP.B   #0xa, R14
+   \   000048   E723         JNE     ??get_command_0
      87                }
-   \                     ??get_command_3:
-   \   000046   1E42....     MOV.W   &char_buf, R14
-   \   00004A   6E4E         MOV.B   @R14, R14
-   \   00004C   7E900A00     CMP.B   #0xa, R14
-   \   000050   E323         JNE     ??get_command_0
      88                write_command_line++;
-   \   000052   9253....     ADD.W   #0x1, &write_command_line
-     89              }
-     90              
-     91              //serial_bits |= ~Send_next_command;
-     92              Num_bufs_to_process--;
+   \   00004A   9253....     ADD.W   #0x1, &write_command_line
+     89                if(write_command_line > NUM_Commands-1) write_command_line = RESET;
+   \   00004E   ........     CALLA   #?Subroutine6
+     90              }
+     91              
+     92              //serial_bits |= ~Send_next_command;
+     93              Num_bufs_to_process--;
    \                     ??get_command_4:
-   \   000056   ........     CALLA   #?Subroutine2
-     93              //serial_bits &= ~Process_buffer_0;
-     94              clear_buffer();
-     95              process_line++;
-     96              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
-     97            }
-     98            //return void;
-     99          }
+   \   000052   ........     CALLA   #?Subroutine5
+     94              //serial_bits &= ~Process_buffer_0;
+     95              clear_buffer();
+     96              process_line++;
+     97              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+     98            }
+     99            //return void;
+    100          }
    \                     ??get_command_1:
-   \   00005A   1001         RETA
+   \   000056   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine2:
+   \                     ?Subroutine6:
+   \   000000   B2900A00.... CMP.W   #0xa, &write_command_line
+   \   000006   0228         JNC     ??get_command_5
+   \   000008   8243....     MOV.W   #0x0, &write_command_line
+   \                     ??get_command_5:
+   \   00000C   1001         RETA
+
+   \                                 In  segment CODE, align 2
+   \                     ?Subroutine5:
    \   000000   B253....     ADD.W   #0xffff, &Num_bufs_to_process
    \   000004   ........     CALLA   #clear_buffer
    \   000008   9253....     ADD.W   #0x1, &process_line
@@ -418,124 +426,150 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000016   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ??Subroutine9_0:
-   \   000000   ........     CALLA   #?Subroutine7
-   \                     ??CrossCallReturnLabel_12:
+   \                     ?Subroutine9:
+   \   000000   1C42....     MOV.W   &process_line, R12
+   \   000004   5C0E         RLAM.W  #0x4, R12
+   \   000006   5C06         RLAM.W  #0x2, R12
+   \   000008   3C50....     ADD.W   #process_buf_0, R12
+   \   00000C   1001         RETA
+
+   \                                 In  segment CODE, align 2
+   \                     ??Subroutine11_0:
+   \   000000   ........     CALLA   #?Subroutine9
+   \                     ??CrossCallReturnLabel_14:
    \   000004   ........     CALLA   #__iar_Strstr
    \   000008   824C....     MOV.W   R12, &char_buf
    \   00000C   0C93         CMP.W   #0x0, R12
    \   00000E   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine7:
-   \   000000   1C42....     MOV.W   &process_line, R12
-   \   000004   5C0E         RLAM.W  #0x4, R12
-   \   000006   5C06         RLAM.W  #0x2, R12
-   \   000008   3C50....     ADD.W   #process_buf_0, R12
-   \   00000C   1001         RETA
-    100          
-
-   \                                 In  segment CODE, align 2
-    101          void process_buffer_0(char *look_for){
-   \                     process_buffer_0:
+    101          void get_connected(){
+   \                     get_connected:
     102            if(Num_bufs_to_process > 0){
    \   000000   8293....     CMP.W   #0x0, &Num_bufs_to_process
+   \   000004   0D24         JEQ     ??get_connected_0
+    103              if(strstr(process_buf_0[process_line] , Am_I_connected)!=NULL){
+   \   000006   3D40....     MOV.W   #`?<Constant "CONNECT">`, R13
+   \   00000A   ........     CALLA   #?Subroutine9
+   \                     ??CrossCallReturnLabel_12:
+   \   00000E   ........     CALLA   #__iar_Strstr
+   \   000012   0C93         CMP.W   #0x0, R12
+   \   000014   0324         JEQ     ??get_connected_2
+    104                serial_bits |= Send_next_command;
+   \   000016   B2D00008.... BIS.W   #0x800, &serial_bits
+    105              }
+    106              Num_bufs_to_process--;
+   \                     ??get_connected_2:
+   \   00001C   ........     CALLA   #?Subroutine5
+    107              clear_buffer();
+    108              process_line++;
+    109              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+    110            }
+    111          }
+   \                     ??get_connected_0:
+   \   000020   1001         RETA
+
+   \                                 In  segment CODE, align 2
+    112          void process_buffer_0(char *look_for){
+   \                     process_buffer_0:
+    113            if(Num_bufs_to_process > 0){
+   \   000000   8293....     CMP.W   #0x0, &Num_bufs_to_process
    \   000004   0C24         JEQ     ??process_buffer_0_0
-    103              if(strcmp(process_buf_0[process_line] , look_for) == 0){
+    114              if(strcmp(process_buf_0[process_line] , look_for) == 0){
    \   000006   0D4C         MOV.W   R12, R13
-   \   000008   ........     CALLA   #?Subroutine7
-   \                     ??CrossCallReturnLabel_11:
+   \   000008   ........     CALLA   #?Subroutine9
+   \                     ??CrossCallReturnLabel_13:
    \   00000C   ........     CALLA   #strcmp
    \   000010   0C93         CMP.W   #0x0, R12
    \   000012   0320         JNE     ??process_buffer_0_2
-    104                serial_bits |= Send_next_command;
+    115                serial_bits |= Send_next_command;
    \   000014   B2D00008.... BIS.W   #0x800, &serial_bits
-    105              }
-    106              Num_bufs_to_process--;
+    116              }
+    117              Num_bufs_to_process--;
    \                     ??process_buffer_0_2:
-   \   00001A   ........     CALLA   #?Subroutine2
-    107              //serial_bits &= ~Process_buffer_0;
-    108              clear_buffer();
-    109              process_line++;
-    110              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
-    111            }
-    112          }
+   \   00001A   ........     CALLA   #?Subroutine5
+    118              //serial_bits &= ~Process_buffer_0;
+    119              clear_buffer();
+    120              process_line++;
+    121              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+    122            }
+    123          }
    \                     ??process_buffer_0_0:
    \   00001E   1001         RETA
 
    \                                 In  segment CODE, align 2
-    113          void clear_buffer(){
+    124          void clear_buffer(){
    \                     clear_buffer:
-    114            for(int j = 0;j<PROCESS_BUF_LENGTH;j++){
+    125            for(int j = 0;j<PROCESS_BUF_LENGTH;j++){
    \   000000   0F43         MOV.W   #0x0, R15
-    115              process_buf_0[process_line][j]=RESET;
+    126              process_buf_0[process_line][j]=RESET;
    \                     ??clear_buffer_0:
    \   000002   1E42....     MOV.W   &process_line, R14
    \   000006   5E0E         RLAM.W  #0x4, R14
    \   000008   5E06         RLAM.W  #0x2, R14
    \   00000A   0E5F         ADD.W   R15, R14
    \   00000C   CE43....     MOV.B   #0x0, process_buf_0(R14)
-    116            }
+    127            }
    \   000010   1F53         ADD.W   #0x1, R15
    \   000012   3F904000     CMP.W   #0x40, R15
    \   000016   F53B         JL      ??clear_buffer_0
-    117          }
+    128          }
    \   000018   1001         RETA
 
    \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine3:
+   \                     ?Subroutine2:
    \   000000   3D40....     MOV.W   #`?<Constant "\\"">`, R13
-   \   000004                REQUIRE ??Subroutine9_0
-   \   000004                // Fall through to label ??Subroutine9_0
+   \   000004                REQUIRE ??Subroutine11_0
+   \   000004                // Fall through to label ??Subroutine11_0
 
    \                                 In  segment CODE, align 2
-    118          char *get_SSID(){
+    129          char *get_SSID(){
    \                     get_SSID:
-    119            if(Num_bufs_to_process > 0){
+    130            if(Num_bufs_to_process > 0){
    \   000000   8293....     CMP.W   #0x0, &Num_bufs_to_process
    \   000004   1624         JEQ     ??get_SSID_1
-    120              if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
-   \   000006   ........     CALLA   #?Subroutine3
-   \                     ??CrossCallReturnLabel_9:
+    131              if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
+   \   000006   ........     CALLA   #?Subroutine2
+   \                     ??CrossCallReturnLabel_10:
    \   00000A   1124         JEQ     ??get_SSID_4
-    121                char_buf++;
+    132                char_buf++;
    \   00000C   ........     CALLA   #?Subroutine4
-    122                serial_bits |= Send_next_command;
-    123                int j=0;    
+    133                serial_bits |= Send_next_command;
+    134                int j=0;    
    \                     ??CrossCallReturnLabel_0:
    \   000010   083C         JMP     ??get_SSID_3
-    124                while(*char_buf != '\"'){
-    125          	if(j<10)SSID[j]=*char_buf;
+    135                while(*char_buf != '\"'){
+    136          	if(j<10)SSID[j]=*char_buf;
    \                     ??get_SSID_0:
    \   000012   3F900A00     CMP.W   #0xa, R15
    \   000016   0234         JGE     ??get_SSID_5
    \   000018   CF4E....     MOV.B   R14, SSID(R15)
-    126          	char_buf++;
+    137          	char_buf++;
    \                     ??get_SSID_5:
    \   00001C   9253....     ADD.W   #0x1, &char_buf
-    127          	j++;
+    138          	j++;
    \   000020   1F53         ADD.W   #0x1, R15
-    128                }
+    139                }
    \                     ??get_SSID_3:
    \   000022   1E42....     MOV.W   &char_buf, R14
    \   000026   6E4E         MOV.B   @R14, R14
    \   000028   7E902200     CMP.B   #0x22, R14
    \   00002C   F223         JNE     ??get_SSID_0
-    129              }
-    130              //serial_bits |= ~Send_next_command;
-    131              Num_bufs_to_process--;
+    140              }
+    141              //serial_bits |= ~Send_next_command;
+    142              Num_bufs_to_process--;
    \                     ??get_SSID_4:
-   \   00002E   ........     CALLA   #?Subroutine2
-    132              //serial_bits &= ~Process_buffer_0;
-    133              clear_buffer();
-    134              process_line++;
-    135              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
-    136            }
-    137            return SSID;
+   \   00002E   ........     CALLA   #?Subroutine5
+    143              //serial_bits &= ~Process_buffer_0;
+    144              clear_buffer();
+    145              process_line++;
+    146              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+    147            }
+    148            return SSID;
    \                     ??get_SSID_1:
    \   000032   3C40....     MOV.W   #SSID, R12
    \   000036   1001         RETA
-    138          }
+    149          }
 
    \                                 In  segment CODE, align 2
    \                     ?Subroutine4:
@@ -545,124 +579,124 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   00000C   1001         RETA
 
    \                                 In  segment CODE, align 2
-    139          char *get_IP(){
+    150          char *get_IP(){
    \                     get_IP:
-    140            if(Num_bufs_to_process > 0){
+    151            if(Num_bufs_to_process > 0){
    \   000000   8293....     CMP.W   #0x0, &Num_bufs_to_process
    \   000004   1324         JEQ     ??get_IP_1
-    141              if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
-   \   000006   ........     CALLA   #?Subroutine3
-   \                     ??CrossCallReturnLabel_10:
+    152              if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
+   \   000006   ........     CALLA   #?Subroutine2
+   \                     ??CrossCallReturnLabel_11:
    \   00000A   0E24         JEQ     ??get_IP_4
-    142                char_buf++;
+    153                char_buf++;
    \   00000C   ........     CALLA   #?Subroutine4
-    143                serial_bits |= Send_next_command;
-    144                int j=0;    
+    154                serial_bits |= Send_next_command;
+    155                int j=0;    
    \                     ??CrossCallReturnLabel_1:
    \   000010   053C         JMP     ??get_IP_3
-    145                while(*char_buf != '\"'){
-    146          	IP_Addy[j]=*char_buf;
+    156                while(*char_buf != '\"'){
+    157          	IP_Addy[j]=*char_buf;
    \                     ??get_IP_0:
    \   000012   CF4E....     MOV.B   R14, IP_Addy(R15)
-    147          	char_buf++;
+    158          	char_buf++;
    \   000016   9253....     ADD.W   #0x1, &char_buf
-    148          	j++;
+    159          	j++;
    \   00001A   1F53         ADD.W   #0x1, R15
-    149                }
+    160                }
    \                     ??get_IP_3:
    \   00001C   1E42....     MOV.W   &char_buf, R14
    \   000020   6E4E         MOV.B   @R14, R14
    \   000022   7E902200     CMP.B   #0x22, R14
    \   000026   F523         JNE     ??get_IP_0
-    150              }
-    151              //serial_bits |= ~Send_next_command;
-    152              Num_bufs_to_process--;
+    161              }
+    162              //serial_bits |= ~Send_next_command;
+    163              Num_bufs_to_process--;
    \                     ??get_IP_4:
-   \   000028   ........     CALLA   #?Subroutine2
-    153              //serial_bits &= ~Process_buffer_0;
-    154              clear_buffer();
-    155              process_line++;
-    156              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
-    157            }
-    158            return IP_Addy;
+   \   000028   ........     CALLA   #?Subroutine5
+    164              //serial_bits &= ~Process_buffer_0;
+    165              clear_buffer();
+    166              process_line++;
+    167              if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+    168            }
+    169            return IP_Addy;
    \                     ??get_IP_1:
    \   00002C   3C40....     MOV.W   #IP_Addy, R12
    \   000030   1001         RETA
-    159          }
+    170          }
 
    \                                 In  segment CODE, align 2
-    160          void Init_Serial_UCA0(char speed){
+    171          void Init_Serial_UCA0(char speed){
    \                     Init_Serial_UCA0:
-    161          
-    162            switch(speed){
+    172          
+    173            switch(speed){
    \   000000   4C83         SUB.B   #0x0, R12
    \   000002   0324         JEQ     ??Init_Serial_UCA0_1
    \   000004   5C83         SUB.B   #0x1, R12
    \   000006   0924         JEQ     ??Init_Serial_UCA0_2
    \   000008   1001         RETA
-    163            case BAUD115200:
-    164            //------------------------------------------------------------------------------
-    165            // TX error (%) RX error (%)
-    166            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
-    167            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
-    168            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
-    169            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
-    170            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
-    171            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
-    172            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
-    173            //------------------------------------------------------------------------------
-    174            // Configure eUSCI_A0 for UART mode
-    175            UCA0CTLW0 = 0;
+    174            case BAUD115200:
+    175            //------------------------------------------------------------------------------
+    176            // TX error (%) RX error (%)
+    177            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    178            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
+    179            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
+    180            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
+    181            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
+    182            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+    183            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+    184            //------------------------------------------------------------------------------
+    185            // Configure eUSCI_A0 for UART mode
+    186            UCA0CTLW0 = 0;
    \                     ??Init_Serial_UCA0_1:
-   \   00000A   ........     CALLA   #?Subroutine5
-    176            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
-    177            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
-    178            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
-    179            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
-    180            UCA0CTLW0 &= ~UCPEN; // No Parity
-    181            UCA0CTLW0 &= ~UCSYNC;
-    182            UCA0CTLW0 &= ~UC7BIT;
-    183            UCA0CTLW0 |= UCMODE_0;
-    184            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
-    185            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
-    186            // UCA?MCTLW = UCSx + UCFx + UCOS16
-    187            UCA0BRW = 4 ; // 115,200 baud
-   \                     ??CrossCallReturnLabel_2:
-   \   00000E   A2420605     MOV.W   #0x4, &0x506
-    188            UCA0MCTLW = 0x5551 ;
-   \   000012   B24051550805 MOV.W   #0x5551, &0x508
-    189            UCA0CTLW0 &= ~UCSWRST ; // release from reset
-   \   000018   083C         JMP     ??Init_Serial_UCA0_0
-    190            //UCA0TXBUF = 0x00; // Prime the Pump
-    191            UCA0IE |= UCRXIE; // Enable RX interrupt
-    192            break;
-    193            case BAUD460800:
-    194            UCA0CTLW0 = 0;
-   \                     ??Init_Serial_UCA0_2:
-   \   00001A   ........     CALLA   #?Subroutine5
-    195            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
-    196            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
-    197            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
-    198            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
-    199            UCA0CTLW0 &= ~UCPEN; // No Parity
-    200            UCA0CTLW0 &= ~UCSYNC;
-    201            UCA0CTLW0 &= ~UC7BIT;
-    202            UCA0CTLW0 |= UCMODE_0;
-    203            UCA0BRW = 17 ; // 115,200 baud
+   \   00000A   ........     CALLA   #?Subroutine7
+    187            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
+    188            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+    189            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
+    190            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+    191            UCA0CTLW0 &= ~UCPEN; // No Parity
+    192            UCA0CTLW0 &= ~UCSYNC;
+    193            UCA0CTLW0 &= ~UC7BIT;
+    194            UCA0CTLW0 |= UCMODE_0;
+    195            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    196            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+    197            // UCA?MCTLW = UCSx + UCFx + UCOS16
+    198            UCA0BRW = 4 ; // 115,200 baud
    \                     ??CrossCallReturnLabel_3:
+   \   00000E   A2420605     MOV.W   #0x4, &0x506
+    199            UCA0MCTLW = 0x5551 ;
+   \   000012   B24051550805 MOV.W   #0x5551, &0x508
+    200            UCA0CTLW0 &= ~UCSWRST ; // release from reset
+   \   000018   083C         JMP     ??Init_Serial_UCA0_0
+    201            //UCA0TXBUF = 0x00; // Prime the Pump
+    202            UCA0IE |= UCRXIE; // Enable RX interrupt
+    203            break;
+    204            case BAUD460800:
+    205            UCA0CTLW0 = 0;
+   \                     ??Init_Serial_UCA0_2:
+   \   00001A   ........     CALLA   #?Subroutine7
+    206            UCA0CTLW0 |= UCSWRST ; // Put eUSCI in reset
+    207            UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+    208            UCA0CTLW0 &= ~UCMSB; // MSB, LSB select
+    209            UCA0CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+    210            UCA0CTLW0 &= ~UCPEN; // No Parity
+    211            UCA0CTLW0 &= ~UCSYNC;
+    212            UCA0CTLW0 &= ~UC7BIT;
+    213            UCA0CTLW0 |= UCMODE_0;
+    214            UCA0BRW = 17 ; // 115,200 baud
+   \                     ??CrossCallReturnLabel_4:
    \   00001E   B24011000605 MOV.W   #0x11, &0x506
-    204            UCA0MCTLW = 0x4A00 ;
+    215            UCA0MCTLW = 0x4A00 ;
    \   000024   B240004A0805 MOV.W   #0x4a00, &0x508
-    205            UCA0CTLW0 &= ~UCSWRST ; // release from reset
+    216            UCA0CTLW0 &= ~UCSWRST ; // release from reset
    \                     ??Init_Serial_UCA0_0:
    \   00002A   92C30005     BIC.W   #0x1, &0x500
-    206            //UCA0TXBUF = 0x00; // Prime the Pump
-    207            UCA0IE |= UCRXIE; // Enable RX interrupt
+    217            //UCA0TXBUF = 0x00; // Prime the Pump
+    218            UCA0IE |= UCRXIE; // Enable RX interrupt
    \   00002E   92D31A05     BIS.W   #0x1, &0x51a
-    208            break;
-    209            }
-    210            //------------------------------------------------------------------------------
-    211          }
+    219            break;
+    220            }
+    221            //------------------------------------------------------------------------------
+    222          }
    \   000032   1001         RETA
    \   000034                REQUIRE _A_UCA0CTLW0_L
    \   000034                REQUIRE _A_UCA0BRW_L
@@ -670,7 +704,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000034                REQUIRE _A_UCA0IE_L
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine5:
+   \                     ?Subroutine7:
    \   000000   82430005     MOV.W   #0x0, &0x500
    \   000004   92D30005     BIS.W   #0x1, &0x500
    \   000008   B2D080000005 BIS.W   #0x80, &0x500
@@ -683,77 +717,77 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000032   1001         RETA
 
    \                                 In  segment CODE, align 2, keep-with-next
-    212          void Init_Serial_UCA1(char speed){
+    223          void Init_Serial_UCA1(char speed){
    \                     Init_Serial_UCA1:
-    213            
-    214            switch(speed){
+    224            
+    225            switch(speed){
    \   000000   4C83         SUB.B   #0x0, R12
    \   000002   0324         JEQ     ??Init_Serial_UCA1_0
    \   000004   5C83         SUB.B   #0x1, R12
    \   000006   0B24         JEQ     ??Init_Serial_UCA1_1
    \   000008   1001         RETA
-    215            case BAUD115200:
-    216            //------------------------------------------------------------------------------
-    217            // TX error (%) RX error (%)
-    218            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
-    219            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
-    220            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
-    221            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
-    222            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
-    223            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
-    224            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
-    225            //------------------------------------------------------------------------------
-    226            // Configure eUSCI_A0 for UART mode
-    227            UCA1CTLW0 = 0;
+    226            case BAUD115200:
+    227            //------------------------------------------------------------------------------
+    228            // TX error (%) RX error (%)
+    229            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    230            // 8000000 4800 1 104 2 0xD6 -0.08 0.04 -0.10 0.14
+    231            // 8000000 9600 1 52 1 0x49 -0.08 0.04 -0.10 0.14
+    232            // 8000000 19200 1 26 0 0xB6 -0.08 0.16 -0.28 0.20
+    233            // 8000000 57600 1 8 10 0xF7 -0.32 0.32 -1.00 0.36
+    234            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+    235            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+    236            //------------------------------------------------------------------------------
+    237            // Configure eUSCI_A0 for UART mode
+    238            UCA1CTLW0 = 0;
    \                     ??Init_Serial_UCA1_0:
-   \   00000A   ........     CALLA   #?Subroutine6
-    228            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
-    229            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
-    230            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
-    231            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
-    232            UCA1CTLW0 &= ~UCPEN; // No Parity
-    233            UCA1CTLW0 &= ~UCSYNC;
-    234            UCA1CTLW0 &= ~UC7BIT;
-    235            UCA1CTLW0 |= UCMODE_0;
-    236            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
-    237            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
-    238            // UCA?MCTLW = UCSx + UCFx + UCOS16
-    239            UCA1BRW = 4 ; // 115,200 baud
-   \                     ??CrossCallReturnLabel_4:
-   \   00000E   A2428605     MOV.W   #0x4, &0x586
-    240            UCA1MCTLW = 0x5551 ;
-   \   000012   B24051558805 MOV.W   #0x5551, &0x588
-    241            UCA1CTLW0 &= ~UCSWRST ; // release from reset
-   \   000018   92C38005     BIC.W   #0x1, &0x580
-    242           // UCA1TXBUF = 0x00; // Prime the Pump
-    243            UCA1IE |= UCRXIE; // Enable RX interrupt
-   \   00001C   ....         JMP     ?Subroutine1
-    244            break;
-    245            case BAUD460800:
-    246            UCA1CTLW0 = 0;
-   \                     ??Init_Serial_UCA1_1:
-   \   00001E   ........     CALLA   #?Subroutine6
-    247            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
-    248            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
-    249            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
-    250            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
-    251            UCA1CTLW0 &= ~UCPEN; // No Parity
-    252            UCA1CTLW0 &= ~UCSYNC;
-    253            UCA1CTLW0 &= ~UC7BIT;
-    254            UCA1CTLW0 |= UCMODE_0;
-    255            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
-    256            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
-    257            // UCA?MCTLW = UCSx + UCFx + UCOS16
-    258            UCA1BRW = 17 ;
+   \   00000A   ........     CALLA   #?Subroutine8
+    239            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
+    240            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+    241            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
+    242            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+    243            UCA1CTLW0 &= ~UCPEN; // No Parity
+    244            UCA1CTLW0 &= ~UCSYNC;
+    245            UCA1CTLW0 &= ~UC7BIT;
+    246            UCA1CTLW0 |= UCMODE_0;
+    247            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    248            // 8000000 115200 1 4 5 0x55 -0.80 0.64 -1.12 1.76
+    249            // UCA?MCTLW = UCSx + UCFx + UCOS16
+    250            UCA1BRW = 4 ; // 115,200 baud
    \                     ??CrossCallReturnLabel_5:
+   \   00000E   A2428605     MOV.W   #0x4, &0x586
+    251            UCA1MCTLW = 0x5551 ;
+   \   000012   B24051558805 MOV.W   #0x5551, &0x588
+    252            UCA1CTLW0 &= ~UCSWRST ; // release from reset
+   \   000018   92C38005     BIC.W   #0x1, &0x580
+    253           // UCA1TXBUF = 0x00; // Prime the Pump
+    254            UCA1IE |= UCRXIE; // Enable RX interrupt
+   \   00001C   ....         JMP     ?Subroutine1
+    255            break;
+    256            case BAUD460800:
+    257            UCA1CTLW0 = 0;
+   \                     ??Init_Serial_UCA1_1:
+   \   00001E   ........     CALLA   #?Subroutine8
+    258            UCA1CTLW0 |= UCSWRST ; // Put eUSCI in reset
+    259            UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
+    260            UCA1CTLW0 &= ~UCMSB; // MSB, LSB select
+    261            UCA1CTLW0 &= ~UCSPB; // UCSPB = 0(1 stop bit) OR 1(2 stop bits)
+    262            UCA1CTLW0 &= ~UCPEN; // No Parity
+    263            UCA1CTLW0 &= ~UCSYNC;
+    264            UCA1CTLW0 &= ~UC7BIT;
+    265            UCA1CTLW0 |= UCMODE_0;
+    266            // BRCLK Baudrate UCOS16 UCBRx UCFx UCSx neg pos neg pos
+    267            // 8000000 460800 0 17 0 0x4A -2.72 2.56 -3.76 7.28
+    268            // UCA?MCTLW = UCSx + UCFx + UCOS16
+    269            UCA1BRW = 17 ;
+   \                     ??CrossCallReturnLabel_6:
    \   000022   B24011008605 MOV.W   #0x11, &0x586
-    259            UCA1MCTLW = 0x4A00 ;
+    270            UCA1MCTLW = 0x4A00 ;
    \   000028   B240004A8805 MOV.W   #0x4a00, &0x588
-    260            UCA1CTLW0 &= ~UCSWRST ; // release from reset
+    271            UCA1CTLW0 &= ~UCSWRST ; // release from reset
    \   00002E   92C38005     BIC.W   #0x1, &0x580
-    261            UCA1TXBUF = 0x00; // Prime the Pump
+    272            UCA1TXBUF = 0x00; // Prime the Pump
    \   000032   82438E05     MOV.W   #0x0, &0x58e
-    262            UCA1IE |= UCRXIE; // Enable RX interrupt
+    273            UCA1IE |= UCRXIE; // Enable RX interrupt
    \   000036                REQUIRE ?Subroutine1
    \   000036                REQUIRE _A_UCA1CTLW0_L
    \   000036                REQUIRE _A_UCA1BRW_L
@@ -761,10 +795,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000036                REQUIRE _A_UCA1IE_L
    \   000036                REQUIRE _A_UCA1TXBUF_L
    \   000036                // Fall through to label ?Subroutine1
-    263            break;
-    264            }
-    265            //------------------------------------------------------------------------------
-    266          }
+    274            break;
+    275            }
+    276            //------------------------------------------------------------------------------
+    277          }
 
    \                                 In  segment CODE, align 2
    \                     ?Subroutine1:
@@ -772,7 +806,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000004   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine6:
+   \                     ?Subroutine8:
    \   000000   82438005     MOV.W   #0x0, &0x580
    \   000004   92D38005     BIS.W   #0x1, &0x580
    \   000008   B2D080008005 BIS.W   #0x80, &0x580
@@ -786,17 +820,17 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    \                                 In  segment DATA16_Z, align 1, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-    267          char test_output[11];
+    278          char test_output[11];
    \                     test_output:
    \   000000                DS8 11
-    268          #pragma vector=EUSCI_A0_VECTOR//To IOT
+    279          #pragma vector=EUSCI_A0_VECTOR//To IOT
 
    \                                 In  segment ISR_CODE, align 2
-    269          __interrupt void EUSCI_A0_ISR(void){
+    280          __interrupt void EUSCI_A0_ISR(void){
    \                     EUSCI_A0_ISR:
    \   000000   1F15         PUSHM.W #0x2, R15
-    270            
-    271            switch(__even_in_range(UCA0IV,0x08)){ // Bruh IDK what I did here needs to be fixed
+    281            
+    282            switch(__even_in_range(UCA0IV,0x08)){ // Bruh IDK what I did here needs to be fixed
    \   000002   1F421E05     MOV.W   &0x51e, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for EUSCI_A0_ISR>_0`:
@@ -809,27 +843,27 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000012   1E420C05     MOV.W   &0x50c, R14
    \   000016   1F42....     MOV.W   &Rx_write_0, R15
    \   00001A   CF4E0000     MOV.B   R14, 0(R15)
-    272            case 0: // Vector 0 - no interrupt
-    273              break;
-    274            case 2: // Vector 2 - RXIFG
-    275              
-    276            //UCA1TXBUF=UCA0RXBUF;
-    277            *Rx_write_0 = UCA0RXBUF;
-    278            Rx_read_0 = Rx_write_0;
+    283            case 0: // Vector 0 - no interrupt
+    284              break;
+    285            case 2: // Vector 2 - RXIFG
+    286              
+    287            //UCA1TXBUF=UCA0RXBUF;
+    288            *Rx_write_0 = UCA0RXBUF;
+    289            Rx_read_0 = Rx_write_0;
    \   00001E   1E42....     MOV.W   &Rx_write_0, R14
    \   000022   824E....     MOV.W   R14, &Rx_read_0
-    279            Rx_write_0++;
+    290            Rx_write_0++;
    \   000026   9253....     ADD.W   #0x1, &Rx_write_0
-    280            UCA1TXBUF = *Rx_read_0;// echoing to pc 
+    291            UCA1TXBUF = *Rx_read_0;// echoing to pc 
    \   00002A   6F4E         MOV.B   @R14, R15
    \   00002C   824F8E05     MOV.W   R15, &0x58e
-    281            if(Rx_write_0-Ring_buf_0 == SMALL_RING_SIZE)Rx_write_0 = Ring_buf_0;
+    292            if(Rx_write_0-Ring_buf_0 == SMALL_RING_SIZE)Rx_write_0 = Ring_buf_0;
    \   000030   1F42....     MOV.W   &Rx_write_0, R15
    \   000034   3F80....     SUB.W   #Ring_buf_0, R15
    \   000038   3F902000     CMP.W   #0x20, R15
    \   00003C   0320         JNE     ??EUSCI_A0_ISR_1
    \   00003E   B240........ MOV.W   #Ring_buf_0, &Rx_write_0
-    282            if(*Rx_read_0 == '\n'){
+    293            if(*Rx_read_0 == '\n'){
    \                     ??EUSCI_A0_ISR_1:
    \   000044   1F42....     MOV.W   &line, R15
    \   000048   5F0E         RLAM.W  #0x4, R15
@@ -838,63 +872,63 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000050   3F50....     ADD.W   #process_buf_0, R15
    \   000054   FE900A000000 CMP.B   #0xa, 0(R14)
    \   00005A   1320         JNE     ??EUSCI_A0_ISR_2
-    283              process_buf_0[line][cur_0++]=*Rx_read_0;
+    294              process_buf_0[line][cur_0++]=*Rx_read_0;
    \   00005C   FF400A000000 MOV.B   #0xa, 0(R15)
    \   000062   9253....     ADD.W   #0x1, &cur_0
-    284              *Rx_read_0 = RESET;
+    295              *Rx_read_0 = RESET;
    \   000066   CE430000     MOV.B   #0x0, 0(R14)
-    285              line++;
+    296              line++;
    \   00006A   9253....     ADD.W   #0x1, &line
-    286              cur_0 = 0;
+    297              cur_0 = 0;
    \   00006E   8243....     MOV.W   #0x0, &cur_0
-    287              Num_bufs_to_process++;
+    298              Num_bufs_to_process++;
    \   000072   9253....     ADD.W   #0x1, &Num_bufs_to_process
-    288              //serial_bits |= Process_buffer_0;
-    289              if(line >= NUM_PROCESS_BUF)line = 0;
+    299              //serial_bits |= Process_buffer_0;
+    300              if(line >= NUM_PROCESS_BUF)line = 0;
    \   000076   B292....     CMP.W   #0x8, &line
    \   00007A   1438         JL      ??EUSCI_A0_ISR_0
    \   00007C   8243....     MOV.W   #0x0, &line
    \   000080   113C         JMP     ??EUSCI_A0_ISR_0
-    290            }else{
-    291              process_buf_0[line][cur_0++]=*Rx_read_0;
+    301            }else{
+    302              process_buf_0[line][cur_0++]=*Rx_read_0;
    \                     ??EUSCI_A0_ISR_2:
    \   000082   EF4E0000     MOV.B   @R14, 0(R15)
    \   000086   9253....     ADD.W   #0x1, &cur_0
-    292              *Rx_read_0 = RESET;
+    303              *Rx_read_0 = RESET;
    \   00008A   CE430000     MOV.B   #0x0, 0(R14)
    \   00008E   0A3C         JMP     ??EUSCI_A0_ISR_0
-    293            }
+    304            }
    \                     ??EUSCI_A0_ISR_5:
-   \   000090   ........     CALLA   #?Subroutine8
-   \                     ??CrossCallReturnLabel_6:
+   \   000090   ........     CALLA   #?Subroutine10
+   \                     ??CrossCallReturnLabel_7:
    \   000094   0320         JNE     ??EUSCI_A0_ISR_3
-    294            
-    295            
-    296            
-    297          	//we want to capture in a process buf if something found
-    298                
-    299              
-    300              
-    301                
-    302              break;
-    303            case 4: // Vector 4 – TXIFG
-    304              if( Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
-    305                UCA0IE &= ~UCTXIE;
+    305            
+    306            
+    307            
+    308          	//we want to capture in a process buf if something found
+    309                
+    310              
+    311              
+    312                
+    313              break;
+    314            case 4: // Vector 4 – TXIFG
+    315              if( Tx_String[i]=='\0'){//If the end of a string add line feed and turn off Tx
+    316                UCA0IE &= ~UCTXIE;
    \   000096   A2C31A05     BIC.W   #0x2, &0x51a
    \   00009A   043C         JMP     ??EUSCI_A0_ISR_0
-    306                //UCA0TXBUF = '\r';
-    307              //}//else if(Tx_String[i]=='\r'){
-    308                //UCA0IE &= ~UCTXIE;
-    309              }else{// keep chars going
-    310                UCA0TXBUF = Tx_String[i++];
+    317                //UCA0TXBUF = '\r';
+    318              //}//else if(Tx_String[i]=='\r'){
+    319                //UCA0IE &= ~UCTXIE;
+    320              }else{// keep chars going
+    321                UCA0TXBUF = Tx_String[i++];
    \                     ??EUSCI_A0_ISR_3:
    \   00009C   824F0E05     MOV.W   R15, &0x50e
    \   0000A0   9253....     ADD.W   #0x1, &i
-    311              }
-    312              break;
-    313            default: break;
-    314            }
-    315          }
+    322              }
+    323              break;
+    324            default: break;
+    325            }
+    326          }
    \                     ??EUSCI_A0_ISR_0:
    \   0000A4   1E17         POPM.W  #0x2, R15
    \   0000A6   0013         RETI
@@ -905,19 +939,19 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   0000A8                REQUIRE _A_UCA0IV_L
 
    \                                 In  segment ISR_CODE, align 2
-   \                     ?Subroutine8:
+   \                     ?Subroutine10:
    \   000000   1F42....     MOV.W   &Tx_String, R15
    \   000004   1F52....     ADD.W   &i, R15
    \   000008   6F4F         MOV.B   @R15, R15
    \   00000A   4F93         CMP.B   #0x0, R15
    \   00000C   1001         RETA
-    316          #pragma vector=EUSCI_A1_VECTOR//PC Communication
+    327          #pragma vector=EUSCI_A1_VECTOR//PC Communication
 
    \                                 In  segment ISR_CODE, align 2
-    317          __interrupt void EUSCI_A1_ISR(void){
+    328          __interrupt void EUSCI_A1_ISR(void){
    \                     EUSCI_A1_ISR:
    \   000000   3F15         PUSHM.W #0x4, R15
-    318            switch(__even_in_range(UCA1IV,0x08)){
+    329            switch(__even_in_range(UCA1IV,0x08)){
    \   000002   1F429E05     MOV.W   &0x59e, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for EUSCI_A1_ISR>_0`:
@@ -930,18 +964,18 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000012   1E428C05     MOV.W   &0x58c, R14
    \   000016   1F42....     MOV.W   &RX_write, R15
    \   00001A   CF4E0000     MOV.B   R14, 0(R15)
-    319            case 0: // Vector 0 - no interrupt
-    320              break;
-    321            case 2: // Vector 2 - RXIFG
-    322              					//Need to save the rx to send to the UCA0 (IOT)
-    323              *RX_write =  UCA1RXBUF;		//Store UCA1RXBUF into current ring buf location
-    324              RX_read = RX_write;			// set read to the current write
+    330            case 0: // Vector 0 - no interrupt
+    331              break;
+    332            case 2: // Vector 2 - RXIFG
+    333              					//Need to save the rx to send to the UCA0 (IOT)
+    334              *RX_write =  UCA1RXBUF;		//Store UCA1RXBUF into current ring buf location
+    335              RX_read = RX_write;			// set read to the current write
    \   00001E   1D42....     MOV.W   &RX_write, R13
    \   000022   824D....     MOV.W   R13, &RX_read
-    325              RX_write++;				// increment write location
+    336              RX_write++;				// increment write location
    \   000026   0F4D         MOV.W   R13, R15
    \   000028   1F53         ADD.W   #0x1, R15
-    326              if(RX_write - RING_BUF == SMALL_RING_SIZE) RX_write = RING_BUF;//processing Ring_buf overflow seting it back to start
+    337              if(RX_write - RING_BUF == SMALL_RING_SIZE) RX_write = RING_BUF;//processing Ring_buf overflow seting it back to start
    \   00002A   0E4F         MOV.W   R15, R14
    \   00002C   3E80....     SUB.W   #RING_BUF, R14
    \   000030   3E902000     CMP.W   #0x20, R14
@@ -949,12 +983,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000036   3F40....     MOV.W   #RING_BUF, R15
    \                     ??EUSCI_A1_ISR_4:
    \   00003A   824F....     MOV.W   R15, &RX_write
-    327              if(*RX_read == Command_Char)serial_bits |= Command_bit;//If command Start is found
+    338              if(*RX_read == Command_Char)serial_bits |= Command_bit;//If command Start is found
    \   00003E   6C4D         MOV.B   @R13, R12
    \   000040   7C905E00     CMP.B   #0x5e, R12
    \   000044   0320         JNE     ??EUSCI_A1_ISR_5
    \   000046   B2D08000.... BIS.W   #0x80, &serial_bits
-    328              if((*RX_read == Command_End || *RX_read == Command_LF) && serial_bits & Command_bit ){//if Command end is found
+    339              if((*RX_read == Command_End || *RX_read == Command_LF) && serial_bits & Command_bit ){//if Command end is found
    \                     ??EUSCI_A1_ISR_5:
    \   00004C   6F4D         MOV.B   @R13, R15
    \   00004E   1E42....     MOV.W   &Process_in_cur, R14
@@ -965,68 +999,68 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     ??EUSCI_A1_ISR_6:
    \   00005E   B2B08000.... BIT.W   #0x80, &serial_bits
    \   000064   0F24         JEQ     ??EUSCI_A1_ISR_0
-    329                serial_bits &= ~Command_bit;
+    340                serial_bits &= ~Command_bit;
    \   000066   B2C08000.... BIC.W   #0x80, &serial_bits
-    330                strncpy(process_buf[2],process_buf[0],Process_in_cur);
+    341                strncpy(process_buf[2],process_buf[0],Process_in_cur);
    \   00006C   3D40....     MOV.W   #process_buf, R13
    \   000070   3C40....     MOV.W   #process_buf + 128, R12
    \   000074   ........     CALLA   #strncpy
-    331                Process_in_cur = 0;
+    342                Process_in_cur = 0;
    \   000078   8243....     MOV.W   #0x0, &Process_in_cur
-    332                serial_bits |= Process_command;	//SET PROCESS COMMAND BIT
+    343                serial_bits |= Process_command;	//SET PROCESS COMMAND BIT
    \   00007C   B2D00001.... BIS.W   #0x100, &serial_bits
    \   000082   113C         JMP     ??EUSCI_A1_ISR_2
-    333                //send(process_buf[0],Send_UCA0);
-    334              }  
-    335              else if(serial_bits & Command_bit){//processing command when it is found
+    344                //send(process_buf[0],Send_UCA0);
+    345              }  
+    346              else if(serial_bits & Command_bit){//processing command when it is found
    \                     ??EUSCI_A1_ISR_0:
    \   000084   B2B08000.... BIT.W   #0x80, &serial_bits
    \   00008A   0524         JEQ     ??EUSCI_A1_ISR_1
-    336                process_buf[0][Process_in_cur] = *RX_read;
+    347                process_buf[0][Process_in_cur] = *RX_read;
    \   00008C   CE4F....     MOV.B   R15, process_buf(R14)
-    337                  Process_in_cur++;
+    348                  Process_in_cur++;
    \   000090   9253....     ADD.W   #0x1, &Process_in_cur
    \   000094   083C         JMP     ??EUSCI_A1_ISR_2
-    338              }else if(*RX_read != '\0' /*|| *RX_read !=*/ ){
+    349              }else if(*RX_read != '\0' /*|| *RX_read !=*/ ){
    \                     ??EUSCI_A1_ISR_1:
    \   000096   4F93         CMP.B   #0x0, R15
    \   000098   0324         JEQ     ??EUSCI_A1_ISR_7
-    339                UCA0TXBUF = *RX_read;
+    350                UCA0TXBUF = *RX_read;
    \   00009A   824F0E05     MOV.W   R15, &0x50e
    \   00009E   033C         JMP     ??EUSCI_A1_ISR_2
-    340                //send(IOT_char[0],Send_UCA0);
-    341              }else{
-    342                UCA0TXBUF = '\r';
+    351                //send(IOT_char[0],Send_UCA0);
+    352              }else{
+    353                UCA0TXBUF = '\r';
    \                     ??EUSCI_A1_ISR_7:
    \   0000A0   B2400D000E05 MOV.W   #0xd, &0x50e
-    343              }
-    344              //UCA0TXBUF = temp;
-    345              serial_bits |= Serial_off;
+    354              }
+    355              //UCA0TXBUF = temp;
+    356              serial_bits |= Serial_off;
    \                     ??EUSCI_A1_ISR_2:
    \   0000A6   B2D02000.... BIS.W   #0x20, &serial_bits
-    346              break;
+    357              break;
    \   0000AC   0D3C         JMP     ??EUSCI_A1_ISR_3
    \                     ??EUSCI_A1_ISR_10:
-   \   0000AE   ........     CALLA   #?Subroutine8
-   \                     ??CrossCallReturnLabel_7:
+   \   0000AE   ........     CALLA   #?Subroutine10
+   \                     ??CrossCallReturnLabel_8:
    \   0000B2   0620         JNE     ??EUSCI_A1_ISR_8
-    347            case 4: // Vector 4 – TXIFG
-    348              if(Tx_String[i]=='\0' /*|| Tx_String[i]=='\n'*/ ){//If the end of a string add line feed and turn off Tx
-    349                  UCA1TXBUF = '\n';
+    358            case 4: // Vector 4 – TXIFG
+    359              if(Tx_String[i]=='\0' /*|| Tx_String[i]=='\n'*/ ){//If the end of a string add line feed and turn off Tx
+    360                  UCA1TXBUF = '\n';
    \   0000B4   B2400A008E05 MOV.W   #0xa, &0x58e
-    350                  UCA1IE &= ~UCTXIE;
+    361                  UCA1IE &= ~UCTXIE;
    \   0000BA   A2C39A05     BIC.W   #0x2, &0x59a
    \   0000BE   043C         JMP     ??EUSCI_A1_ISR_3
-    351              }else{// keep chars going
-    352                UCA1TXBUF = Tx_String[i++];
+    362              }else{// keep chars going
+    363                UCA1TXBUF = Tx_String[i++];
    \                     ??EUSCI_A1_ISR_8:
    \   0000C0   824F8E05     MOV.W   R15, &0x58e
    \   0000C4   9253....     ADD.W   #0x1, &i
-    353              }
-    354              break;
-    355            
-    356            }
-    357          }
+    364              }
+    365              break;
+    366            
+    367            }
+    368          }
    \                     ??EUSCI_A1_ISR_3:
    \   0000C8   3C17         POPM.W  #0x4, R15
    \   0000CA   0013         RETI
@@ -1057,6 +1091,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   5E00         DC8 "^"
 
    \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "CONNECT">`:
+   \   000000   434F4E4E4543 DC8 "CONNECT"
+   \            5400        
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
    \                     `?<Constant "\\"">`:
    \   000000   2200         DC8 "\""
 
@@ -1079,6 +1118,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   get_command
         8   -> __iar_Strstr
         8   -> clear_buffer
+      4   get_connected
+        4   -> __iar_Strstr
+        8   -> clear_buffer
       4   process_buffer_0
         8   -> clear_buffer
         4   -> strcmp
@@ -1089,20 +1131,22 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
+       8  ?<Constant "CONNECT">
        2  ?<Constant "\"">
        2  ?<Constant "^">
        2  ?<Initializer for RX_write>
        2  ?<Initializer for Rx_write_0>
-      16  ??Subroutine9_0
+      16  ??Subroutine11_0
        6  ?Subroutine0
        6  ?Subroutine1
-      24  ?Subroutine2
-       4  ?Subroutine3
+      14  ?Subroutine10
+       4  ?Subroutine2
       14  ?Subroutine4
-      52  ?Subroutine5
-      52  ?Subroutine6
-      14  ?Subroutine7
-      14  ?Subroutine8
+      24  ?Subroutine5
+      14  ?Subroutine6
+      52  ?Subroutine7
+      52  ?Subroutine8
+      14  ?Subroutine9
        2  Commad_start
        2  Command_end
      160  Commands
@@ -1143,7 +1187,8 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  cur_0
       50  get_IP
       56  get_SSID
-      92  get_command
+      88  get_command
+      34  get_connected
        2  i
        2  line
      512  process_buf
@@ -1157,17 +1202,17 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  write_command_line
 
  
-   598 bytes in segment CODE
+   642 bytes in segment CODE
     28 bytes in segment DATA16_AN
-     4 bytes in segment DATA16_C
+    12 bytes in segment DATA16_C
      4 bytes in segment DATA16_I
      4 bytes in segment DATA16_ID
  1 353 bytes in segment DATA16_Z
      4 bytes in segment INTVEC
    386 bytes in segment ISR_CODE
  
-   984 bytes of CODE  memory
-     8 bytes of CONST memory (+  4 bytes shared)
+ 1 028 bytes of CODE  memory
+    16 bytes of CONST memory (+  4 bytes shared)
  1 357 bytes of DATA  memory (+ 28 bytes shared)
 
 Errors: none

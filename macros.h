@@ -42,15 +42,21 @@
 #define rx_buff_update  (0x10)
 #define Serial_off      (0x20)
 #define UCA1_TX         (0x40)
-
+#define Command_bit      (0x80)
 #define Process_command (0x100)
 #define Process_buffer_0 (0x200)
 #define Process_buffer_1 (0x400)
 #define Send_next_command (0x800)
+#define Wifi_connected	  (0x1000)
 
+#define NUM_Commands		(10)
+#define NUM_Command_chars	(16)
 
 #define Send_UCA0        (0x00)
 #define Send_UCA1        (0x01)
+
+#define PASSWORD	("1234")
+#define PASSWORD_LENGTH 	(4)
 
 #define SEND_THIS              ("UNCA  #1")
 #define BEGINNING (0)
@@ -174,6 +180,10 @@
 #define TB1CCR1_BIT             (0x10)
 #define DELAY_2_SEC             (0x04)
 #define DELAYED_2_SEC           (0x08)
+#define Movemet_timer		(0x10)
+#define Change_wheel_state	(0x20)
+//#define 
+
 
 //Timer 0
 #define TB0CCR0_INTERVAL        (6250)
@@ -185,7 +195,7 @@
 
 #define TB1CCR2_INTERVAL        (1250)
 //Timer 2
-//#define TB2CCR0_INTERVAL        (6250)
+#define TB2CCR0_INTERVAL        (25000)
 //#define TB2CCR1_INTERVAL        (6250)
 //#define TB2CCR2_INTERVAL        (6250)
 //Timer 3
@@ -215,19 +225,28 @@
 #define DIR_MASK              (0x0f)
 
 #define BOTH_FORWARD          (0x03)
-#define PIVOT_F_L             (0x01)              
+#define PIVOT_F_L             (0x01) 
+#define FORWARD               (0x03)
+#define REVERSE               (0x0F)
+#define STOP		      (0x00)
+#define ESTOP		      (0xF1)
 #define CCW                   (0x0B)
 #define  CW                   (0x07)
 #define BOTH_REVERSE          (0x0f)
 
 
-#define FORWARD               (0x03)
-#define REVERSE               (0x0F)
+
 //#define CW                    (0x00)//need to define
 //===========================PID================================================
 #define PID_SETPOINT                    (255.0f)
 //===========================PORTS==============================================
 //--------------------Port1-----------------------------
+
+//LIGHT PORT CONFIG
+#define OUT1			(0x00)
+#define DIR1			(0x01)
+#define SEL1_0			(0xFE)
+#define SEL1_1			(0x3E)
 #define RED_LED                 (0x01) //P1.0
 #define A1_SEEED                (0x02) //P1.1
 #define V_DETECT_L              (0x04) //P1.2
@@ -238,6 +257,11 @@
 #define UCA0TXD                 (0x80) //P1.7
 
 //--------------------Port2-----------------------------
+#define OUT2			(0x3D)
+#define DIR2			(0x37)
+#define SEL2_0			(0x00)
+#define SEL2_1			(0xC0)
+
 #define RESET_LCD               (0x01) //P2.0
 #define Check_Bat               (0x02) //P2.1
 #define IR_LED                  (0x04) //P2.2
@@ -248,6 +272,11 @@
 #define LFXIN                   (0x80) //P2.7
 
 //--------------------Port3-----------------------------
+#define OUT3			(0x01)
+#define DIR3			(0xD1)
+#define SEL3_0			(0x0E)
+#define SEL3_1			(0x0E)
+
 #define TEST_PROBE               (0x01) //P3.0
 #define OA2O                     (0x02) //P3.1
 #define OA2N                     (0x04) //P3.2
@@ -259,6 +288,11 @@
 #define USE_GPIO                 (0x00)
 #define USE_SMCLK                (0x01)
 //--------------------Port4-----------------------------
+#define OUT4			(0x13)
+#define DIR4			(0x11)
+#define SEL4_0			(0xEC)
+#define SEL4_1			(0x00)
+
 #define DAC_CNTL1                (0x01) //P4.0
 #define SW1                      (0x02) //P4.1
 #define UCA1RXD                  (0x04) //P4.2
@@ -269,6 +303,11 @@
 #define UCB1SOMI                 (0x80) //P4.7
 
 //--------------------Port5-----------------------------
+#define OUT5			(0x00)
+#define DIR5			(0x00)
+#define SEL5_0			(0x00)
+#define SEL5_1			(0x00)
+
 #define CHECK_BAT                (0x01) //P5.0
 #define V_BAT                    (0x02) //P5.1
 #define V_DAC                    (0x04) //P5.2
@@ -276,6 +315,11 @@
 #define IOT_BOOT_CPU             (0x10) //P5.4
 
 //--------------------Port6-----------------------------
+#define OUT6			(0x00)
+#define DIR6			(0x7F)
+#define SEL6_0			(0x3F)
+#define SEL6_1			(0x00)
+
 #define R_FORWARD                (0x01) //P6.0
 #define R_REVERSE                (0x02) //P6.1
 #define L_FORWARD                (0x04) //P6.2

@@ -34,13 +34,12 @@ char IP_Addy[21];
 char SSID[11];
 char *char_buf;
 volatile unsigned int Num_bufs_to_process;
-#define NUM_Commands		(10)
-#define NUM_Command_chars	(16)
+
 char Commands[NUM_Commands][NUM_Command_chars];
 unsigned int write_command_line;
 
 
-#define Command_bit      (0x80)
+
 
 #define Command_Char     ('^')
 #define Command_End      (0x0D)
@@ -49,9 +48,8 @@ unsigned int write_command_line;
 #define Fast_Command 	 ("^F")
 #define Slow_Command 	 ("^S")
 
+#define Am_I_connected	 ("CONNECT")
 
-#define CR		 ("\r")
-#define NL		 ("\n")
 
 
 //process_buf_0;
@@ -71,7 +69,6 @@ void send(char *string, char port){
   }
   
 }
-
 void get_command(){
   if(Num_bufs_to_process > 0){
     if((char_buf = strstr(process_buf_0[process_line] , "^"))!=NULL){
@@ -79,13 +76,17 @@ void get_command(){
       //serial_bits |= Send_next_command;
       int j=0;    
       while(*char_buf != '\n'){//HAVE A COMMAND QUEUE
+	if(*char_buf == '^'){
+	  write_command_line++;
+	  j=0;
+	}
 	Commands[write_command_line][j]=*char_buf;
 	char_buf++;
-	if(*char_buf == '^')write_command_line++;
 	if(write_command_line > NUM_Commands-1) write_command_line = RESET;
 	j++;
       }
       write_command_line++;
+      if(write_command_line > NUM_Commands-1) write_command_line = RESET;
     }
     
     //serial_bits |= ~Send_next_command;
@@ -97,7 +98,17 @@ void get_command(){
   }
   //return void;
 }
-
+void get_connected(){
+  if(Num_bufs_to_process > 0){
+    if(strstr(process_buf_0[process_line] , Am_I_connected)!=NULL){
+      serial_bits |= Send_next_command;
+    }
+    Num_bufs_to_process--;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
+}
 void process_buffer_0(char *look_for){
   if(Num_bufs_to_process > 0){
     if(strcmp(process_buf_0[process_line] , look_for) == 0){

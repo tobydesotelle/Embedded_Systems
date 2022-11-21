@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:36
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:50
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW203B.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWADC7.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -74,11 +74,6 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                                 In  segment DATA16_AN, at 0x45c
    \   union <unnamed> _A_TB3CCR5_L
    \                     _A_TB3CCR5_L:
-   \   000000                DS8 2
-
-   \                                 In  segment DATA16_AN, at 0x58e
-   \   union <unnamed> _A_UCA1TXBUF_L
-   \                     _A_UCA1TXBUF_L:
    \   000000                DS8 2
      23          
      24          // Global Variables
@@ -158,60 +153,53 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   92C33001     BIC.W   #0x1, &0x130
      50            Master_Init();
    \   000004   ........     CALLA   #Master_Init
-     51            BACKLIGHT = 30000;
-   \   000008   B24030755C04 MOV.W   #0x7530, &0x45c
-     52            while(!((display_bits) & (Splash_bit))){
+     51            BACKLIGHT = 0;//30000;
+   \   000008   82435C04     MOV.W   #0x0, &0x45c
+     52            while(!((display_bits) & (Splash_bit))){}
    \                     ??main_0:
-   \   00000E   92B3....     BIT.W   #0x1, &display_bits
-   \   000012   FD27         JEQ     ??main_0
-     53            }
-     54            IOT_main();
-   \   000014   ........     CALLA   #IOT_main
-     55            while(ALWAYS){
-     56              menu_state_machine();
+   \   00000C   92B3....     BIT.W   #0x1, &display_bits
+   \   000010   FD27         JEQ     ??main_0
+     53            IOT_main();
+   \   000012   ........     CALLA   #IOT_main
+     54            while(ALWAYS){
+     55              //menu_state_machine();
+     56              get_command();
    \                     ??main_1:
-   \   000018   ........     CALLA   #menu_state_machine
-     57              //iot_wifi_connect();
-     58              get_command();
-   \   00001C   ........     CALLA   #get_command
-     59              process_switches();
-   \   000020   ........     CALLA   #process_switches
-     60              Display_Process();
-   \   000024   ........     CALLA   #Display_Process
-     61              if(serial_bits & UCA1_TX){
-   \   000028   B2B04000.... BIT.W   #0x40, &serial_bits
-   \   00002E   0524         JEQ     ??main_2
-     62                serial_bits &= UCA1_TX;
-   \   000030   B2F04000.... AND.W   #0x40, &serial_bits
-     63                UCA1TXBUF = '\0';
-   \   000036   82438E05     MOV.W   #0x0, &0x58e
-     64              }
-     65                
-     66              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
-   \                     ??main_2:
-   \   00003A   D2E32202     XOR.B   #0x1, &0x222
-   \   00003E   EC3F         JMP     ??main_1
-   \   000040   0343         NOP
-   \   000042                REQUIRE _A_PM5CTL0_L
-   \   000042                REQUIRE _A_TB3CCR5_L
-   \   000042                REQUIRE _A_UCA1TXBUF_L
-   \   000042                REQUIRE _A_PBOUT_L
-     67              //Wheels_Process();         //State machine for line following 
-     68            }
-     69          }
-     70          
-     71            
+   \   000016   ........     CALLA   #get_command
+     57              process_switches();
+   \   00001A   ........     CALLA   #process_switches
+     58              Display_Process();
+   \   00001E   ........     CALLA   #Display_Process
+     59              Command_state();
+   \   000022   ........     CALLA   #Command_state
+     60          //    if(serial_bits & UCA1_TX){
+     61          //      serial_bits &= UCA1_TX;
+     62          //      UCA1TXBUF = '\0';
+     63          //    }
+     64                
+     65              P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
+   \   000026   D2E32202     XOR.B   #0x1, &0x222
+   \   00002A   F53F         JMP     ??main_1
+   \   00002C   0343         NOP
+   \   00002E                REQUIRE _A_PM5CTL0_L
+   \   00002E                REQUIRE _A_TB3CCR5_L
+   \   00002E                REQUIRE _A_PBOUT_L
+     66              //Wheels_Process();         //State machine for line following 
+     67            }
+     68          }
+     69          
+     70            
 
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
       4   main
+        4   -> Command_state
         4   -> Display_Process
         4   -> IOT_main
         4   -> Master_Init
         4   -> get_command
-        4   -> menu_state_machine
         4   -> process_switches
 
 
@@ -222,10 +210,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_PBOUT_L
        2  _A_PM5CTL0_L
        2  _A_TB3CCR5_L
-       2  _A_UCA1TXBUF_L
        1  baud
        2  display_bits
-      66  main
+      46  main
        2  motor_control_bits
        2  serial_bits
        1  state
@@ -235,12 +222,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  timer_bits
 
  
- 66 bytes in segment CODE
-  8 bytes in segment DATA16_AN
+ 46 bytes in segment CODE
+  6 bytes in segment DATA16_AN
  15 bytes in segment DATA16_Z
  
- 66 bytes of CODE memory
- 15 bytes of DATA memory (+ 8 bytes shared)
+ 46 bytes of CODE memory
+ 15 bytes of DATA memory (+ 6 bytes shared)
 
 Errors: none
 Warnings: none

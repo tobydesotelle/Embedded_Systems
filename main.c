@@ -48,20 +48,19 @@ int *test;
 void main(void){
   PM5CTL0 &= ~LOCKLPM5;// Disable the GPIO power-on default high-impedance mode to activate
   Master_Init();
-  BACKLIGHT = 30000;
-  while(!((display_bits) & (Splash_bit))){
-  }
+  BACKLIGHT = 0;//30000;
+  while(!((display_bits) & (Splash_bit))){}
   IOT_main();
   while(ALWAYS){
-    menu_state_machine();
-    //iot_wifi_connect();
+    //menu_state_machine();
     get_command();
     process_switches();
     Display_Process();
-    if(serial_bits & UCA1_TX){
-      serial_bits &= UCA1_TX;
-      UCA1TXBUF = '\0';
-    }
+    Command_state();
+//    if(serial_bits & UCA1_TX){
+//      serial_bits &= UCA1_TX;
+//      UCA1TXBUF = '\0';
+//    }
       
     P3OUT ^= TEST_PROBE;   // Change State of TEST_PROBE OFF
     //Wheels_Process();         //State machine for line following 

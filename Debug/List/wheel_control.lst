@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          17/Nov/2022  23:51:37
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:50
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,7 +16,7 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\wheel_control.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW2286.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAF66.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\wheel_control.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -49,19 +49,14 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       9          //-------------------------------------------------------------------------
      10          #include "macros.h"
 
-   \                                 In  segment DATA16_AN, at 0x386
-   \   union <unnamed> _A_TB0CCTL2_L
-   \                     _A_TB0CCTL2_L:
-   \   000000                DS8 2
-
-   \                                 In  segment DATA16_AN, at 0x396
-   \   union <unnamed> _A_TB0CCR2_L
-   \                     _A_TB0CCR2_L:
-   \   000000                DS8 2
-
    \                                 In  segment DATA16_AN, at 0x3c2
    \   union <unnamed> _A_TB1CCTL0_L
    \                     _A_TB1CCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x402
+   \   union <unnamed> _A_TB2CCTL0_L
+   \                     _A_TB2CCTL0_L:
    \   000000                DS8 2
 
    \                                 In  segment DATA16_AN, at 0x454
@@ -91,329 +86,485 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      11          // use state machine for setting movement and delays.
      12          
      13          extern volatile unsigned short motor_control_bits;
+     14          extern volatile unsigned short timer_bits;
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     14          unsigned int right_speed;
+     15          unsigned int right_speed;
    \                     right_speed:
    \   000000                DS8 2
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     15          unsigned int left_speed;
+     16          unsigned int left_speed;
    \                     left_speed:
    \   000000                DS8 2
-     16          extern unsigned short line_detection;
-     17          extern unsigned char state;
+     17          extern unsigned short line_detection;
+     18          extern unsigned char state;
 
    \                                 In  segment DATA16_Z, align 1, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     18          unsigned char check_state;
+     19          unsigned char check_state;
    \                     check_state:
    \   000000                DS8 1
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     19          PIDController pid;
+     20          PIDController pid;
    \                     pid:
    \   000000                DS8 56
-     20          
-     21          /*
-     22          //#define R_MOTOR_STATE       (0x01)// 0 = off / 1 = on
-     23          //#define L_MOTOR_STATE       (0x02)// 0 = off / 1 = on
-     24          //#define R_MOTOR_DIR         (0x04)// 0 = forward / 1 = reverse
-     25          //#define L_MOTOR_DIR         (0x08)// 0 = forward / 1 = reverse
-     26          //#define R_MOTOR_DIR_CHANGED (0X10)// will be set if direction changed and safey flag not met
-     27          //#define R_MOTOR_DIR_CHANGED (0X20)// will be set if direction changed and safey flag not met
-     28          //#define R_MOTOR_SPD_CHANGED (0X40)//
-     29          //#define L_MOTOR_SPD_CHANGED (0X80)
-     30          Things needed delay when changing wheels
-     31          wheel selection
-     32          Timed wheel movement for consistancy
-     33          
-     34          
-     35          simple movement i.e.(forwards, backwards, CW, CCW)
-     36          
-     37          
-     38          */
 
-   \                                 In  segment CODE, align 2
-     39          void move(unsigned short movement_bits){
-   \                     move:
-   \   000000   0D4C         MOV.W   R12, R13
-     40            changed_check(movement_bits);//checks if motor direction has changed
-   \   000002   ........     CALLA   #changed_check
-     41            delay_motor();//delay if motor direction has changed
-   \   000006   ........     CALLA   #delay_motor
-     42            process_wheels(movement_bits);//send move command if motor direction has changed or speed has changed
-   \   00000A   0C4D         MOV.W   R13, R12
-   \   00000C   ........     BRA     #process_wheels
-     43          }
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          char right_wheel_state;//Right and left wheel controller
+   \                     right_wheel_state:
+   \   000000                DS8 1
 
-   \                                 In  segment CODE, align 2
-     44          void changed_check(unsigned short movement_bits){
-   \                     changed_check:
-     45              if((motor_control_bits&0x0f)==movement_bits){//if the movement is the same
-   \   000000   1F42....     MOV.W   &motor_control_bits, R15
-   \   000004   3FF00F00     AND.W   #0xf, R15
-   \   000008   0F9C         CMP.W   R12, R15
-   \   00000A   1324         JEQ     ??changed_check_0
-     46              //this is if the movement doesn't change the direction
-     47            }
-     48            else{//if a wheel has changed direction
-     49              if(((motor_control_bits&R_MOTOR_DIR)!=(movement_bits&R_MOTOR_DIR))){
-   \   00000C   1E42....     MOV.W   &motor_control_bits, R14
-   \   000010   6EF2         AND.B   #0x4, R14
-   \   000012   4F4C         MOV.B   R12, R15
-   \   000014   6FF2         AND.B   #0x4, R15
-   \   000016   4E9F         CMP.B   R15, R14
-   \   000018   0324         JEQ     ??changed_check_1
-     50                motor_control_bits |= R_MOTOR_DIR_CHANGED ;
-   \   00001A   B2D01000.... BIS.W   #0x10, &motor_control_bits
-     51              }
-     52              if(((motor_control_bits&L_MOTOR_DIR)!=(movement_bits&L_MOTOR_DIR))){
-   \                     ??changed_check_1:
-   \   000020   1E42....     MOV.W   &motor_control_bits, R14
-   \   000024   7EF2         AND.B   #0x8, R14
-   \   000026   7CF2         AND.B   #0x8, R12
-   \   000028   4E9C         CMP.B   R12, R14
-   \   00002A   0324         JEQ     ??changed_check_0
-     53                motor_control_bits |= L_MOTOR_DIR_CHANGED ;
-   \   00002C   B2D02000.... BIS.W   #0x20, &motor_control_bits
-     54              }
-     55            }
-     56            
-     57          }
-   \                     ??changed_check_0:
-   \   000032   1001         RETA
-
-   \                                 In  segment CODE, align 2
-     58          void delay_motor(){
-   \                     delay_motor:
-     59            if(motor_control_bits&R_MOTOR_DIR_CHANGED||motor_control_bits&L_MOTOR_DIR_CHANGED){
-   \   000000   B2B01000.... BIT.W   #0x10, &motor_control_bits
-   \   000006   0420         JNE     ??delay_motor_1
-   \   000008   B2B02000.... BIT.W   #0x20, &motor_control_bits
-   \   00000E   2624         JEQ     ??delay_motor_0
-     60              //start a timer
-     61              if(motor_control_bits&R_MOTOR_DIR_CHANGED){
-   \                     ??delay_motor_1:
-   \   000010   B2B01000.... BIT.W   #0x10, &motor_control_bits
-   \   000016   0924         JEQ     ??delay_motor_3
-     62                motor_control_bits &= ~R_MOTOR_STATE;
-   \   000018   92C3....     BIC.W   #0x1, &motor_control_bits
-     63                motor_control_bits &= ~R_MOTOR_DIR_CHANGED;
-   \   00001C   B2C01000.... BIC.W   #0x10, &motor_control_bits
-     64                RIGHT_FORWARD_SPEED = WHEEL_OFF;
-   \   000022   82435604     MOV.W   #0x0, &0x456
-     65                RIGHT_REVERSE_SPEED = WHEEL_OFF;
-   \   000026   82435404     MOV.W   #0x0, &0x454
-     66              }
-     67              if(motor_control_bits&L_MOTOR_DIR_CHANGED){
-   \                     ??delay_motor_3:
-   \   00002A   B2B02000.... BIT.W   #0x20, &motor_control_bits
-   \   000030   0924         JEQ     ??delay_motor_2
-     68                motor_control_bits &= ~L_MOTOR_STATE;
-   \   000032   A2C3....     BIC.W   #0x2, &motor_control_bits
-     69                motor_control_bits &= ~L_MOTOR_DIR_CHANGED;
-   \   000036   B2C02000.... BIC.W   #0x20, &motor_control_bits
-     70                LEFT_FORWARD_SPEED = WHEEL_OFF;
-   \   00003C   82435A04     MOV.W   #0x0, &0x45a
-     71                LEFT_REVERSE_SPEED = WHEEL_OFF;
-   \   000040   82435804     MOV.W   #0x0, &0x458
-     72              }
-     73              if(TB0CCTL2!=CCIE){
-   \                     ??delay_motor_2:
-   \   000044   B29010008603 CMP.W   #0x10, &0x386
-   \   00004A   0824         JEQ     ??delay_motor_0
-     74                TB0CCR2 += TB0CCR2_INTERVAL;
-   \   00004C   B250A8619603 ADD.W   #0x61a8, &0x396
-     75                TB0CCTL2 &= ~CCIFG;//enable wheel delay timer
-   \   000052   92C38603     BIC.W   #0x1, &0x386
-     76                TB0CCTL2 |= CCIE;
-   \   000056   B2D010008603 BIS.W   #0x10, &0x386
-     77              }
-     78            }
-     79          }
-   \                     ??delay_motor_0:
-   \   00005C   1001         RETA
-   \   00005E                REQUIRE _A_TB3CCR2_L
-   \   00005E                REQUIRE _A_TB3CCR1_L
-   \   00005E                REQUIRE _A_TB3CCR4_L
-   \   00005E                REQUIRE _A_TB3CCR3_L
-   \   00005E                REQUIRE _A_TB0CCTL2_L
-   \   00005E                REQUIRE _A_TB0CCR2_L
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     22          char left_wheel_state;
+   \                     left_wheel_state:
+   \   000000                DS8 1
+     23          #define IDLE		(0x00)
+     24          #define Configure_wheel (0x01)
+     25          #define Forward_start	(0x02)
+     26          #define Reverse_stare	(0x03)
+     27          #define Forward_adjust	(0x04)
+     28          #define Reverse_adjust	(0x05)
+     29          #define Intiate_stop	(0x06)
+     30          #define Stop_hold	(0x07)
+     31          
 
    \                                 In  segment CODE, align 2, keep-with-next
-     80          void process_wheels(unsigned short movement_bits){
-   \                     process_wheels:
-     81            motor_control_bits &= 0x00;
-   \   000000   8293....     CMP.W   #0x0, &motor_control_bits
-   \   000004   8243....     MOV.W   #0x0, &motor_control_bits
-     82            motor_control_bits |= movement_bits;
-   \   000008   82DC....     BIS.W   R12, &motor_control_bits
-     83            if((motor_control_bits&WHEELS_ON==WHEELS_ON)/*&&(motor_control_bits&!WHEELS_DIR_CHANGED)*/){  
-   \   00000C   92B3....     BIT.W   #0x1, &motor_control_bits
-   \   000010   2A24         JEQ     ??process_wheels_0
-     84              switch((motor_control_bits&DIR_MASK)){//>>2
-   \   000012   1F42....     MOV.W   &left_speed, R15
-   \   000016   1D42....     MOV.W   &right_speed, R13
-   \   00001A   1E42....     MOV.W   &motor_control_bits, R14
-   \   00001E   7EF00F00     AND.B   #0xf, R14
-   \   000022   5E83         SUB.B   #0x1, R14
-   \   000024   0924         JEQ     ??process_wheels_2
-   \   000026   6E83         SUB.B   #0x2, R14
-   \   000028   0C24         JEQ     ??process_wheels_3
-   \   00002A   6E82         SUB.B   #0x4, R14
-   \   00002C   1524         JEQ     ??process_wheels_4
-   \   00002E   6E82         SUB.B   #0x4, R14
-   \   000030   0D24         JEQ     ??process_wheels_5
-   \   000032   6E82         SUB.B   #0x4, R14
-   \   000034   0E24         JEQ     ??process_wheels_6
-   \   000036   153C         JMP     ??process_wheels_1
-     85              case PIVOT_F_L:
-     86                RIGHT_FORWARD_SPEED = right_speed;
-   \                     ??process_wheels_2:
-   \   000038   824D5604     MOV.W   R13, &0x456
-     87                LEFT_FORWARD_SPEED = WHEEL_OFF;
-   \   00003C   82435A04     MOV.W   #0x0, &0x45a
-     88                break;
-   \   000040   1001         RETA
-     89              case BOTH_FORWARD:
-     90                RIGHT_FORWARD_SPEED = right_speed;
-   \                     ??process_wheels_3:
-   \   000042   824D5604     MOV.W   R13, &0x456
-     91                LEFT_FORWARD_SPEED = left_speed;
-   \   000046   824F5A04     MOV.W   R15, &0x45a
-     92                break;
-   \   00004A   1001         RETA
-     93              case CCW:
-     94                RIGHT_FORWARD_SPEED = right_speed;
-   \                     ??process_wheels_5:
-   \   00004C   824D5604     MOV.W   R13, &0x456
-     95                LEFT_REVERSE_SPEED = left_speed;
-   \   000050   ....         JMP     ?Subroutine0
-     96                break;
-     97              case BOTH_REVERSE:
-     98                RIGHT_REVERSE_SPEED = right_speed;
-   \                     ??process_wheels_6:
-   \   000052   824D5404     MOV.W   R13, &0x454
-     99                LEFT_REVERSE_SPEED = left_speed;
-   \   000056   ....         JMP     ?Subroutine0
-    100                break;
-    101              case CW:
-    102                LEFT_FORWARD_SPEED = right_speed;
-   \                     ??process_wheels_4:
-   \   000058   824D5A04     MOV.W   R13, &0x45a
-    103                RIGHT_REVERSE_SPEED = left_speed;
+     32          void right_wheel_statemachine(){
+   \                     right_wheel_statemachine:
+     33            switch(right_wheel_state){
+   \   000000   1F42....     MOV.W   &right_speed, R15
+   \   000004   5E42....     MOV.B   &right_wheel_state, R14
+   \   000008   4E83         SUB.B   #0x0, R14
+   \   00000A   0C24         JEQ     ??right_wheel_statemachine_4
+   \   00000C   5E83         SUB.B   #0x1, R14
+   \   00000E   1024         JEQ     ??right_wheel_statemachine_5
+   \   000010   7E800300     SUB.B   #0x3, R14
+   \   000014   1A24         JEQ     ??right_wheel_statemachine_6
+   \   000016   5E83         SUB.B   #0x1, R14
+   \   000018   2124         JEQ     ??right_wheel_statemachine_7
+   \   00001A   5E83         SUB.B   #0x1, R14
+   \   00001C   3624         JEQ     ??right_wheel_statemachine_8
+   \   00001E   5E83         SUB.B   #0x1, R14
+   \   000020   4024         JEQ     ??right_wheel_statemachine_9
+   \   000022   433C         JMP     ??right_wheel_statemachine_3
+     34            case IDLE:
+     35              if(motor_control_bits & R_MOTOR_STATE)right_wheel_state = Configure_wheel;
+   \                     ??right_wheel_statemachine_4:
+   \   000024   92B3....     BIT.W   #0x1, &motor_control_bits
+   \   000028   4224         JEQ     ??right_wheel_statemachine_0
+   \   00002A   D243....     MOV.B   #0x1, &right_wheel_state
+   \   00002E   1001         RETA
+     36              break;
+     37            case Configure_wheel:
+     38              set_speed(8000);
+   \                     ??right_wheel_statemachine_5:
+   \   000030   3C40401F     MOV.W   #0x1f40, R12
+   \   000034   ........     CALLA   #set_speed
+     39              if(motor_control_bits & R_MOTOR_DIR)right_wheel_state = Forward_adjust;
+   \   000038   A2B2....     BIT.W   #0x4, &motor_control_bits
+   \   00003C   4E7E         SUBC.B  R14, R14
+   \   00003E   7EE3         XOR.B   #0xff, R14
+   \   000040   7E500500     ADD.B   #0x5, R14
+   \   000044   C24E....     MOV.B   R14, &right_wheel_state
+   \   000048   1001         RETA
+     40              else right_wheel_state = Reverse_adjust;
+     41              break;
+     42            case Forward_adjust:
+     43              RIGHT_FORWARD_SPEED = right_speed;
+   \                     ??right_wheel_statemachine_6:
+   \   00004A   824F5604     MOV.W   R15, &0x456
+     44              if(RIGHT_FORWARD_SPEED == 0 || !(motor_control_bits & R_MOTOR_STATE))right_wheel_state = Intiate_stop;
+   \   00004E   82935604     CMP.W   #0x0, &0x456
+   \   000052   0C24         JEQ     ??right_wheel_statemachine_1
+   \   000054   92B3....     BIT.W   #0x1, &motor_control_bits
+   \   000058   0924         JEQ     ??right_wheel_statemachine_1
+     45              else if( motor_control_bits & R_MOTOR_DIR_CHANGED){
+   \   00005A   0C3C         JMP     ??right_wheel_statemachine_2
+     46                right_wheel_state = Intiate_stop;
+     47                motor_control_bits &= ~R_MOTOR_DIR_CHANGED;
+     48              }
+     49              break;
+     50            case Reverse_adjust:
+     51              RIGHT_REVERSE_SPEED = right_speed;
+   \                     ??right_wheel_statemachine_7:
    \   00005C   824F5404     MOV.W   R15, &0x454
-    104                break;
-   \   000060   1001         RETA
-    105              default:
-    106                stop();
-   \                     ??process_wheels_1:
-   \   000062   ........     CALLA   #stop
-    107                break;
-    108              }
-    109            }
-    110          }
-   \                     ??process_wheels_0:
-   \   000066   1001         RETA
-   \   000068                REQUIRE _A_TB3CCR2_L
-   \   000068                REQUIRE _A_TB3CCR4_L
-   \   000068                REQUIRE _A_TB3CCR3_L
-   \   000068                REQUIRE _A_TB3CCR1_L
-
-   \                                 In  segment CODE, align 2
-   \                     ?Subroutine0:
-   \   000000   824F5804     MOV.W   R15, &0x458
-   \   000004   1001         RETA
-    111          void speed_change();
-    112          void direction_change(); //if direction change rise flag and start a timer 
+     52              if(RIGHT_REVERSE_SPEED == 0 || !(motor_control_bits & R_MOTOR_STATE))right_wheel_state = Intiate_stop;
+   \   000060   82935404     CMP.W   #0x0, &0x454
+   \   000064   0324         JEQ     ??right_wheel_statemachine_1
+   \   000066   92B3....     BIT.W   #0x1, &motor_control_bits
+   \   00006A   0420         JNE     ??right_wheel_statemachine_2
+   \                     ??right_wheel_statemachine_1:
+   \   00006C   F2400600.... MOV.B   #0x6, &right_wheel_state
+   \   000072   1001         RETA
+     53              else if( motor_control_bits & R_MOTOR_DIR_CHANGED){
+   \                     ??right_wheel_statemachine_2:
+   \   000074   B2B01000.... BIT.W   #0x10, &motor_control_bits
+   \   00007A   1924         JEQ     ??right_wheel_statemachine_0
+     54                right_wheel_state = Intiate_stop;
+   \   00007C   F2400600.... MOV.B   #0x6, &right_wheel_state
+     55                motor_control_bits &= ~R_MOTOR_DIR_CHANGED;
+   \   000082   B2C01000.... BIC.W   #0x10, &motor_control_bits
+   \   000088   1001         RETA
+     56              }
+     57              break;
+     58            case Intiate_stop:
+     59              RIGHT_FORWARD_SPEED = 0;
+   \                     ??right_wheel_statemachine_8:
+   \   00008A   82435604     MOV.W   #0x0, &0x456
+     60              RIGHT_REVERSE_SPEED = 0;
+   \   00008E   82435404     MOV.W   #0x0, &0x454
+     61               motor_control_bits = 0;
+   \   000092   8243....     MOV.W   #0x0, &motor_control_bits
+     62              TB2CCTL0 |= CCIE;
+   \   000096   B2D010000204 BIS.W   #0x10, &0x402
+     63              right_wheel_state = Stop_hold;
+   \   00009C   F2400700.... MOV.B   #0x7, &right_wheel_state
+     64            case Stop_hold:
+     65              if(timer_bits & Change_wheel_state)right_wheel_state = IDLE; //BUG here or something
+   \                     ??right_wheel_statemachine_9:
+   \   0000A2   B2B02000.... BIT.W   #0x20, &timer_bits
+   \   0000A8   0224         JEQ     ??right_wheel_statemachine_0
+     66              break;
+     67            default:
+     68              right_wheel_state = IDLE;
+   \                     ??right_wheel_statemachine_3:
+   \   0000AA   C243....     MOV.B   #0x0, &right_wheel_state
+     69              break;
+     70            }
+     71            
+     72          }
+   \                     ??right_wheel_statemachine_0:
+   \   0000AE   1001         RETA
+   \   0000B0                REQUIRE _A_TB3CCR2_L
+   \   0000B0                REQUIRE _A_TB3CCR1_L
+   \   0000B0                REQUIRE _A_TB2CCTL0_L
 
    \                                 In  segment CODE, align 2, keep-with-next
-    113          void set_speed(unsigned int speed){
+     73          void left_wheel_statemachine(){
+   \                     left_wheel_statemachine:
+     74            switch(left_wheel_state){
+   \   000000   1F42....     MOV.W   &right_speed, R15
+   \   000004   5E42....     MOV.B   &left_wheel_state, R14
+   \   000008   4E83         SUB.B   #0x0, R14
+   \   00000A   0C24         JEQ     ??left_wheel_statemachine_4
+   \   00000C   5E83         SUB.B   #0x1, R14
+   \   00000E   1024         JEQ     ??left_wheel_statemachine_5
+   \   000010   7E800300     SUB.B   #0x3, R14
+   \   000014   1A24         JEQ     ??left_wheel_statemachine_6
+   \   000016   5E83         SUB.B   #0x1, R14
+   \   000018   2124         JEQ     ??left_wheel_statemachine_7
+   \   00001A   5E83         SUB.B   #0x1, R14
+   \   00001C   3624         JEQ     ??left_wheel_statemachine_8
+   \   00001E   5E83         SUB.B   #0x1, R14
+   \   000020   4024         JEQ     ??left_wheel_statemachine_9
+   \   000022   433C         JMP     ??left_wheel_statemachine_3
+     75            case IDLE:
+     76              if(motor_control_bits & R_MOTOR_STATE)left_wheel_state = Configure_wheel;
+   \                     ??left_wheel_statemachine_4:
+   \   000024   92B3....     BIT.W   #0x1, &motor_control_bits
+   \   000028   4224         JEQ     ??left_wheel_statemachine_0
+   \   00002A   D243....     MOV.B   #0x1, &left_wheel_state
+   \   00002E   1001         RETA
+     77              break;
+     78            case Configure_wheel:
+     79              set_speed(8000);
+   \                     ??left_wheel_statemachine_5:
+   \   000030   3C40401F     MOV.W   #0x1f40, R12
+   \   000034   ........     CALLA   #set_speed
+     80              if(motor_control_bits & L_MOTOR_DIR)left_wheel_state = Forward_adjust;
+   \   000038   B2B2....     BIT.W   #0x8, &motor_control_bits
+   \   00003C   4E7E         SUBC.B  R14, R14
+   \   00003E   7EE3         XOR.B   #0xff, R14
+   \   000040   7E500500     ADD.B   #0x5, R14
+   \   000044   C24E....     MOV.B   R14, &left_wheel_state
+   \   000048   1001         RETA
+     81              else left_wheel_state = Reverse_adjust;
+     82              break;
+     83            case Forward_adjust:
+     84              LEFT_FORWARD_SPEED = right_speed;
+   \                     ??left_wheel_statemachine_6:
+   \   00004A   824F5A04     MOV.W   R15, &0x45a
+     85              if(LEFT_FORWARD_SPEED == 0 || !(motor_control_bits & L_MOTOR_STATE))left_wheel_state = Intiate_stop;
+   \   00004E   82935A04     CMP.W   #0x0, &0x45a
+   \   000052   0C24         JEQ     ??left_wheel_statemachine_1
+   \   000054   A2B3....     BIT.W   #0x2, &motor_control_bits
+   \   000058   0924         JEQ     ??left_wheel_statemachine_1
+     86              else if( motor_control_bits & L_MOTOR_DIR_CHANGED){
+   \   00005A   0C3C         JMP     ??left_wheel_statemachine_2
+     87                left_wheel_state = Intiate_stop;
+     88                motor_control_bits &= ~L_MOTOR_DIR_CHANGED;
+     89              }
+     90              break;
+     91            case Reverse_adjust:
+     92              LEFT_REVERSE_SPEED = right_speed;
+   \                     ??left_wheel_statemachine_7:
+   \   00005C   824F5804     MOV.W   R15, &0x458
+     93              if(LEFT_REVERSE_SPEED == 0 || !(motor_control_bits & L_MOTOR_STATE))left_wheel_state = Intiate_stop;
+   \   000060   82935804     CMP.W   #0x0, &0x458
+   \   000064   0324         JEQ     ??left_wheel_statemachine_1
+   \   000066   A2B3....     BIT.W   #0x2, &motor_control_bits
+   \   00006A   0420         JNE     ??left_wheel_statemachine_2
+   \                     ??left_wheel_statemachine_1:
+   \   00006C   F2400600.... MOV.B   #0x6, &left_wheel_state
+   \   000072   1001         RETA
+     94              else if( motor_control_bits & L_MOTOR_DIR_CHANGED){
+   \                     ??left_wheel_statemachine_2:
+   \   000074   B2B02000.... BIT.W   #0x20, &motor_control_bits
+   \   00007A   1924         JEQ     ??left_wheel_statemachine_0
+     95                left_wheel_state = Intiate_stop;
+   \   00007C   F2400600.... MOV.B   #0x6, &left_wheel_state
+     96                motor_control_bits &= ~L_MOTOR_DIR_CHANGED;
+   \   000082   B2C02000.... BIC.W   #0x20, &motor_control_bits
+   \   000088   1001         RETA
+     97              }
+     98              break;
+     99            case Intiate_stop:
+    100              LEFT_FORWARD_SPEED = 0;
+   \                     ??left_wheel_statemachine_8:
+   \   00008A   82435A04     MOV.W   #0x0, &0x45a
+    101              LEFT_REVERSE_SPEED = 0;
+   \   00008E   82435804     MOV.W   #0x0, &0x458
+    102              motor_control_bits = 0;
+   \   000092   8243....     MOV.W   #0x0, &motor_control_bits
+    103              TB2CCTL0 |= CCIE;
+   \   000096   B2D010000204 BIS.W   #0x10, &0x402
+    104              left_wheel_state = Stop_hold;
+   \   00009C   F2400700.... MOV.B   #0x7, &left_wheel_state
+    105            case Stop_hold:
+    106              if(timer_bits & Change_wheel_state)left_wheel_state = IDLE;
+   \                     ??left_wheel_statemachine_9:
+   \   0000A2   B2B02000.... BIT.W   #0x20, &timer_bits
+   \   0000A8   0224         JEQ     ??left_wheel_statemachine_0
+    107              break;
+    108            default:
+    109              left_wheel_state = IDLE;
+   \                     ??left_wheel_statemachine_3:
+   \   0000AA   C243....     MOV.B   #0x0, &left_wheel_state
+    110              break;
+    111            }
+    112            
+    113          }
+   \                     ??left_wheel_statemachine_0:
+   \   0000AE   1001         RETA
+   \   0000B0                REQUIRE _A_TB3CCR4_L
+   \   0000B0                REQUIRE _A_TB3CCR3_L
+   \   0000B0                REQUIRE _A_TB2CCTL0_L
+    114          /*
+    115          //#define R_MOTOR_STATE       (0x01)// 0 = off / 1 = on
+    116          //#define L_MOTOR_STATE       (0x02)// 0 = off / 1 = on
+    117          //#define R_MOTOR_DIR         (0x04)// 0 = forward / 1 = reverse
+    118          //#define L_MOTOR_DIR         (0x08)// 0 = forward / 1 = reverse
+    119          //#define R_MOTOR_DIR_CHANGED (0X10)// will be set if direction changed and safey flag not met
+    120          //#define R_MOTOR_DIR_CHANGED (0X20)// will be set if direction changed and safey flag not met
+    121          //#define R_MOTOR_SPD_CHANGED (0X40)//
+    122          //#define L_MOTOR_SPD_CHANGED (0X80)
+    123          Things needed delay when changing wheels
+    124          wheel selection
+    125          Timed wheel movement for consistancy
+    126          
+    127          
+    128          simple movement i.e.(forwards, backwards, CW, CCW)
+    129          
+    130          
+    131          */
+
+   \                                 In  segment CODE, align 2, keep-with-next
+    132          void move(unsigned short movement_bits){
+   \                     move:
+    133            motor_control_bits = movement_bits; 
+   \   000000   824C....     MOV.W   R12, &motor_control_bits
+    134            if((motor_control_bits & R_MOTOR_DIR) != (movement_bits & R_MOTOR_DIR)) motor_control_bits |= R_MOTOR_DIR_CHANGED;
+   \   000004   1E42....     MOV.W   &motor_control_bits, R14
+   \   000008   6EF2         AND.B   #0x4, R14
+   \   00000A   4F4C         MOV.B   R12, R15
+   \   00000C   6FF2         AND.B   #0x4, R15
+   \   00000E   4E9F         CMP.B   R15, R14
+   \   000010   0324         JEQ     ??move_0
+   \   000012   B2D01000.... BIS.W   #0x10, &motor_control_bits
+    135            if((motor_control_bits & L_MOTOR_DIR) != (movement_bits & L_MOTOR_DIR)) motor_control_bits |= L_MOTOR_DIR_CHANGED;
+   \                     ??move_0:
+   \   000018   1E42....     MOV.W   &motor_control_bits, R14
+   \   00001C   7EF2         AND.B   #0x8, R14
+   \   00001E   7CF2         AND.B   #0x8, R12
+   \   000020   4E9C         CMP.B   R12, R14
+   \   000022   0324         JEQ     ??move_1
+   \   000024   B2D02000.... BIS.W   #0x20, &motor_control_bits
+    136            //else 
+    137            left_wheel_statemachine();
+   \                     ??move_1:
+   \   00002A   ........     CALLA   #left_wheel_statemachine
+    138            right_wheel_statemachine();
+   \   00002E   ........     BRA     #right_wheel_statemachine
+    139          }
+    140          
+    141          
+    142          
+    143          
+    144          
+    145          //
+    146          //void changed_check(unsigned short movement_bits){
+    147          //    if((motor_control_bits&0x0f)==movement_bits){//if the movement is the same
+    148          //    //this is if the movement doesn't change the direction
+    149          //  }
+    150          //  else{//if a wheel has changed direction
+    151          //    if(((motor_control_bits&R_MOTOR_DIR)!=(movement_bits&R_MOTOR_DIR))){
+    152          //      motor_control_bits |= R_MOTOR_DIR_CHANGED ;
+    153          //    }
+    154          //    if(((motor_control_bits&L_MOTOR_DIR)!=(movement_bits&L_MOTOR_DIR))){
+    155          //      motor_control_bits |= L_MOTOR_DIR_CHANGED ;
+    156          //    }
+    157          //  }
+    158          //  
+    159          //}
+    160          //void delay_motor(){
+    161          //  if(motor_control_bits&R_MOTOR_DIR_CHANGED||motor_control_bits&L_MOTOR_DIR_CHANGED){
+    162          //    //start a timer
+    163          //    if(motor_control_bits&R_MOTOR_DIR_CHANGED){
+    164          //      motor_control_bits &= ~R_MOTOR_STATE;
+    165          //      motor_control_bits &= ~R_MOTOR_DIR_CHANGED;
+    166          //      RIGHT_FORWARD_SPEED = WHEEL_OFF;
+    167          //      RIGHT_REVERSE_SPEED = WHEEL_OFF;
+    168          //    }
+    169          //    if(motor_control_bits&L_MOTOR_DIR_CHANGED){
+    170          //      motor_control_bits &= ~L_MOTOR_STATE;
+    171          //      motor_control_bits &= ~L_MOTOR_DIR_CHANGED;
+    172          //      LEFT_FORWARD_SPEED = WHEEL_OFF;
+    173          //      LEFT_REVERSE_SPEED = WHEEL_OFF;
+    174          //    }
+    175          //    if(TB0CCTL2!=CCIE){
+    176          //      TB0CCR2 += TB0CCR2_INTERVAL;
+    177          //      TB0CCTL2 &= ~CCIFG;//enable wheel delay timer
+    178          //      TB0CCTL2 |= CCIE;
+    179          //    }
+    180          //  }
+    181          //}
+    182          //void process_wheels(unsigned short movement_bits){
+    183          //  motor_control_bits &= 0x00;
+    184          //  motor_control_bits |= movement_bits;
+    185          //  if((motor_control_bits&WHEELS_ON==WHEELS_ON)/*&&(motor_control_bits&!WHEELS_DIR_CHANGED)*/){  
+    186          //    switch((motor_control_bits&DIR_MASK)){//>>2
+    187          //    case PIVOT_F_L:
+    188          //      RIGHT_FORWARD_SPEED = right_speed;
+    189          //      LEFT_FORWARD_SPEED = WHEEL_OFF;
+    190          //      break;
+    191          //    case BOTH_FORWARD:
+    192          //      RIGHT_FORWARD_SPEED = right_speed;
+    193          //      LEFT_FORWARD_SPEED = left_speed;
+    194          //      break;
+    195          //    case CCW:
+    196          //      RIGHT_FORWARD_SPEED = right_speed;
+    197          //      LEFT_REVERSE_SPEED = left_speed;
+    198          //      break;
+    199          //    case BOTH_REVERSE:
+    200          //      RIGHT_REVERSE_SPEED = right_speed;
+    201          //      LEFT_REVERSE_SPEED = left_speed;
+    202          //      break;
+    203          //    case CW:
+    204          //      LEFT_FORWARD_SPEED = right_speed;
+    205          //      RIGHT_REVERSE_SPEED = left_speed;
+    206          //      break;
+    207          //    default:
+    208          //      stop();
+    209          //      break;
+    210          //    }
+    211          //  }
+    212          //}
+    213          //void speed_change();
+    214          //void direction_change(); //if direction change rise flag and start a timer 
+
+   \                                 In  segment CODE, align 2, keep-with-next
+    215          void set_speed(unsigned int speed){
    \                     set_speed:
-    114            right_speed=speed;
+    216            right_speed=speed;
    \   000000   824C....     MOV.W   R12, &right_speed
-    115            left_speed=speed;
-   \   000004                REQUIRE ?Subroutine1
-   \   000004                // Fall through to label ?Subroutine1
-    116          }
+    217            left_speed=speed;
+   \   000004                REQUIRE ?Subroutine0
+   \   000004                // Fall through to label ?Subroutine0
+    218          }
 
    \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine1:
+   \                     ?Subroutine0:
    \   000000   824C....     MOV.W   R12, &left_speed
    \   000004   1001         RETA
 
    \                                 In  segment CODE, align 2, keep-with-next
-    117          void set_right_speed(unsigned int speed){
+    219          void set_right_speed(unsigned int speed){
    \                     set_right_speed:
-    118            right_speed=speed;
+    220            right_speed=speed;
    \   000000   824C....     MOV.W   R12, &right_speed
-    119          }
+    221          }
    \   000004   1001         RETA
 
    \                                 In  segment CODE, align 2
-    120          void set_left_speed(unsigned int speed){
+    222          void set_left_speed(unsigned int speed){
    \                     set_left_speed:
-    121            left_speed=speed;
-   \   000000   ....         JMP     ?Subroutine1
+    223            left_speed=speed;
+   \   000000   ....         JMP     ?Subroutine0
    \   000002   0343         NOP
-    122          }
+    224          }
 
    \                                 In  segment CODE, align 2
-    123          void enable_ramp_to(unsigned int setpoint){
+    225          void enable_ramp_to(unsigned int setpoint){
    \                     enable_ramp_to:
-    124            if(setpoint>BACKLIGHT)ramp_up_to(setpoint);
+    226            if(setpoint>BACKLIGHT)ramp_up_to(setpoint);
    \   000000   829C5C04     CMP.W   R12, &0x45c
    \   000004   022C         JC      ??enable_ramp_to_0
    \   000006   ........     CALLA   #ramp_up_to
-    125            
-    126          }
+    227            
+    228          }
    \                     ??enable_ramp_to_0:
    \   00000A   1001         RETA
    \   00000C                REQUIRE _A_TB3CCR5_L
 
    \                                 In  segment CODE, align 2
-    127          void ramp_up_to(unsigned int setpoint){
+    229          void ramp_up_to(unsigned int setpoint){
    \                     ramp_up_to:
-    128            //enable timer 1 to increase pwm value
-    129            TB1CCTL0 &= ~CCIFG; // CCR0 enable interrupt
+    230            //enable timer 1 to increase pwm value
+    231            TB1CCTL0 &= ~CCIFG; // CCR0 enable interrupt
    \   000000   92C3C203     BIC.W   #0x1, &0x3c2
-    130            TB1CCTL0 |= CCIE; // CCR0 enable interrupt
+    232            TB1CCTL0 |= CCIE; // CCR0 enable interrupt
    \   000004   B2D01000C203 BIS.W   #0x10, &0x3c2
-    131            //speed=setpoint;
-    132          }
+    233            //speed=setpoint;
+    234          }
    \   00000A   1001         RETA
    \   00000C                REQUIRE _A_TB1CCTL0_L
 
    \                                 In  segment CODE, align 2
-    133          void stop(){
+    235          void stop(){
    \                     stop:
-    134            RIGHT_FORWARD_SPEED = WHEEL_OFF;
-   \   000000   82435604     MOV.W   #0x0, &0x456
-    135            RIGHT_REVERSE_SPEED = WHEEL_OFF;
-   \   000004   82435404     MOV.W   #0x0, &0x454
-    136            LEFT_FORWARD_SPEED = WHEEL_OFF;
-   \   000008   82435A04     MOV.W   #0x0, &0x45a
-    137            LEFT_REVERSE_SPEED = WHEEL_OFF;
-   \   00000C   82435804     MOV.W   #0x0, &0x458
-    138          }
-   \   000010   1001         RETA
-   \   000012                REQUIRE _A_TB3CCR2_L
-   \   000012                REQUIRE _A_TB3CCR1_L
-   \   000012                REQUIRE _A_TB3CCR4_L
-   \   000012                REQUIRE _A_TB3CCR3_L
+    236            set_speed(0);
+   \   000000   0C43         MOV.W   #0x0, R12
+   \   000002   ........     CALLA   #set_speed
+    237            RIGHT_FORWARD_SPEED = WHEEL_OFF;
+   \   000006   82435604     MOV.W   #0x0, &0x456
+    238            RIGHT_REVERSE_SPEED = WHEEL_OFF;
+   \   00000A   82435404     MOV.W   #0x0, &0x454
+    239            LEFT_FORWARD_SPEED = WHEEL_OFF;
+   \   00000E   82435A04     MOV.W   #0x0, &0x45a
+    240            LEFT_REVERSE_SPEED = WHEEL_OFF;
+   \   000012   82435804     MOV.W   #0x0, &0x458
+    241          }
+   \   000016   1001         RETA
+   \   000018                REQUIRE _A_TB3CCR2_L
+   \   000018                REQUIRE _A_TB3CCR1_L
+   \   000018                REQUIRE _A_TB3CCR4_L
+   \   000018                REQUIRE _A_TB3CCR3_L
 
    \                                 In  segment CODE, align 2
-    139          void Wheels_Process(void){
+    242          void Wheels_Process(void){
    \                     Wheels_Process:
    \   000000   0A12         PUSH.W  R10
-    140            //------------------------------------------------------
-    141            process_detectors();
+    243            //------------------------------------------------------
+    244            process_detectors();
    \   000002   ........     CALLA   #process_detectors
-    142            switch(state){
+    245            switch(state){
    \   000006   3A40....     MOV.W   #state, R10
    \   00000A   6E4A         MOV.B   @R10, R14
    \   00000C   4E83         SUB.B   #0x0, R14
@@ -431,135 +582,135 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000024   7E803F00     SUB.B   #0x3f, R14
    \   000028   4524         JEQ     ??Wheels_Process_4
    \   00002A   423C         JMP     ??Wheels_Process_3
-    143            case IDLE: // IDLE
-    144              stop();
+    246            case IDLE: // IDLE
+    247              stop();
    \                     ??Wheels_Process_5:
    \   00002C   ........     CALLA   #stop
-    145              set_speed(BASE_SPEED);
+    248              set_speed(BASE_SPEED);
    \   000030   3C408813     MOV.W   #0x1388, R12
    \   000034   ........     CALLA   #set_speed
-    146              idle_case(START);
+    249              idle_case(START);
    \   000038   5C43         MOV.B   #0x1, R12
    \   00003A   ........     CALLA   #idle_case
-    147              break; 
+    250              break; 
    \   00003E   3A3C         JMP     ??Wheels_Process_4
-    148            case START: 
-    149              move(FORWARD);
+    251            case START: 
+    252              move(FORWARD);
    \                     ??Wheels_Process_6:
-   \   000040   ........     CALLA   #?Subroutine2
-    150              do_for(&state,IDLE,100);
+   \   000040   ........     CALLA   #?Subroutine1
+    253              do_for(&state,IDLE,100);
    \                     ??CrossCallReturnLabel_2:
    \   000044   3E406400     MOV.W   #0x64, R14
    \   000048   4D43         MOV.B   #0x0, R13
    \   00004A   0C4A         MOV.W   R10, R12
    \   00004C   ........     CALLA   #do_for
-    151              search(LINE_FOUND);
+    254              search(LINE_FOUND);
    \   000050   6C43         MOV.B   #0x2, R12
    \   000052   ........     CALLA   #search
-    152              break;
+    255              break;
    \   000056   2E3C         JMP     ??Wheels_Process_4
-    153            case LINE_FOUND: 
-    154              stop();
+    256            case LINE_FOUND: 
+    257              stop();
    \                     ??Wheels_Process_7:
    \   000058   ........     CALLA   #stop
-    155              do_for(&state,BACK_UP,50);
+    258              do_for(&state,BACK_UP,50);
    \   00005C   3E403200     MOV.W   #0x32, R14
    \   000060   7D400300     MOV.B   #0x3, R13
    \   000064   213C         JMP     ??Wheels_Process_0
-    156              //P6OUT |=GRN_LED;
-    157              break;
-    158            case BACK_UP: 
-    159              move(FORWARD);
+    259              //P6OUT |=GRN_LED;
+    260              break;
+    261            case BACK_UP: 
+    262              move(FORWARD);
    \                     ??Wheels_Process_8:
-   \   000066   ........     CALLA   #?Subroutine2
-    160              do_for(&state,ALIGN,10);
+   \   000066   ........     CALLA   #?Subroutine1
+    263              do_for(&state,ALIGN,10);
    \                     ??CrossCallReturnLabel_1:
    \   00006A   3E400A00     MOV.W   #0xa, R14
    \   00006E   6D42         MOV.B   #0x4, R13
    \   000070   1B3C         JMP     ??Wheels_Process_0
-    161              break;
-    162            case ALIGN: //Spin until both sensor read strong 
-    163              
-    164              set_speed(BASE_SPEED);
+    264              break;
+    265            case ALIGN: //Spin until both sensor read strong 
+    266              
+    267              set_speed(BASE_SPEED);
    \                     ??Wheels_Process_9:
    \   000072   3C408813     MOV.W   #0x1388, R12
    \   000076   ........     CALLA   #set_speed
-    165              move(CW);
+    268              move(CW);
    \   00007A   3C400700     MOV.W   #0x7, R12
    \   00007E   ........     CALLA   #move
-    166              if(line_detection>=0X44){
+    269              if(line_detection>=0X44){
    \   000082   B2904400.... CMP.W   #0x44, &line_detection
    \   000088   0C28         JNC     ??Wheels_Process_2
-    167                state = PID;
+    270                state = PID;
    \   00008A   F2400500.... MOV.B   #0x5, &state
-    168                PIDController_Init(&pid);
+    271                PIDController_Init(&pid);
    \   000090   3C40....     MOV.W   #pid, R12
    \   000094   ........     CALLA   #PIDController_Init
-    169              }
-    170              //check_state=START;
-    171              do_for(&state,IDLE,1000);
+    272              }
+    273              //check_state=START;
+    274              do_for(&state,IDLE,1000);
    \   000098   043C         JMP     ??Wheels_Process_2
-    172              break;
-    173            case PID : // Adjust Reverse
-    174              move(FORWARD);
+    275              break;
+    276            case PID : // Adjust Reverse
+    277              move(FORWARD);
    \                     ??Wheels_Process_10:
-   \   00009A   ........     CALLA   #?Subroutine2
-    175              pid_control();
+   \   00009A   ........     CALLA   #?Subroutine1
+    278              pid_control();
    \                     ??CrossCallReturnLabel_0:
    \   00009E   ........     CALLA   #pid_control
-    176              do_for(&state,IDLE,1000);
+    279              do_for(&state,IDLE,1000);
    \                     ??Wheels_Process_2:
    \   0000A2   3E40E803     MOV.W   #0x3e8, R14
    \   0000A6   4D43         MOV.B   #0x0, R13
    \                     ??Wheels_Process_0:
    \   0000A8   0C4A         MOV.W   R10, R12
    \   0000AA   ........     CALLA   #do_for
-    177              break;  
+    280              break;  
    \   0000AE   023C         JMP     ??Wheels_Process_4
-    178            case Stop: // Look for End of Stop Time
-    179              
-    180              break; 
-    181            default:
-    182              state = IDLE;
+    281            case Stop: // Look for End of Stop Time
+    282              
+    283              break; 
+    284            default:
+    285              state = IDLE;
    \                     ??Wheels_Process_3:
    \   0000B0   C243....     MOV.B   #0x0, &state
-    183              break;
-    184            }
-    185          }
+    286              break;
+    287            }
+    288          }
    \                     ??Wheels_Process_4:
    \   0000B4   3A41         POP.W   R10
    \   0000B6   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine2:
+   \                     ?Subroutine1:
    \   000000   3C400300     MOV.W   #0x3, R12
    \   000004   ........     BRA     #move
 
    \                                 In  segment CODE, align 2
-    186          void pid_control(){
+    289          void pid_control(){
    \                     pid_control:
-    187            //Want to update pid loop and set output
-    188            float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
+    290            //Want to update pid loop and set output
+    291            float Motor_offset = PIDController_Update(&pid,0.0f,measurment());
    \   000000   ........     CALLA   #measurment
    \   000004   1D15         PUSHM.W #0x2, R13
    \   000006   0E43         MOV.W   #0x0, R14
    \   000008   0F43         MOV.W   #0x0, R15
    \   00000A   3C40....     MOV.W   #pid, R12
    \   00000E   ........     CALLA   #PIDController_Update
-    189            set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
+    292            set_left_speed(BASE_SPEED+(unsigned int)Motor_offset);
    \   000012   ........     CALLA   #_Cast32fto32s
    \   000016   0F4C         MOV.W   R12, R15
    \   000018   3F508813     ADD.W   #0x1388, R15
    \   00001C   824F....     MOV.W   R15, &left_speed
-    190            set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
+    293            set_right_speed(BASE_SPEED-(unsigned int)Motor_offset);
    \   000020   3F408813     MOV.W   #0x1388, R15
    \   000024   0F8C         SUB.W   R12, R15
    \   000026   824F....     MOV.W   R15, &right_speed
-    191            
-    192          }
+    294            
+    295          }
    \   00002A   A1000400     ADDA    #0x4, SP
    \   00002E   1001         RETA
-    193          
+    296          
 
    Maximum stack usage in bytes:
 
@@ -575,25 +726,25 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
         6   -> search
         6   -> set_speed
         6   -> stop
-      4   changed_check
-      4   delay_motor
       4   enable_ramp_to
         4   -> ramp_up_to
+      4   left_wheel_statemachine
+        4   -> set_speed
       4   move
-        4   -> changed_check
-        4   -> delay_motor
-        0   -> process_wheels
+        4   -> left_wheel_statemachine
+        0   -> right_wheel_statemachine
       8   pid_control
         8   -> PIDController_Update
         4   -> measurment
         8 _Cast32fto32s
-      4   process_wheels
-        4   -> stop
       4   ramp_up_to
+      4   right_wheel_statemachine
+        4   -> set_speed
       4   set_left_speed
       4   set_right_speed
       4   set_speed
       4   stop
+        4   -> set_speed
 
 
    Segment part sizes:
@@ -601,40 +752,39 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    Bytes  Function/Label
    -----  --------------
        6  ?Subroutine0
-       6  ?Subroutine1
-       8  ?Subroutine2
+       8  ?Subroutine1
      184  Wheels_Process
-       2  _A_TB0CCR2_L
-       2  _A_TB0CCTL2_L
        2  _A_TB1CCTL0_L
+       2  _A_TB2CCTL0_L
        2  _A_TB3CCR1_L
        2  _A_TB3CCR2_L
        2  _A_TB3CCR3_L
        2  _A_TB3CCR4_L
        2  _A_TB3CCR5_L
-      52  changed_check
        1  check_state
-      94  delay_motor
       12  enable_ramp_to
        2  left_speed
-      16  move
+       1  left_wheel_state
+     176  left_wheel_statemachine
+      50  move
       56  pid
       48  pid_control
-     104  process_wheels
       12  ramp_up_to
        2  right_speed
+       1  right_wheel_state
+     176  right_wheel_statemachine
        4  set_left_speed
        6  set_right_speed
        4  set_speed
-      18  stop
+      24  stop
 
  
- 574 bytes in segment CODE
-  16 bytes in segment DATA16_AN
-  61 bytes in segment DATA16_Z
+ 710 bytes in segment CODE
+  14 bytes in segment DATA16_AN
+  63 bytes in segment DATA16_Z
  
- 574 bytes of CODE memory
-  61 bytes of DATA memory (+ 16 bytes shared)
+ 710 bytes of CODE memory
+  63 bytes of DATA memory (+ 14 bytes shared)
 
 Errors: none
 Warnings: none

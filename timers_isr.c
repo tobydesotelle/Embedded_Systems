@@ -78,14 +78,7 @@ __interrupt void TIMER0_B1_ISR(void){
     if((time_interval_200 >= 5 )&& serial_bits & Serial_off){
       send("hello im testing the length of stings that can be sent",1);
       time_interval_200 = 0;
-//      serial_bits |= UCA1_TX;
     }
-//    if(motor_control_bits&!R_MOTOR_STATE){
-//      motor_control_bits |= R_MOTOR_STATE;
-//    }
-//    if(motor_control_bits&!L_MOTOR_STATE){
-//      motor_control_bits |= L_MOTOR_STATE;
-//    }
     TB0CCR2 += TB0CCR2_INTERVAL;
     break;
   case TIMER_OVERFLOW: // overflow
@@ -124,7 +117,6 @@ __interrupt void Timer1_B0_ISR(void){
   if(timer_bits & DELAY_2_SEC){
     timer200++;
     if(timer200>=START_DELAY){
-      
       timer_bits |= DELAYED_2_SEC;
       timer_bits &= ~DELAY_2_SEC;
       timer200=RESET;
@@ -154,7 +146,8 @@ __interrupt void TIMER1_B1_ISR(void){
     timer_bits |= TB1CCR1_BIT;
     break;
   case CCR2: 
-    TB1CCR1+=TB1CCR2_INTERVAL;
+    TB1CCTL2 &= ~CCIFG;
+    TB1CCR2+=TB1CCR2_INTERVAL;
     
     break;
   case TIMER_OVERFLOW:
@@ -181,7 +174,10 @@ __interrupt void TIMER1_B1_ISR(void){
 */
 #pragma vector = TIMER2_B0_VECTOR
 __interrupt void Timer2_B0_ISR(void){ 
-  
+  TB2CCTL0 &= ~CCIFG;
+  TB2CCTL0 &= ~CCIE;
+  TB2CCR0 = TB0CCR0_INTERVAL;
+  timer_bits |= Change_wheel_state;
 }
 #pragma vector=TIMER2_B1_VECTOR
 __interrupt void TIMER2_B1_ISR(void){
