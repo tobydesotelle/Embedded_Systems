@@ -1,24 +1,26 @@
 #include "macros.h"
+#define Command_Char     ('^')
+#define Command_End      (0x0D)
+#define Command_LF       ('\n')
+#define Test_Command	 ("^^")
+#define Fast_Command 	 ("^F")
+#define Slow_Command 	 ("^S")
+#define Am_I_connected	 ("CONNECT")
+#define eUCA0_rx                ()
+#define Display_SIZE		(10)
+
 
 extern volatile unsigned short serial_bits;
-#define eUCA0_rx                ()
 
-
-volatile unsigned int usb_rx_ring_wr;
-volatile char USB_Char_Rx[SMALL_RING_SIZE];
-char temp[2];
 
 char process_buf[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];
 char process_buf_0[NUM_PROCESS_BUF][PROCESS_BUF_LENGTH];
 char Ring_buf_0[SMALL_RING_SIZE];
 char *Rx_write_0=Ring_buf_0;
 char *Rx_read_0;
-int line;
-int cur_0;
-//process 0 is for reciving PC
-//process 1 is for reciving IOT
-//Process 2 is for Command buffer
-//process_buf_0;
+unsigned int line;
+unsigned int cur_0;
+
 char RING_BUF[SMALL_RING_SIZE];
 char *RX_write=RING_BUF;
 char *RX_read;
@@ -38,25 +40,9 @@ volatile unsigned int Num_bufs_to_process;
 char Commands[NUM_Commands][NUM_Command_chars];
 unsigned int write_command_line;
 
-
-
-
-#define Command_Char     ('^')
-#define Command_End      (0x0D)
-#define Command_LF       ('\n')
-#define Test_Command	 ("^^")
-#define Fast_Command 	 ("^F")
-#define Slow_Command 	 ("^S")
-
-#define Am_I_connected	 ("CONNECT")
-
-
-
-//process_buf_0;
-
 void send(char *string, char port){
-  i=0;
-  Tx_String = &string[0];
+  i=RESET;
+  Tx_String = &string[RESET];
   switch(port){
   case Send_UCA0:
     UCA0IE |= UCTXIE;
@@ -70,15 +56,16 @@ void send(char *string, char port){
   
 }
 void get_command(){
-  if(Num_bufs_to_process > 0){
+  if(Num_bufs_to_process > LOW){
     if((char_buf = strstr(process_buf_0[process_line] , "^"))!=NULL){
       char_buf++;
       //serial_bits |= Send_next_command;
-      int j=0;    
+      int j=RESET;    
       while(*char_buf != '\n'){//HAVE A COMMAND QUEUE
 	if(*char_buf == '^'){
 	  write_command_line++;
-	  j=0;
+	  char_buf++;
+	  j=RESET;
 	}
 	Commands[write_command_line][j]=*char_buf;
 	char_buf++;
@@ -89,9 +76,7 @@ void get_command(){
       if(write_command_line > NUM_Commands-1) write_command_line = RESET;
     }
     
-    //serial_bits |= ~Send_next_command;
     Num_bufs_to_process--;
-    //serial_bits &= ~Process_buffer_0;
     clear_buffer();
     process_line++;
     if(process_line == NUM_PROCESS_BUF)process_line =RESET;
@@ -99,7 +84,7 @@ void get_command(){
   //return void;
 }
 void get_connected(){
-  if(Num_bufs_to_process > 0){
+  if(Num_bufs_to_process > RESET){
     if(strstr(process_buf_0[process_line] , Am_I_connected)!=NULL){
       serial_bits |= Send_next_command;
     }
@@ -110,37 +95,34 @@ void get_connected(){
   }
 }
 void process_buffer_0(char *look_for){
-  if(Num_bufs_to_process > 0){
+  if(Num_bufs_to_process > RESET){
     if(strcmp(process_buf_0[process_line] , look_for) == 0){
       serial_bits |= Send_next_command;
     }
     Num_bufs_to_process--;
-    //serial_bits &= ~Process_buffer_0;
     clear_buffer();
     process_line++;
     if(process_line == NUM_PROCESS_BUF)process_line =RESET;
   }
 }
 void clear_buffer(){
-  for(int j = 0;j<PROCESS_BUF_LENGTH;j++){
+  for(int j = RESET;j<PROCESS_BUF_LENGTH;j++){
     process_buf_0[process_line][j]=RESET;
   }
 }
 char *get_SSID(){
-  if(Num_bufs_to_process > 0){
+  if(Num_bufs_to_process > RESET){
     if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
       char_buf++;
       serial_bits |= Send_next_command;
-      int j=0;    
+      int j=RESET;    
       while(*char_buf != '\"'){
-	if(j<10)SSID[j]=*char_buf;
+	if(j<Display_SIZE)SSID[j]=*char_buf;
 	char_buf++;
 	j++;
       }
     }
-    //serial_bits |= ~Send_next_command;
     Num_bufs_to_process--;
-    //serial_bits &= ~Process_buffer_0;
     clear_buffer();
     process_line++;
     if(process_line == NUM_PROCESS_BUF)process_line =RESET;
@@ -148,25 +130,41 @@ char *get_SSID(){
   return SSID;
 }
 char *get_IP(){
-  if(Num_bufs_to_process > 0){
+  if(Num_bufs_to_process > RESET){
     if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
       char_buf++;
       serial_bits |= Send_next_command;
-      int j=0;    
+      int j=RESET;    
       while(*char_buf != '\"'){
 	IP_Addy[j]=*char_buf;
 	char_buf++;
 	j++;
       }
     }
-    //serial_bits |= ~Send_next_command;
     Num_bufs_to_process--;
-    //serial_bits &= ~Process_buffer_0;
     clear_buffer();
     process_line++;
     if(process_line == NUM_PROCESS_BUF)process_line =RESET;
   }
   return IP_Addy;
+}
+void get_from_serial(char *store){
+  if(Num_bufs_to_process > RESET){
+    if((char_buf = strstr(process_buf_0[process_line] , "\""))!=NULL){
+      char_buf++;
+      serial_bits |= Send_next_command;
+      int j=RESET;    
+      while(*char_buf != '\"' && j <= PROCESS_BUF_LENGTH){
+	store[j]=*char_buf;
+	char_buf++;
+	j++;
+      }
+    }
+    Num_bufs_to_process--;
+    clear_buffer();
+    process_line++;
+    if(process_line == NUM_PROCESS_BUF)process_line =RESET;
+  }
 }
 void Init_Serial_UCA0(char speed){
 
@@ -275,10 +273,8 @@ void Init_Serial_UCA1(char speed){
   }
   //------------------------------------------------------------------------------
 }
-char test_output[11];
 #pragma vector=EUSCI_A0_VECTOR//To IOT
 __interrupt void EUSCI_A0_ISR(void){
-  
   switch(__even_in_range(UCA0IV,0x08)){ // Bruh IDK what I did here needs to be fixed
   case 0: // Vector 0 - no interrupt
     break;
@@ -330,7 +326,7 @@ __interrupt void EUSCI_A1_ISR(void){
   case 0: // Vector 0 - no interrupt
     break;
   case 2: // Vector 2 - RXIFG
-    					//Need to save the rx to send to the UCA0 (IOT)
+  				//Need to save the rx to send to the UCA0 (IOT)
     *RX_write =  UCA1RXBUF;		//Store UCA1RXBUF into current ring buf location
     RX_read = RX_write;			// set read to the current write
     RX_write++;				// increment write location
@@ -341,18 +337,16 @@ __interrupt void EUSCI_A1_ISR(void){
       strncpy(process_buf[2],process_buf[0],Process_in_cur);
       Process_in_cur = 0;
       serial_bits |= Process_command;	//SET PROCESS COMMAND BIT
-      //send(process_buf[0],Send_UCA0);
     }  
     else if(serial_bits & Command_bit){//processing command when it is found
       process_buf[0][Process_in_cur] = *RX_read;
         Process_in_cur++;
     }else if(*RX_read != '\0' /*|| *RX_read !=*/ ){
       UCA0TXBUF = *RX_read;
-      //send(IOT_char[0],Send_UCA0);
+
     }else{
       UCA0TXBUF = '\r';
     }
-    //UCA0TXBUF = temp;
     serial_bits |= Serial_off;
     break;
   case 4: // Vector 4 – TXIFG

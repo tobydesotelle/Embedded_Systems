@@ -20,19 +20,85 @@
 #define ERROR_LIMITS                          (1000)
 
 
+#define Treshold			(200)
+#define White_val			(300)
+#define Black_val			(3000)
+#define Off_line_ret			(450)
+extern char display_line[DISPLAYLINES][DISPLAYCHARS];
+extern volatile unsigned char switch_control;
 unsigned short line_detection;
 extern unsigned int ADC_Left_Detect;
 extern unsigned int ADC_Right_Detect;
 extern unsigned int V_Thumb;
+unsigned int R_white;
+unsigned int L_white;
+unsigned int R_black;
+unsigned int L_black;
+short measure_state = 0;
+char calibration_state = 0;
+char calibrated = 0;
+
+#define ON_line		(0)
+#define right_of_line		(1)
+#define left_of_line		(2)
 
 
-
-float measurment(){//This is the measurment value for the pid contoller
-//  if(ADC_Left_Detect<=BASE_READING);//
-//  if(ADC_Right_Detect<=BASE_READING);
-  return (float)ADC_Left_Detect - ADC_Right_Detect ;//+ PID_SETPOINT;
+int measurment(){//This is the measurment value for the pid contoller
+  if(ADC_Left_Detect<=L_white+Treshold/*+Treshold*/&& measure_state != right_of_line && measure_state != left_of_line ){
+  	measure_state = right_of_line;
+  }
+  if(ADC_Right_Detect<=R_white+Treshold/*+Treshold*/&& measure_state != right_of_line && measure_state != left_of_line ){
+	measure_state =  left_of_line;
+  }
+  
+  switch(measure_state){//current state of where it is on line
+  case ON_line:
+    strcpy(display_line[DISPLAY3], "    on    ");
+    return (ADC_Left_Detect - L_white) - (ADC_Right_Detect - R_white) ;
+  break;
+  case right_of_line://want to turn left and keep turning until found line
+    strcpy(display_line[DISPLAY3], "   right  ");
+    if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
+    return -Off_line_ret;
+    break;
+  case left_of_line://want to turn right and keep turning until found line
+    strcpy(display_line[DISPLAY3], "   left   ");
+    if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
+    return Off_line_ret;
+    break;
+  
+  }
+  return (ADC_Left_Detect - L_white) - (ADC_Right_Detect - R_white) ;
 }
-
+void line_calibration(){
+  while(!(calibrated)){
+    switch(calibration_state){
+    case 0:
+      if(SW1_AND_TOGGLED){
+	SW1_CLEAR;
+	R_white = ADC_Right_Detect;
+	L_white = ADC_Left_Detect;
+	calibration_state++;
+      }
+      line_calibration_display('w');
+      break;
+    case 1:
+      if(SW1_AND_TOGGLED){
+	SW1_CLEAR;
+	R_black = ADC_Right_Detect;
+	L_black = ADC_Left_Detect;
+	calibration_state++;
+	
+      }
+      line_calibration_display('b');
+      break;
+    case 2:
+      calibrated = 1;
+      break;
+    }
+    Display_Process();
+  }
+}
 
 void set_line_bit(unsigned short level_detection){
   if(level_detection>L_CLEAR)line_detection &= L_CLEAR;

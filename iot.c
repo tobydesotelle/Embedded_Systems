@@ -6,12 +6,15 @@ extern volatile unsigned short timer_bits;
 
 extern unsigned char menu_state;
 extern char IP_Addy[21];
-extern char SSID[11];
+extern char SSID[64];
 extern char Commands[NUM_Commands][NUM_Command_chars];
 unsigned int cur_command;
 unsigned int commmand_time; 
 unsigned short IOT_bits;
 unsigned char command_state;
+extern unsigned int write_command_line;
+
+
 #define System_Store0	 ("AT+SYSSTORE=0\r\n")
 #define CIPMUX1		 ("AT+CIPMUX=1\r\n")
 #define SSID_Find	 ("AT+CWJAP?\r\n")
@@ -23,7 +26,17 @@ unsigned char command_state;
 #define Start_timmer	(0x54)
 #define Process_next	(0x55)
 #define IOT_Process_next (0x01)
+#define NUM_queues	(50)
 
+unsigned char command_queue[NUM_queues];
+unsigned int time_queue[NUM_queues];
+
+unsigned char *add_to_queue=command_queue;
+unsigned char *read_command_queue=command_queue;
+
+unsigned int *add_to_time=time_queue;
+unsigned int *read_time=time_queue;
+unsigned int timerb1_2_cnt;
 char IOT_state=0;
 char IOT_state_mem;
 void IOT_main(){
@@ -38,7 +51,61 @@ void IOT_main(){
   menu_state = Main_menu;
   IOT_bits |= IOT_Process_next;
 }
-
+void Command_state(){//handle movements and times 
+  get_command();
+  process_command();
+  //if(Command_state == 0){//flag new command  and stop command
+    switch(*read_command_queue){// Add display 
+    case IDLE:
+      stop();
+      break;
+    case ESTOP:
+      stop();
+      break;
+    case STOP:
+      stop();
+      //wifi_move_diplay(Stop_display);
+      do_for(read_command_queue,Process_next,*read_time);
+      break;
+    case FORWARD:
+      move(FORWARD);
+      //wifi_move_diplay(FORWARD_display);
+      do_for(read_command_queue,Process_next,*read_time);
+      //command_state = Start_timmer;
+      break;
+    case REVERSE:
+      move(REVERSE);
+      //wifi_move_diplay(REVERSE_display);
+      do_for(read_command_queue,Process_next,*read_time);
+      //command_state = Start_timmer;
+      break;
+    case CCW:
+      move(CW);
+      //wifi_move_diplay(CCW_display);
+      do_for(read_command_queue,Process_next,*read_time);
+      //command_state = Start_timmer;
+      break;
+    case CW:
+      move(CCW);
+      //wifi_move_diplay(CW_display);
+      do_for(read_command_queue,Process_next,*read_time);
+      //command_state = Start_timmer;
+      break;
+    case Start_timmer:
+      do_for(read_command_queue,Process_next,*read_time);
+      break;
+    case Process_next:
+      stop();
+      *read_command_queue = RESET;
+      *read_time = RESET;
+	read_command_queue++;
+	read_time++;
+	if(read_command_queue - command_queue >= NUM_queues)read_command_queue = command_queue;
+	if(read_time- time_queue >= NUM_queues)read_time= time_queue;
+      break;
+    //}
+  }
+}
 void iot_wifi_connect(){
   if(serial_bits & Send_next_command){
     IOT_state++;
@@ -74,14 +141,16 @@ void iot_wifi_connect(){
     IOT_state++;
     break;
   case 8:
-    get_SSID();
+    //get_SSID();
+    get_from_serial(SSID);
     break;
   case 9:
     send(Find_IP,Send_UCA0);
     IOT_state++;
     break;
   case 10:
-    get_IP();
+    //get_IP();
+    get_from_serial(IP_Addy);
     break;
   case 11:
     process_buffer_0(OK);
@@ -89,7 +158,7 @@ void iot_wifi_connect(){
   case 12:
     P3OUT |= IOT_LINK_CPU;
     display_bits |= Display_IP;
-    menu_state = IP_Display;
+    //menu_state = IP_Display;
     IOT_state++;
     break;
   case 13:
@@ -97,52 +166,47 @@ void iot_wifi_connect(){
       break;
   case 14:
     serial_bits |= Wifi_connected;
+    clear_display();
   }
   
 }
-void process_command(){
-  
+void process_command(){ // reads command then adds to the queue
+  if(Commands[cur_command][PASSWORD_LENGTH]=='x'){//If currently written is the estop command
+    command_state = ESTOP;
+  }
   if(strncmp(Commands[cur_command],PASSWORD,PASSWORD_LENGTH) == 0){
-    if(Commands[cur_command][PASSWORD_LENGTH]=='s'){
-      command_state = 0;
-	stop();
-	
+    switch(Commands[cur_command][PASSWORD_LENGTH]){
+    case 'f':
+      *add_to_queue++ = FORWARD;
+      break;
+    case 'b':
+      *add_to_queue++ = REVERSE;
+      break;
+    case 'r':
+      *add_to_queue++ = CW;
+      break;
+    case 'l':
+      *add_to_queue++ = CCW;
+      break;
+    case 's':
+      *add_to_queue++ = STOP;
+      break;
     }
-    if(IOT_bits & IOT_Process_next){
-      switch(Commands[cur_command][PASSWORD_LENGTH]){
-      case 'f':
-	command_state = FORWARD;
-	break;
-      case 'b':
-	command_state = REVERSE;
-	break;
-      case 'r':
-	command_state = CW;
-	break;
-      case 'l':
-	command_state = CCW;
-	break;
-      case 's':
-	command_state = 0;
-	stop();
-	break;
-      }
-      IOT_bits &= ~IOT_Process_next;
-      
-    }
+    
     char char_num[5];
     strncpy(char_num,&Commands[cur_command][PASSWORD_LENGTH+1],4);
-    commmand_time =str_to_int(char_num);  
+    
     clear_command();
+    
+    *add_to_time++ = str_to_int(char_num);  
     cur_command++;
+    
     if(cur_command>=NUM_Commands)cur_command = RESET;
-    //now get length of time to do 
+    if(add_to_time - time_queue >= NUM_queues)add_to_time = time_queue;
+    if(add_to_queue - command_queue >= NUM_queues)add_to_queue = command_queue;
+
     
     
-  }
-  else{
-    //clear_command();
-    //cur_command++;
   }
 }
 unsigned int str_to_int(char *num_string){
@@ -158,47 +222,6 @@ void clear_command(){
     Commands[cur_command][j]=RESET;
   }
 }
-void Command_state(){//handle movements and times 
-  process_command();
-  //if(Command_state == 0){//flag new command  and stop command
-    switch(command_state){
-    case 0:
-      IOT_bits |= IOT_Process_next;
-      stop();
-      break;
-    case FORWARD:
-      move(FORWARD);
-      do_for(&command_state,Process_next,commmand_time);
-      //command_state = Start_timmer;
-      break;
-    case REVERSE:
-      move(REVERSE);
-      do_for(&command_state,Process_next,commmand_time);
-      //command_state = Start_timmer;
-      break;
-    case CCW:
-      move(CW);
-      do_for(&command_state,Process_next,commmand_time);
-      //command_state = Start_timmer;
-      break;
-    case CW:
-      move(CCW);
-      do_for(&command_state,Process_next,commmand_time);
-      //command_state = Start_timmer;
-      break;
-    case Start_timmer:
-      do_for(&command_state,Process_next,commmand_time);
-      break;
-    case Process_next:
-      cur_command++;
-      IOT_bits |= IOT_Process_next;
-      command_state = 0;
-      break;
-    //}
-  }
-  IOT_bits |= IOT_Process_next;
-}
-unsigned int timerb1_2_cnt;
 void movement_time(unsigned int time){
   TB1CCTL2 &= ~CCIFG;
   TB1CCTL2 |= CCIE;
@@ -209,23 +232,7 @@ void movement_time(unsigned int time){
      TB1CCTL2 &= ~CCIE;
       timerb1_2_cnt = 0;
       
-      command_state = 0;
+      command_state = STOP;
     }
   }
 }
-//void do_for(unsigned char *curState,unsigned char nextState,unsigned int time){
-//  if((TB1CCTL1&CCIE)!=CCIE){
-//  TB1CCTL1 &= ~CCIFG;
-//  TB1CCTL1 |= CCIE;
-//  time100=0;
-//  }
-//  if(timer_bits&TB1CCR1_BIT){
-//    time100++;
-//    timer_bits &= ~TB1CCR1_BIT;
-//  }
-//  if(time100>=time){
-//    *curState=nextState;
-//    time100=0;
-//    TB1CCTL1 &= ~CCIE;
-//  }
-//}

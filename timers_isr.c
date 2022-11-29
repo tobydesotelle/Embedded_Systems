@@ -11,7 +11,7 @@
 #include "macros.h"
 extern volatile unsigned char update_display;
 
-extern volatile unsigned int time_interval50;//50ms
+unsigned int time_interval50;//50ms
 unsigned int time_interval_200;
 
 extern volatile unsigned short display_bits;

@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:49
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,16 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\display.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAC9A.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9107.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\display.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohz --multiplier=32
+#        ./ --core=430X --data_model=small -Ol --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -66,459 +67,544 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000                DS8 1
      17          extern char IP_Addy[21];
      18          extern char SSID[11];
-     19          
-     20          
-     21          #define Trying_to_connect	(0x00)
+     19          extern char adc_char[5];
+     20          extern unsigned int ADC_Left_Detect;
+     21          extern unsigned int ADC_Right_Detect;
+     22          extern unsigned int V_Thumb;
+     23          
+     24          #define Trying_to_connect	(0x00)
 
-   \                                 In  segment CODE, align 2, keep-with-next
-     22          void Connecting_machine(){
+   \                                 In  segment CODE, align 2
+     25          void Connecting_machine(){
    \                     Connecting_machine:
-     23            switch(connect_state){
+     26            switch(connect_state){
    \   000000   5E42....     MOV.B   &connect_state, R14
    \   000004   4E83         SUB.B   #0x0, R14
-   \   000006   0424         JEQ     ??Connecting_machine_1
+   \   000006   0424         JEQ     ??Connecting_machine_2
    \   000008   7E800500     SUB.B   #0x5, R14
-   \   00000C   0A24         JEQ     ??Connecting_machine_2
+   \   00000C   0A24         JEQ     ??Connecting_machine_3
    \   00000E   1001         RETA
-     24            case Trying_to_connect:
-     25              Connecting_Display();
-   \                     ??Connecting_machine_1:
-   \   000010   ........     CALLA   #Connecting_Display
-     26              if(display_bits & Display_IP)connect_state = IP_Display;
-   \   000014   A2B2....     BIT.W   #0x4, &display_bits
-   \   000018   0624         JEQ     ??Connecting_machine_0
-   \   00001A   F2400500.... MOV.B   #0x5, &connect_state
-   \   000020   1001         RETA
-     27              break;
-     28            case IP_Display:
-     29              display_IP();
+     27            case Trying_to_connect:
+     28              Connecting_Display();
    \                     ??Connecting_machine_2:
-   \   000022   ........     CALLA   #display_IP
+   \   000010   ........     CALLA   #Connecting_Display
+     29              if(display_bits & Display_IP)connect_state = WIFI_menu;
+   \   000014   A2B2....     BIT.W   #0x4, &display_bits
+   \   000018   0628         JNC     ??Connecting_machine_1
+   \   00001A   F2400500.... MOV.B   #0x5, &connect_state
      30              break;
-     31            }
-     32            
-     33          }
-   \                     ??Connecting_machine_0:
+   \   000020   1001         RETA
+     31            case WIFI_menu:
+     32              display_IP();
+   \                     ??Connecting_machine_3:
+   \   000022   ........     CALLA   #display_IP
+     33              break;
+     34            }
+     35            
+     36          }
+   \                     ??Connecting_machine_1:
    \   000026   1001         RETA
 
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ??Subroutine7_0:
-   \   000000   ........     CALLA   #strcpy
-   \   000004   D243....     MOV.B   #0x1, &display_changed
-   \   000008   D243....     MOV.B   #0x1, &update_display
-   \   00000C   ........     BRA     #Display_Process
-
-   \                                 In  segment CODE, align 2, keep-with-next
-     34          void Init_Display(void){
+   \                                 In  segment CODE, align 2
+     37          void Init_Display(void){
    \                     Init_Display:
-     35              strcpy(display_line[DISPLAY0], "  MSP 430 ");
+     38              strcpy(display_line[DISPLAY0], "  MSP 430 ");
    \   000000   3D40....     MOV.W   #`?<Constant "  MSP 430 ">`, R13
-   \   000004   ........     CALLA   #?Subroutine4
-     36              strcpy(display_line[DISPLAY1], "Powered on");
-   \                     ??CrossCallReturnLabel_2:
-   \   000008   3D40....     MOV.W   #`?<Constant "Powered on">`, R13
-   \   00000C   ........     CALLA   #?Subroutine6
-     37              strcpy(display_line[DISPLAY2], "          ");
-   \                     ??CrossCallReturnLabel_8:
-   \   000010   3D40....     MOV.W   #`?<Constant "          ">`, R13
-   \   000014   ........     CALLA   #?Subroutine5
-     38              strcpy(display_line[DISPLAY3], "          ");
-   \                     ??CrossCallReturnLabel_4:
-   \   000018   ....         JMP     ??Subroutine7_0
-   \   00001A   0343         NOP
-     39            display_changed = TRUE;
-     40            update_display=UPDATED;
-     41            Display_Process();
-     42            
-     43          }
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine6:
-   \   000000   3C40....     MOV.W   #display_line + 11, R12
-   \   000004   ........     BRA     #strcpy
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine4:
-   \   000000   3C40....     MOV.W   #display_line, R12
-   \   000004   ........     BRA     #strcpy
+   \   000004   3C40....     MOV.W   #display_line, R12
+   \   000008   ........     CALLA   #strcpy
+     39              strcpy(display_line[DISPLAY1], "Powered on");
+   \   00000C   3D40....     MOV.W   #`?<Constant "Powered on">`, R13
+   \   000010   3C40....     MOV.W   #display_line + 11, R12
+   \   000014   ........     CALLA   #strcpy
+     40              strcpy(display_line[DISPLAY2], "          ");
+   \   000018   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   00001C   3C40....     MOV.W   #display_line + 22, R12
+   \   000020   ........     CALLA   #strcpy
+     41              strcpy(display_line[DISPLAY3], "          ");
+   \   000024   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000028   3C40....     MOV.W   #display_line + 33, R12
+   \   00002C   ........     CALLA   #strcpy
+     42            display_changed = TRUE;
+   \   000030   D243....     MOV.B   #0x1, &display_changed
+     43            update_display=UPDATED;
+   \   000034   D243....     MOV.B   #0x1, &update_display
+     44            Display_Process();
+   \   000038   ........     CALLA   #Display_Process
+     45            
+     46          }
+   \   00003C   1001         RETA
 
    \                                 In  segment CODE, align 2
-   \                     ?Subroutine5:
-   \   000000   3C40....     MOV.W   #display_line + 22, R12
-   \   000004   ........     CALLA   #strcpy
-   \   000008   3D40....     MOV.W   #`?<Constant "          ">`, R13
-   \   00000C   3C40....     MOV.W   #display_line + 33, R12
-   \   000010   1001         RETA
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine3:
-   \   000000   3D40....     MOV.W   #`?<Constant "Connecting">`, R13
-   \   000004   ........     CALLA   #?Subroutine4
-   \                     ??CrossCallReturnLabel_3:
-   \   000008   3D40....     MOV.W   #`?<Constant "          ">`, R13
-   \   00000C   3C40....     MOV.W   #display_line + 11, R12
-   \   000010                REQUIRE ??Subroutine7_0
-   \   000010                // Fall through to label ??Subroutine7_0
-
-   \                                 In  segment CODE, align 2, keep-with-next
-     44          void Init_Display_1(void){
-   \                     Init_Display_1:
-     45              //lcd_BIG_mid();
-     46              strcpy(display_line[DISPLAY0], "Connecting");
-   \   000000   ....         JMP     ?Subroutine3
-   \   000002   0343         NOP
-     47              strcpy(display_line[DISPLAY1], "          ");
-     48              //strcpy(display_line[DISPLAY2], "Desotelle ");
-     49            display_changed = TRUE;
-     50            update_display=UPDATED;
-     51            Display_Process();
-     52          }
-
-   \                                 In  segment CODE, align 2, keep-with-next
-     53          void Connecting_Display(void){
+     47          void Connecting_Display(void){
    \                     Connecting_Display:
-     54              //lcd_BIG_mid();
-     55              strcpy(display_line[DISPLAY0], "Connecting");
-   \   000000                REQUIRE ?Subroutine3
-   \   000000                // Fall through to label ?Subroutine3
-     56              strcpy(display_line[DISPLAY1], "          ");
-     57              //strcpy(display_line[DISPLAY2], "Desotelle ");
-     58            display_changed = TRUE;
-     59            update_display=UPDATED;
-     60            Display_Process();
-     61          }
+     48              //lcd_BIG_mid();
+     49              strcpy(display_line[DISPLAY0], "Connecting");
+   \   000000   3D40....     MOV.W   #`?<Constant "Connecting">`, R13
+   \   000004   3C40....     MOV.W   #display_line, R12
+   \   000008   ........     CALLA   #strcpy
+     50              strcpy(display_line[DISPLAY1], "          ");
+   \   00000C   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000010   3C40....     MOV.W   #display_line + 11, R12
+   \   000014   ........     CALLA   #strcpy
+     51              //strcpy(display_line[DISPLAY2], "Desotelle ");
+     52            display_changed = TRUE;
+   \   000018   D243....     MOV.B   #0x1, &display_changed
+     53            update_display=UPDATED;
+   \   00001C   D243....     MOV.B   #0x1, &update_display
+     54            Display_Process();
+   \   000020   ........     CALLA   #Display_Process
+     55          }
+   \   000024   1001         RETA
 
    \                                 In  segment CODE, align 2
-     62          void Display_Process(void){
+     56          void Display_Process(void){
    \                     Display_Process:
-     63            if(update_display){
+     57            if(update_display){
    \   000000   C293....     CMP.B   #0x0, &update_display
    \   000004   0D24         JEQ     ??Display_Process_0
-     64              update_display = RESET_STATE;
+     58              update_display = RESET_STATE;
    \   000006   C243....     MOV.B   #0x0, &update_display
-     65              if(display_changed){
+     59              if(display_changed){
    \   00000A   C293....     CMP.B   #0x0, &display_changed
    \   00000E   0824         JEQ     ??Display_Process_0
-     66                display_changed = RESET_STATE;
+     60                display_changed = RESET_STATE;
    \   000010   C243....     MOV.B   #0x0, &display_changed
-     67                Display_Update(RESET_STATE,RESET_STATE,RESET_STATE,RESET_STATE);
+     61                Display_Update(RESET_STATE,RESET_STATE,RESET_STATE,RESET_STATE);
    \   000014   4F43         MOV.B   #0x0, R15
    \   000016   4E43         MOV.B   #0x0, R14
    \   000018   4D43         MOV.B   #0x0, R13
    \   00001A   4C43         MOV.B   #0x0, R12
    \   00001C   ........     CALLA   #Display_Update
-     68              }
-     69            }
-     70          }
+     62              }
+     63            }
+     64          }
    \                     ??Display_Process_0:
    \   000020   1001         RETA
 
-   \                                 In  segment CODE, align 2, keep-with-next
-     71          void display_IP(){
+   \                                 In  segment CODE, align 2
+     65          void display_IP(){
    \                     display_IP:
    \   000000   B1000C00     SUBA    #0xc, SP
-     72            if(display_bits & Display_IP){
+     66            if(display_bits & Display_IP){
    \   000004   A2B2....     BIT.W   #0x4, &display_bits
-   \   000008   0D43         MOV.W   #0x0, R13
-   \   00000A   1D28         JNC     ??display_IP_1
-     73              	char temp_ip[11];
-     74          	//strncpy(temp_ip,SSID,10);
-     75          	change_display_line("connected ",DISPLAY0);
+   \   000008   2028         JNC     ??display_IP_1
+     67              	char temp_ip[11];
+     68          	//strncpy(temp_ip,SSID,10);
+     69          	change_display_line("connected ",DISPLAY0);
+   \   00000A   0D43         MOV.W   #0x0, R13
    \   00000C   3C40....     MOV.W   #`?<Constant "connected ">`, R12
    \   000010   ........     CALLA   #change_display_line
-     76              	change_display_line(SSID,DISPLAY1);
+     70              	change_display_line(SSID,DISPLAY1);
    \   000014   1D43         MOV.W   #0x1, R13
    \   000016   3C40....     MOV.W   #SSID, R12
    \   00001A   ........     CALLA   #change_display_line
-     77            	strncpy(temp_ip,IP_Addy,10);
+     71            	strncpy(temp_ip,IP_Addy,10);
    \   00001E   3E400A00     MOV.W   #0xa, R14
    \   000022   3D40....     MOV.W   #IP_Addy, R13
    \   000026   0C41         MOV.W   SP, R12
    \   000028   ........     CALLA   #strncpy
-     78          	change_display_line(temp_ip,DISPLAY2);
+     72          	change_display_line(temp_ip,DISPLAY2);
    \   00002C   2D43         MOV.W   #0x2, R13
    \   00002E   ........     CALLA   #change_display_line
-     79          	strncpy(temp_ip,&IP_Addy[10],10);
+     73          	strncpy(temp_ip,&IP_Addy[10],10);
    \   000032   3E400A00     MOV.W   #0xa, R14
    \   000036   3D40....     MOV.W   #IP_Addy + 10, R13
    \   00003A   0C41         MOV.W   SP, R12
    \   00003C   ........     CALLA   #strncpy
-     80          	change_display_line(temp_ip,DISPLAY3);
+     74          	change_display_line(temp_ip,DISPLAY3);
    \   000040   3D400300     MOV.W   #0x3, R13
-   \   000044   023C         JMP     ??display_IP_0
-     81          	
-     82            }
-     83            else{
-     84              change_display_line("connecting",DISPLAY0);
+   \   000044   ........     CALLA   #change_display_line
+   \   000048   053C         JMP     ??display_IP_0
+     75          	
+     76            }
+     77            else{
+     78              change_display_line("connecting",DISPLAY0);
    \                     ??display_IP_1:
-   \   000046   3C40....     MOV.W   #`?<Constant "connecting">`, R12
+   \   00004A   0D43         MOV.W   #0x0, R13
+   \   00004C   3C40....     MOV.W   #`?<Constant "connecting">`, R12
+   \   000050   ........     CALLA   #change_display_line
+     79            }
+     80            display_changed = TRUE;
    \                     ??display_IP_0:
-   \   00004A   ........     CALLA   #change_display_line
-     85            }
-     86            display_changed = TRUE;
-   \   00004E   D243....     MOV.B   #0x1, &display_changed
-     87            update_display=UPDATED;
-   \   000052   D243....     MOV.B   #0x1, &update_display
-     88            Display_Process();
-   \   000056   ........     CALLA   #Display_Process
-     89          }
-   \   00005A   A1000C00     ADDA    #0xc, SP
-   \   00005E   1001         RETA
+   \   000054   D243....     MOV.B   #0x1, &display_changed
+     81            update_display=UPDATED;
+   \   000058   D243....     MOV.B   #0x1, &update_display
+     82            Display_Process();
+   \   00005C   ........     CALLA   #Display_Process
+     83          }
+   \   000060   A1000C00     ADDA    #0xc, SP
+   \   000064   1001         RETA
 
-   \                                 In  segment CODE, align 2, keep-with-next
-     90          void waiting_animation(){
+   \                                 In  segment CODE, align 2
+     84          void waiting_animation(){
    \                     waiting_animation:
-     91            switch(ani_state){
+     85            switch(ani_state){
    \   000000   5E42....     MOV.B   &ani_state, R14
    \   000004   4E83         SUB.B   #0x0, R14
    \   000006   0524         JEQ     ??waiting_animation_1
    \   000008   5E83         SUB.B   #0x1, R14
    \   00000A   0B24         JEQ     ??waiting_animation_2
    \   00000C   5E83         SUB.B   #0x1, R14
-   \   00000E   1024         JEQ     ??waiting_animation_3
-   \   000010   153C         JMP     ??waiting_animation_0
-     92            case 0:
-     93              change_display_line(WAITING1,DISPLAY0);
+   \   00000E   1124         JEQ     ??waiting_animation_3
+   \   000010   183C         JMP     ??waiting_animation_0
+     86            case 0:
+     87              change_display_line(WAITING1,DISPLAY0);
    \                     ??waiting_animation_1:
    \   000012   0D43         MOV.W   #0x0, R13
    \   000014   3C40....     MOV.W   #`?<Constant "Waiting.  ">`, R12
    \   000018   ........     CALLA   #change_display_line
-     94              ani_state++;
+     88              ani_state++;
    \   00001C   D253....     ADD.B   #0x1, &ani_state
-     95              break;
+     89              break;
    \   000020   1001         RETA
-     96            case 1:
-     97              ani_state++;
+     90            case 1:
+     91              ani_state++;
    \                     ??waiting_animation_2:
-   \   000022   E243....     MOV.B   #0x2, &ani_state
-     98              change_display_line(WAITING2,DISPLAY0);
+   \   000022   D253....     ADD.B   #0x1, &ani_state
+     92              change_display_line(WAITING2,DISPLAY0);
    \   000026   0D43         MOV.W   #0x0, R13
    \   000028   3C40....     MOV.W   #`?<Constant "Waiting.. ">`, R12
-   \   00002C   ........     BRA     #change_display_line
-     99              break;
-    100            case 2:
-    101              change_display_line(WAITING3,DISPLAY0);
+   \   00002C   ........     CALLA   #change_display_line
+     93              break;
+   \   000030   1001         RETA
+     94            case 2:
+     95              change_display_line(WAITING3,DISPLAY0);
    \                     ??waiting_animation_3:
-   \   000030   0D43         MOV.W   #0x0, R13
-   \   000032   3C40....     MOV.W   #`?<Constant "Waiting...">`, R12
-   \   000036   ........     CALLA   #change_display_line
-    102              ani_state=0;
-   \   00003A   ....         JMP     ?Subroutine2
-    103              break;
-    104            default:
-    105              ani_state=0;
+   \   000032   0D43         MOV.W   #0x0, R13
+   \   000034   3C40....     MOV.W   #`?<Constant "Waiting...">`, R12
+   \   000038   ........     CALLA   #change_display_line
+     96              ani_state=0;
+   \   00003C   C243....     MOV.B   #0x0, &ani_state
+     97              break;
+   \   000040   1001         RETA
+     98            default:
+     99              ani_state=0;
    \                     ??waiting_animation_0:
-   \   00003C                REQUIRE ?Subroutine2
-   \   00003C                // Fall through to label ?Subroutine2
-    106              break;
-    107            } 
-    108            
-    109            
-    110          }
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine2:
-   \   000000   C243....     MOV.B   #0x0, &ani_state
-   \   000004   1001         RETA
-
-   \                                 In  segment CODE, align 2, keep-with-next
-    111          void serial_display(){
-   \                     serial_display:
-    112            
-    113            
-    114            
-    115          }
-   \   000000   1001         RETA
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine0:
-   \   000000                RPT     #0xa
-   \   000000   49180C5F     ADDX.W  R15, R12
-   \   000004   3C50....     ADD.W   #display_line, R12
-   \   000008   ........     CALLA   #strcpy
-   \   00000C   D243....     MOV.B   #0x1, &display_changed
-   \   000010   1001         RETA
+   \   000042   C243....     MOV.B   #0x0, &ani_state
+    100              break;
+    101            } 
+    102            
+    103            
+    104          }
+   \   000046   1001         RETA
 
    \                                 In  segment CODE, align 2
-    116          void clear_line(unsigned int line){
+    105          void clear_line(unsigned int line){
    \                     clear_line:
-    117            strcpy(display_line[line], "          ");
+    106            strcpy(display_line[line], "          ");
    \   000000   3D40....     MOV.W   #`?<Constant "          ">`, R13
    \   000004   0F4C         MOV.W   R12, R15
-   \   000006   ....         JMP     ?Subroutine0
-   \   000008   0343         NOP
-    118            display_changed=DISPLAYCHANGED;
-    119          }
+   \   000006                RPT     #0xa
+   \   000006   49180F5C     ADDX.W  R12, R15
+   \   00000A   3F50....     ADD.W   #display_line, R15
+   \   00000E   0C4F         MOV.W   R15, R12
+   \   000010   ........     CALLA   #strcpy
+    107            display_changed=DISPLAYCHANGED;
+   \   000014   D243....     MOV.B   #0x1, &display_changed
+    108          }
+   \   000018   1001         RETA
 
    \                                 In  segment CODE, align 2
-    120          void clear_display(){
+    109          void clear_display(){
    \                     clear_display:
-    121            clear_line(DISPLAY0);
+    110            clear_line(DISPLAY0);
    \   000000   0C43         MOV.W   #0x0, R12
    \   000002   ........     CALLA   #clear_line
-    122            clear_line(DISPLAY1);
+    111            clear_line(DISPLAY1);
    \   000006   1C43         MOV.W   #0x1, R12
    \   000008   ........     CALLA   #clear_line
-    123            clear_line(DISPLAY2); 
+    112            clear_line(DISPLAY2); 
    \   00000C   2C43         MOV.W   #0x2, R12
    \   00000E   ........     CALLA   #clear_line
-    124            clear_line(DISPLAY3);
+    113            clear_line(DISPLAY3);
    \   000012   3C400300     MOV.W   #0x3, R12
-   \   000016   ........     BRA     #clear_line
-    125          }
+   \   000016   ........     CALLA   #clear_line
+    114          }
+   \   00001A   1001         RETA
 
-   \                                 In  segment CODE, align 2, keep-with-next
-    126          void change_display_line(char *text,int line){ 
+   \                                 In  segment CODE, align 2
+    115          void change_display_line(char *text,int line){ 
    \                     change_display_line:
    \   000000   0F4D         MOV.W   R13, R15
-    127            strcpy(display_line[line], text);
+    116            strcpy(display_line[line], text);
    \   000002   0D4C         MOV.W   R12, R13
    \   000004   0C4F         MOV.W   R15, R12
-   \   000006                REQUIRE ?Subroutine0
-   \   000006                // Fall through to label ?Subroutine0
-    128            display_changed=DISPLAYCHANGED;
-    129          }
+   \   000006                RPT     #0xa
+   \   000006   49180C5F     ADDX.W  R15, R12
+   \   00000A   3C50....     ADD.W   #display_line, R12
+   \   00000E   ........     CALLA   #strcpy
+    117            display_changed=DISPLAYCHANGED;
+   \   000012   D243....     MOV.B   #0x1, &display_changed
+    118          }
+   \   000016   1001         RETA
 
-   \                                 In  segment CODE, align 2, keep-with-next
-    130          void change_display_adc(char *text,unsigned int line){ 
+   \                                 In  segment CODE, align 2
+    119          void change_display_adc(char *text,unsigned int line){ //MIght be outdated soon
    \                     change_display_adc:
    \   000000   0A12         PUSH.W  R10
    \   000002   0A4C         MOV.W   R12, R10
-    131            
-    132            //text[]
-    133            text[4]=' ';
-   \   000004   FC4020000400 MOV.B   #0x20, 0x4(R12)
-    134            text[5]=' ';
-   \   00000A   FC4020000500 MOV.B   #0x20, 0x5(R12)
-    135            text[6]='\0';
-   \   000010   CC430600     MOV.B   #0x0, 0x6(R12)
-    136            //text[7]='\0';
-    137            switch(line){
+    120            
+    121            //text[]
+    122            text[4]=' ';
+   \   000004   FA4020000400 MOV.B   #0x20, 0x4(R10)
+    123            text[5]=' ';
+   \   00000A   FA4020000500 MOV.B   #0x20, 0x5(R10)
+    124            text[6]='\0';
+   \   000010   CA430600     MOV.B   #0x0, 0x6(R10)
+    125            //text[7]='\0';
+    126            switch(line){
    \   000014   0D83         SUB.W   #0x0, R13
-   \   000016   0524         JEQ     ??change_display_adc_2
+   \   000016   0624         JEQ     ??change_display_adc_2
    \   000018   1D83         SUB.W   #0x1, R13
-   \   00001A   0924         JEQ     ??change_display_adc_3
+   \   00001A   0E24         JEQ     ??change_display_adc_3
    \   00001C   1D83         SUB.W   #0x1, R13
-   \   00001E   0F24         JEQ     ??change_display_adc_4
-   \   000020   193C         JMP     ??change_display_adc_1
-    138            
-    139            case DISPLAY0:
-    140              strcpy(display_line[0],DETECT_L_STRING );
+   \   00001E   1824         JEQ     ??change_display_adc_4
+   \   000020   1D83         SUB.W   #0x1, R13
+   \   000022   213C         JMP     ??change_display_adc_1
+    127            
+    128            case DISPLAY0:
+    129              strcpy(display_line[0],DETECT_L_STRING );
    \                     ??change_display_adc_2:
-   \   000022   3D40....     MOV.W   #`?<Constant "DL=">`, R13
-   \   000026   ........     CALLA   #?Subroutine4
-    141              strcat(display_line[0],text);
-   \                     ??CrossCallReturnLabel_1:
-   \   00002A   0D4A         MOV.W   R10, R13
-   \   00002C   113C         JMP     ??change_display_adc_0
-    142              break;
-    143            case DISPLAY1:
-    144              strcpy(display_line[1],DETECT_R_STRING );
+   \   000024   3D40....     MOV.W   #`?<Constant "DL=">`, R13
+   \   000028   3C40....     MOV.W   #display_line, R12
+   \   00002C   ........     CALLA   #strcpy
+    130              strcat(display_line[0],text);
+   \   000030   0D4A         MOV.W   R10, R13
+   \   000032   ........     CALLA   #strcat
+    131              break;
+   \   000036   173C         JMP     ??change_display_adc_1
+    132            case DISPLAY1:
+    133              strcpy(display_line[1],DETECT_R_STRING );
    \                     ??change_display_adc_3:
-   \   00002E   3D40....     MOV.W   #`?<Constant "DR=">`, R13
-   \   000032   ........     CALLA   #?Subroutine6
-    145              strcat(display_line[1],text);
-   \                     ??CrossCallReturnLabel_7:
-   \   000036   0D4A         MOV.W   R10, R13
-   \   000038   3C40....     MOV.W   #display_line + 11, R12
-   \   00003C   093C         JMP     ??change_display_adc_0
-    146              break;
-    147            case DISPLAY2:
-    148              strcpy(display_line[2],V_THUMB_STRING );
+   \   000038   3D40....     MOV.W   #`?<Constant "DR=">`, R13
+   \   00003C   3C40....     MOV.W   #display_line + 11, R12
+   \   000040   ........     CALLA   #strcpy
+    134              strcat(display_line[1],text);
+   \   000044   0D4A         MOV.W   R10, R13
+   \   000046   3C40....     MOV.W   #display_line + 11, R12
+   \   00004A   ........     CALLA   #strcat
+    135              break;
+   \   00004E   0B3C         JMP     ??change_display_adc_1
+    136            case DISPLAY2:
+    137              strcpy(display_line[2],V_THUMB_STRING );
    \                     ??change_display_adc_4:
-   \   00003E   3D40....     MOV.W   #`?<Constant "VT=">`, R13
-   \   000042   3C40....     MOV.W   #display_line + 22, R12
-   \   000046   ........     CALLA   #strcpy
-    149              strcat(display_line[2],text);
-   \   00004A   0D4A         MOV.W   R10, R13
-   \   00004C   3C40....     MOV.W   #display_line + 22, R12
-   \                     ??change_display_adc_0:
-   \   000050   ........     CALLA   #strcat
-    150              break;
-    151            case DISPLAY3:
-    152              break;
-    153            default:
-    154              break;
-    155            } 
-    156            display_changed=DISPLAYCHANGED;
+   \   000050   3D40....     MOV.W   #`?<Constant "VT=">`, R13
+   \   000054   3C40....     MOV.W   #display_line + 22, R12
+   \   000058   ........     CALLA   #strcpy
+    138              strcat(display_line[2],text);
+   \   00005C   0D4A         MOV.W   R10, R13
+   \   00005E   3C40....     MOV.W   #display_line + 22, R12
+   \   000062   ........     CALLA   #strcat
+    139              break;
+    140            case DISPLAY3:
+    141              break;
+    142            default:
+    143              break;
+    144            } 
+    145            display_changed=DISPLAYCHANGED;
    \                     ??change_display_adc_1:
-   \   000054                REQUIRE ?Subroutine1
-   \   000054                // Fall through to label ?Subroutine1
-    157          }
-
-   \                                 In  segment CODE, align 2, keep-with-next
-   \                     ?Subroutine1:
-   \   000000   D243....     MOV.B   #0x1, &display_changed
-   \   000004   3A41         POP.W   R10
-   \   000006   1001         RETA
+   \   000066   D243....     MOV.B   #0x1, &display_changed
+    146          }
+   \   00006A   3A41         POP.W   R10
+   \   00006C   1001         RETA
 
    \                                 In  segment CODE, align 2
-    158          void main_menu_display(int line){
+    147          void main_menu_display(int line){
    \                     main_menu_display:
    \   000000   0A12         PUSH.W  R10
    \   000002   0A4C         MOV.W   R12, R10
-    159            strcpy(display_line[DISPLAY0], Settings_dis);
-   \   000004   3D40....     MOV.W   #`?<Constant "  Settings">`, R13
-   \   000008   ........     CALLA   #?Subroutine4
-    160            strcpy(display_line[DISPLAY1], Adc_disp);
-   \                     ??CrossCallReturnLabel_0:
-   \   00000C   3D40....     MOV.W   #`?<Constant "  ADC Vals">`, R13
-   \   000010   ........     CALLA   #?Subroutine6
-    161            strcpy(display_line[DISPLAY2], Pid_menu);
-   \                     ??CrossCallReturnLabel_6:
-   \   000014   3D40....     MOV.W   #`?<Constant "  PID Tune">`, R13
-   \   000018   ........     CALLA   #?Subroutine5
-    162            strcpy(display_line[DISPLAY3], CLEAR_DISPLAY);
-   \                     ??CrossCallReturnLabel_5:
-   \   00001C   ........     CALLA   #strcpy
-    163            switch(line){
-   \   000020   0A83         SUB.W   #0x0, R10
-   \   000022   0724         JEQ     ??main_menu_display_1
-   \   000024   1A83         SUB.W   #0x1, R10
-   \   000026   0C24         JEQ     ??main_menu_display_2
-   \   000028   1A83         SUB.W   #0x1, R10
-   \   00002A   1124         JEQ     ??main_menu_display_3
-   \   00002C   1A83         SUB.W   #0x1, R10
-   \   00002E   0F24         JEQ     ??main_menu_display_3
-   \   000030   143C         JMP     ??main_menu_display_0
-    164            case 0x00:
-    165              display_line[DISPLAY0][0] = '-';
+    148            strcpy(display_line[DISPLAY0], Wifi_dis);
+   \   000004   3D40....     MOV.W   #`?<Constant "  Wifi IP ">`, R13
+   \   000008   3C40....     MOV.W   #display_line, R12
+   \   00000C   ........     CALLA   #strcpy
+    149            strcpy(display_line[DISPLAY1], Adc_disp);
+   \   000010   3D40....     MOV.W   #`?<Constant "  ADC Vals">`, R13
+   \   000014   3C40....     MOV.W   #display_line + 11, R12
+   \   000018   ........     CALLA   #strcpy
+    150            strcpy(display_line[DISPLAY2], Pid_menu);
+   \   00001C   3D40....     MOV.W   #`?<Constant "  PID Tune">`, R13
+   \   000020   3C40....     MOV.W   #display_line + 22, R12
+   \   000024   ........     CALLA   #strcpy
+    151            strcpy(display_line[DISPLAY3], Settings_dis);
+   \   000028   3D40....     MOV.W   #`?<Constant "  Settings">`, R13
+   \   00002C   3C40....     MOV.W   #display_line + 33, R12
+   \   000030   ........     CALLA   #strcpy
+    152            switch(line){
+   \   000034   0A83         SUB.W   #0x0, R10
+   \   000036   0724         JEQ     ??main_menu_display_1
+   \   000038   1A83         SUB.W   #0x1, R10
+   \   00003A   0C24         JEQ     ??main_menu_display_2
+   \   00003C   1A83         SUB.W   #0x1, R10
+   \   00003E   1124         JEQ     ??main_menu_display_3
+   \   000040   1A83         SUB.W   #0x1, R10
+   \   000042   1624         JEQ     ??main_menu_display_4
+   \   000044   1B3C         JMP     ??main_menu_display_0
+    153            case 0x00:
+    154              display_line[DISPLAY0][0] = '-';
    \                     ??main_menu_display_1:
-   \   000032   F2402D00.... MOV.B   #0x2d, &display_line
-    166              display_line[DISPLAY0][1] = '>';
-   \   000038   F2403E00.... MOV.B   #0x3e, &display_line + 1
-    167              break;
-   \   00003E   0D3C         JMP     ??main_menu_display_0
-    168            case 0x01:
-    169              display_line[DISPLAY1][0] = '-';
+   \   000046   F2402D00.... MOV.B   #0x2d, &display_line
+    155              display_line[DISPLAY0][1] = '>';
+   \   00004C   F2403E00.... MOV.B   #0x3e, &display_line + 1
+    156              break;
+   \   000052   143C         JMP     ??main_menu_display_0
+    157            case 0x01:
+    158              display_line[DISPLAY1][0] = '-';
    \                     ??main_menu_display_2:
-   \   000040   F2402D00.... MOV.B   #0x2d, &display_line + 11
-    170              display_line[DISPLAY1][1] = '>';
-   \   000046   F2403E00.... MOV.B   #0x3e, &display_line + 12
-    171              break;
-   \   00004C   063C         JMP     ??main_menu_display_0
-    172            case 0x03:
-    173            case 0x02:
-    174              display_line[DISPLAY2][0] = '-';
+   \   000054   F2402D00.... MOV.B   #0x2d, &display_line + 11
+    159              display_line[DISPLAY1][1] = '>';
+   \   00005A   F2403E00.... MOV.B   #0x3e, &display_line + 12
+    160              break;
+   \   000060   0D3C         JMP     ??main_menu_display_0
+    161            case 0x02:
+    162              display_line[DISPLAY2][0] = '-';
    \                     ??main_menu_display_3:
-   \   00004E   F2402D00.... MOV.B   #0x2d, &display_line + 22
-    175              display_line[DISPLAY2][1] = '>';
-   \   000054   F2403E00.... MOV.B   #0x3e, &display_line + 23
-    176              break;
-    177            }
-    178            display_changed=DISPLAYCHANGED;
+   \   000062   F2402D00.... MOV.B   #0x2d, &display_line + 22
+    163              display_line[DISPLAY2][1] = '>';
+   \   000068   F2403E00.... MOV.B   #0x3e, &display_line + 23
+    164              break;
+   \   00006E   063C         JMP     ??main_menu_display_0
+    165            case 0x03:
+    166              display_line[DISPLAY3][0] = '-';
+   \                     ??main_menu_display_4:
+   \   000070   F2402D00.... MOV.B   #0x2d, &display_line + 33
+    167              display_line[DISPLAY3][1] = '>';
+   \   000076   F2403E00.... MOV.B   #0x3e, &display_line + 34
+    168              break;
+    169            }
+    170            display_changed=DISPLAYCHANGED;
    \                     ??main_menu_display_0:
-   \   00005A   ....         JMP     ?Subroutine1
-   \   00005C   0343         NOP
-    179          }
+   \   00007C   D243....     MOV.B   #0x1, &display_changed
+    171          }
+   \   000080   3A41         POP.W   R10
+   \   000082   1001         RETA
 
    \                                 In  segment CODE, align 2
-    180          void adc_menu_display(){
-   \                     adc_menu_display:
-    181            
-    182            
-    183          }
-   \   000000   1001         RETA
+    172          void wifi_move_diplay(char *movement){
+   \                     wifi_move_diplay:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    173            lcd_BIG_mid();
+   \   000004   ........     CALLA   #lcd_BIG_mid
+    174            strcpy(display_line[DISPLAY1], movement);
+   \   000008   0D4A         MOV.W   R10, R13
+   \   00000A   3C40....     MOV.W   #display_line + 11, R12
+   \   00000E   ........     CALLA   #strcpy
+    175            display_changed=DISPLAYCHANGED;
+   \   000012   D243....     MOV.B   #0x1, &display_changed
+    176          }
+   \   000016   3A41         POP.W   R10
+   \   000018   1001         RETA
+
+   \                                 In  segment CODE, align 2
+    177          void adc_display(){ // might be outdated    
+   \                     adc_display:
+    178              strcpy(display_line[0], V_THUMB_STRING );
+   \   000000   3D40....     MOV.W   #`?<Constant "VT=">`, R13
+   \   000004   3C40....     MOV.W   #display_line, R12
+   \   000008   ........     CALLA   #strcpy
+    179              HEXtoBCD(V_Thumb); // Convert result to String
+   \   00000C   1C42....     MOV.W   &V_Thumb, R12
+   \   000010   ........     CALLA   #HEXtoBCD
+    180              strcat(display_line[0],adc_char);
+   \   000014   3D40....     MOV.W   #adc_char, R13
+   \   000018   3C40....     MOV.W   #display_line, R12
+   \   00001C   ........     CALLA   #strcat
+    181              strcat(display_line[0], "   ");
+   \   000020   3D40....     MOV.W   #`?<Constant "   ">`, R13
+   \   000024   ........     CALLA   #strcat
+    182              strcpy(display_line[1], DETECT_L_STRING);
+   \   000028   3D40....     MOV.W   #`?<Constant "DL=">`, R13
+   \   00002C   3C40....     MOV.W   #display_line + 11, R12
+   \   000030   ........     CALLA   #strcpy
+    183              HEXtoBCD(ADC_Right_Detect); // Convert result to String
+   \   000034   1C42....     MOV.W   &ADC_Right_Detect, R12
+   \   000038   ........     CALLA   #HEXtoBCD
+    184              strcat(display_line[1],adc_char);
+   \   00003C   3D40....     MOV.W   #adc_char, R13
+   \   000040   3C40....     MOV.W   #display_line + 11, R12
+   \   000044   ........     CALLA   #strcat
+    185              strcat(display_line[1], "   ");
+   \   000048   3D40....     MOV.W   #`?<Constant "   ">`, R13
+   \   00004C   3C40....     MOV.W   #display_line + 11, R12
+   \   000050   ........     CALLA   #strcat
+    186              strcpy(display_line[2],DETECT_R_STRING );
+   \   000054   3D40....     MOV.W   #`?<Constant "DR=">`, R13
+   \   000058   3C40....     MOV.W   #display_line + 22, R12
+   \   00005C   ........     CALLA   #strcpy
+    187              HEXtoBCD(ADC_Left_Detect); // Convert result to String
+   \   000060   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   000064   ........     CALLA   #HEXtoBCD
+    188              strcat(display_line[2],adc_char);
+   \   000068   3D40....     MOV.W   #adc_char, R13
+   \   00006C   3C40....     MOV.W   #display_line + 22, R12
+   \   000070   ........     CALLA   #strcat
+    189              strcat(display_line[2], "   ");
+   \   000074   3D40....     MOV.W   #`?<Constant "   ">`, R13
+   \   000078   3C40....     MOV.W   #display_line + 22, R12
+   \   00007C   ........     CALLA   #strcat
+    190              display_changed=DISPLAYCHANGED;
+   \   000080   D243....     MOV.B   #0x1, &display_changed
+    191          }
+   \   000084   1001         RETA
+
+   \                                 In  segment CODE, align 2
+    192          void line_calibration_display(char color){ // might be outdated  
+   \                     line_calibration_display:
+    193            switch(color){
+   \   000000   7C806200     SUB.B   #0x62, R12
+   \   000004   0A24         JEQ     ??line_calibration_display_2
+   \   000006   7C801500     SUB.B   #0x15, R12
+   \   00000A   0D20         JNE     ??line_calibration_display_1
+    194            case 'w':
+    195              strcpy(display_line[0], "  White  " );
+   \   00000C   3D40....     MOV.W   #`?<Constant "  White  ">`, R13
+   \   000010   3C40....     MOV.W   #display_line, R12
+   \   000014   ........     CALLA   #strcpy
+    196              break;
+   \   000018   063C         JMP     ??line_calibration_display_1
+    197            case 'b':
+    198              strcpy(display_line[0], "  Black  " );
+   \                     ??line_calibration_display_2:
+   \   00001A   3D40....     MOV.W   #`?<Constant "  Black  ">`, R13
+   \   00001E   3C40....     MOV.W   #display_line, R12
+   \   000022   ........     CALLA   #strcpy
+    199          	break;  
+    200            }
+    201              strcpy(display_line[1], DETECT_L_STRING);
+   \                     ??line_calibration_display_1:
+   \   000026   3D40....     MOV.W   #`?<Constant "DL=">`, R13
+   \   00002A   3C40....     MOV.W   #display_line + 11, R12
+   \   00002E   ........     CALLA   #strcpy
+    202              HEXtoBCD(ADC_Right_Detect); // Convert result to String
+   \   000032   1C42....     MOV.W   &ADC_Right_Detect, R12
+   \   000036   ........     CALLA   #HEXtoBCD
+    203              strcat(display_line[1],adc_char);
+   \   00003A   3D40....     MOV.W   #adc_char, R13
+   \   00003E   3C40....     MOV.W   #display_line + 11, R12
+   \   000042   ........     CALLA   #strcat
+    204              strcat(display_line[1], "   ");
+   \   000046   3D40....     MOV.W   #`?<Constant "   ">`, R13
+   \   00004A   3C40....     MOV.W   #display_line + 11, R12
+   \   00004E   ........     CALLA   #strcat
+    205              strcpy(display_line[2],DETECT_R_STRING );
+   \   000052   3D40....     MOV.W   #`?<Constant "DR=">`, R13
+   \   000056   3C40....     MOV.W   #display_line + 22, R12
+   \   00005A   ........     CALLA   #strcpy
+    206              HEXtoBCD(ADC_Left_Detect); // Convert result to String
+   \   00005E   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   000062   ........     CALLA   #HEXtoBCD
+    207              strcat(display_line[2],adc_char);
+   \   000066   3D40....     MOV.W   #adc_char, R13
+   \   00006A   3C40....     MOV.W   #display_line + 22, R12
+   \   00006E   ........     CALLA   #strcat
+    208              strcat(display_line[2], "   ");
+   \   000072   3D40....     MOV.W   #`?<Constant "   ">`, R13
+   \   000076   3C40....     MOV.W   #display_line + 22, R12
+   \   00007A   ........     CALLA   #strcat
+    209              display_changed=DISPLAYCHANGED;
+   \   00007E   D243....     MOV.B   #0x1, &display_changed
+    210          }
+   \   000082   1001         RETA
 
    \                                 In  segment DATA16_C, align 1, align-sorted
    \                     `?<Constant "  MSP 430 ">`:
@@ -578,9 +664,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   56543D00     DC8 "VT="
 
    \                                 In  segment DATA16_C, align 1, align-sorted
-   \                     `?<Constant "  Settings">`:
-   \   000000   202053657474 DC8 "  Settings"
-   \            696E677300  
+   \                     `?<Constant "  Wifi IP ">`:
+   \   000000   202057696669 DC8 "  Wifi IP "
+   \            2049502000  
 
    \                                 In  segment DATA16_C, align 1, align-sorted
    \                     `?<Constant "  ADC Vals">`:
@@ -592,12 +678,31 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   202050494420 DC8 "  PID Tune"
    \            54756E6500  
 
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Settings">`:
+   \   000000   202053657474 DC8 "  Settings"
+   \            696E677300  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   ">`:
+   \   000000   20202000     DC8 "   "
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  White  ">`:
+   \   000000   202057686974 DC8 "  White  "
+   \            65202000    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Black  ">`:
+   \   000000   2020426C6163 DC8 "  Black  "
+   \            6B202000    
+
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
-      0   Connecting_Display
-        0   -> Display_Process
+      4   Connecting_Display
+        4   -> Display_Process
         4   -> strcpy
       4   Connecting_machine
         4   -> Connecting_Display
@@ -605,20 +710,18 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   Display_Process
         4   -> Display_Update
       4   Init_Display
-        0   -> Display_Process
+        4   -> Display_Process
         4   -> strcpy
-        8   -> strcpy
-      4   Init_Display_1
-        0   -> Display_Process
+      4   adc_display
+        4   -> HEXtoBCD
+        4   -> strcat
         4   -> strcpy
-      4   adc_menu_display
       6   change_display_adc
         6   -> strcat
         6   -> strcpy
       4   change_display_line
         4   -> strcpy
       4   clear_display
-        0   -> clear_line
         4   -> clear_line
       4   clear_line
         4   -> strcpy
@@ -626,13 +729,17 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        16   -> Display_Process
        16   -> change_display_line
        16   -> strncpy
+      4   line_calibration_display
+        4   -> HEXtoBCD
+        4   -> strcat
+        4   -> strcpy
       6   main_menu_display
-       10   -> strcpy
         6   -> strcpy
-      4   serial_display
       4   waiting_animation
-        0   -> change_display_line
         4   -> change_display_line
+      6   wifi_move_diplay
+        6   -> lcd_BIG_mid
+        6   -> strcpy
 
 
    Segment part sizes:
@@ -640,10 +747,14 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    Bytes  Function/Label
    -----  --------------
       11  ?<Constant "          ">
+       4  ?<Constant "   ">
       11  ?<Constant "  ADC Vals">
+      10  ?<Constant "  Black  ">
       11  ?<Constant "  MSP 430 ">
       11  ?<Constant "  PID Tune">
       11  ?<Constant "  Settings">
+      10  ?<Constant "  White  ">
+      11  ?<Constant "  Wifi IP ">
       11  ?<Constant "Connecting">
        4  ?<Constant "DL=">
        4  ?<Constant "DR=">
@@ -654,38 +765,30 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       11  ?<Constant "Waiting...">
       11  ?<Constant "connected ">
       11  ?<Constant "connecting">
-      16  ??Subroutine7_0
-      18  ?Subroutine0
-       8  ?Subroutine1
-       6  ?Subroutine2
-      16  ?Subroutine3
-       8  ?Subroutine4
-      18  ?Subroutine5
-       8  ?Subroutine6
-       0  Connecting_Display
+      38  Connecting_Display
       40  Connecting_machine
       34  Display_Process
-      28  Init_Display
-       4  Init_Display_1
-       2  adc_menu_display
+      62  Init_Display
+     134  adc_display
        1  ani_state
-      84  change_display_adc
-       6  change_display_line
-      26  clear_display
-      10  clear_line
+     110  change_display_adc
+      24  change_display_line
+      28  clear_display
+      26  clear_line
        1  connect_state
-      96  display_IP
-      94  main_menu_display
-       2  serial_display
-      60  waiting_animation
+     102  display_IP
+     132  line_calibration_display
+     132  main_menu_display
+      72  waiting_animation
+      26  wifi_move_diplay
 
  
- 584 bytes in segment CODE
- 144 bytes in segment DATA16_C
+ 960 bytes in segment CODE
+ 179 bytes in segment DATA16_C
    2 bytes in segment DATA16_Z
  
- 584 bytes of CODE  memory
- 144 bytes of CONST memory
+ 960 bytes of CODE  memory
+ 179 bytes of CONST memory
    2 bytes of DATA  memory
 
 Errors: none

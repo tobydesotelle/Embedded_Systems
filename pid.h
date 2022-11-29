@@ -7,36 +7,36 @@
 typedef struct {
 
 	/* Controller gains */
-	float Kp;
-	float Ki;
-	float Kd;
+	int Kp;
+	int Ki;
+	int Kd;
 
 	/* Derivative low-pass filter time constant */
-	float tau;
+	int tau;
 
 	/* Output limits */
-	float limMin;
-	float limMax;
+	int limMin;
+	int limMax;
 	
 	/* Integrator limits */
-	float limMinInt;
-	float limMaxInt;
+	int limMinInt;
+	int limMaxInt;
 
 	/* Sample time (in seconds) */
-	float T;
+	int T;
 
 	/* Controller "memory" */
-	float integrator;
-	float prevError;			/* Required for integrator */
-	float differentiator;
-	float prevMeasurement;		/* Required for differentiator */
+	int integrator;
+	int prevError;			/* Required for integrator */
+	int differentiator;
+	int prevMeasurement;		/* Required for differentiator */
 
 	/* Controller output */
-	float out;
+	int out;
 
 } PIDController;
 
 void  PIDController_Init(PIDController *pid);
-float PIDController_Update(PIDController *pid, float setpoint, float measurement);
+int PIDController_Update(PIDController *pid, int setpoint, int measurement);
 
 #endif

@@ -19,7 +19,6 @@ unsigned int time100;
 
 void idle_case(unsigned char nextState){
   //This will wait until SW1 is pressed.
-  
   if(switch_control&SW1_TOGGLED)state=nextState;
   switch_control &= ~SW1_TOGGLED;
 }

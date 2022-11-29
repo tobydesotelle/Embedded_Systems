@@ -1,11 +1,14 @@
 #include "macros.h"
+#define	ADC_AVG		(5)
 //extern volatile unsigned int ADC_Left_Detect;
 unsigned int ADC_Left_Detect;
 unsigned int ADC_Right_Detect;
 unsigned int V_Thumb;
-char adc_char[4];
+//unsigned int Right_detect[ADC_AVG];
+//unsigned int Left_detect[ADC_AVG];
+//unsigned int V_Thumb_arry[ADC_AVG];
+char adc_char[5];
 unsigned int ADC_Channel=0;
-
 
 void Init_ADC(void){
   //------------------------------------------------------------------------------
@@ -42,7 +45,6 @@ void Init_ADC(void){
   ADCCTL0 |= ADCENC; // ADC enable conversion.
   ADCCTL0 |= ADCSC; // ADC start conversion.
 }
-
 #pragma vector=ADC_VECTOR
 __interrupt void ADC_ISR(void){
   switch(__even_in_range(ADCIV,ADCIV_ADCIFG)){
@@ -68,8 +70,6 @@ __interrupt void ADC_ISR(void){
       V_Thumb = ADCMEM0; // Move result into Global
       V_Thumb = V_Thumb; // Divide the result by 4
       P2OUT|=IR_LED;
-      HEXtoBCD(V_Thumb); // Convert result to String
-      //change_display_adc(adc_char,2); // Place String in Display
       break;
     case GET_L_DETECT:
        ADCMCTL0 &= ~ADCINCH_2; // Disable Last channel A2
@@ -105,7 +105,7 @@ __interrupt void ADC_ISR(void){
 //
 //-----------------------------------------------------------------
 void HEXtoBCD(unsigned int hex_value){
-  unsigned int value;
+  unsigned int value=0;
   for(int i=RESET_STATE; i < adc_num_chars; i++) {
     adc_char[i] = CHAR_0;
   }
@@ -127,4 +127,34 @@ void HEXtoBCD(unsigned int hex_value){
     adc_char[adc_c_2] = CHAR_0 + value;
   }
   adc_char[adc_c_3] = CHAR_0 + hex_value;
+  adc_char[4] = '\0';
 }
+
+
+//char *hex_to_string(unsigned int adc_value){
+//  unsigned int value;
+//  char ret[adc_num_chars+1];
+//  for(int i=RESET_STATE; i < adc_num_chars; i++) {
+//    ret[i] = CHAR_0;
+//  }
+//  while (adc_value > Above_999){
+//    adc_value = adc_value - (Above_999+add_one);
+//    value = value + add_one;
+//    ret[adc_c_0] = CHAR_0 + value;
+//  }
+//  value = RESET_STATE;
+//  while (adc_value > Above_99){
+//    adc_value = adc_value - (Above_99+add_one);
+//    value = value + add_one;
+//    ret[adc_c_1] = CHAR_0 + value;
+//  }
+//  value = RESET_STATE;
+//  while (adc_value > Above_9){
+//    adc_value = adc_value - (Above_9+add_one);
+//    value = value + add_one;
+//    ret[adc_c_2] = CHAR_0 + value;
+//  }
+//  ret[adc_c_3] = CHAR_0 + adc_value;
+//  ret[adc_num_chars] = '\0';
+//  return ret;
+//}

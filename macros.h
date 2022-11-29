@@ -23,9 +23,10 @@
 #define RESET                   (0)
 #define TRUE                    (0x01)
 
+#
 
 #define TURN_SPEED              (0)
-#define BASE_SPEED              (5000)
+#define BASE_SPEED              (4250)
 //===========================GENERAL PORT DEFINTIONS ===========================
 #define LOW                     (0X00)
 #define HIGH                    (0X01)
@@ -76,8 +77,9 @@
 #define Settings                (0x02)
 #define ADC_menu                (0x03)
 #define PID_menu                (0x04)
-#define IP_Display		(0X05)
+#define WIFI_menu		(0X05)
 
+#define Wifi_dis		 ("  Wifi IP ")
 #define Settings_dis             ("  Settings")
 #define Adc_disp                 ("  ADC Vals")
 #define Pid_menu                 ("  PID Tune")
@@ -199,10 +201,11 @@
 //#define TB2CCR1_INTERVAL        (6250)
 //#define TB2CCR2_INTERVAL        (6250)
 //Timer 3
-#define RIGHT_REVERSE_SPEED   (TB3CCR1)  // P6.0 TimerB3_2
-#define RIGHT_FORWARD_SPEED   (TB3CCR2)  // P6.1 TimerB3_1 
-#define LEFT_REVERSE_SPEED    (TB3CCR3)  // P6.2 TimerB3_4
-#define LEFT_FORWARD_SPEED    (TB3CCR4)  // P6.3 TimerB3_3
+
+#define LEFT_REVERSE_SPEED   (TB3CCR2)  // P6.0 TimerB3_2
+#define LEFT_FORWARD_SPEED   (TB3CCR1)  // P6.1 TimerB3_1 
+#define RIGHT_REVERSE_SPEED    (TB3CCR4)  // P6.2 TimerB3_4
+#define RIGHT_FORWARD_SPEED    (TB3CCR3)  // P6.3 TimerB3_3
 #define BACKLIGHT             (TB3CCR5)  //OLD = LED_TEST
 //===========================PWM================================================
 #define WHEEL_PERIOD               (62500)
@@ -228,7 +231,7 @@
 #define PIVOT_F_L             (0x01) 
 #define FORWARD               (0x03)
 #define REVERSE               (0x0F)
-#define STOP		      (0x00)
+#define STOP		      (0xF5)
 #define ESTOP		      (0xF1)
 #define CCW                   (0x0B)
 #define  CW                   (0x07)
@@ -247,6 +250,7 @@
 #define DIR1			(0x01)
 #define SEL1_0			(0xFE)
 #define SEL1_1			(0x3E)
+
 #define RED_LED                 (0x01) //P1.0
 #define A1_SEEED                (0x02) //P1.1
 #define V_DETECT_L              (0x04) //P1.2
@@ -346,6 +350,13 @@
 #define Connecting3                ("Waiting...")
 #define RECIVED                 ("Recived rx")
 #define TRASMIT                 (" Transmit ")
+#define Stop_display		("   STOP   ")
+#define FORWARD_display		(" FORWARD  ")
+#define REVERSE_display		(" REVERSE  ")
+#define CCW_display		("   CCW    ")
+#define CW_display		("   CW     ")
+
+
 #define CHAR_0                  (0x30)
 #define adc_num_chars           (4)
 #define adc_c_0                 (0)

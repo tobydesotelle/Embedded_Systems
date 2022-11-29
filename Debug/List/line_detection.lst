@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:49
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,16 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\line_detection.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAD97.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9271.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\line_detection.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohz --multiplier=32
+#        ./ --core=430X --data_model=small -Ol --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -60,159 +61,392 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      20          #define ERROR_LIMITS                          (1000)
      21          
      22          
+     23          #define Treshold			(200)
+     24          #define White_val			(300)
+     25          #define Black_val			(3000)
+     26          #define Off_line_ret			(450)
+     27          extern char display_line[DISPLAYLINES][DISPLAYCHARS];
+     28          extern volatile unsigned char switch_control;
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     23          unsigned short line_detection;
+     29          unsigned short line_detection;
    \                     line_detection:
    \   000000                DS8 2
-     24          extern unsigned int ADC_Left_Detect;
-     25          extern unsigned int ADC_Right_Detect;
-     26          extern unsigned int V_Thumb;
-     27          
-     28          
-     29          
+     30          extern unsigned int ADC_Left_Detect;
+     31          extern unsigned int ADC_Right_Detect;
+     32          extern unsigned int V_Thumb;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          unsigned int R_white;
+   \                     R_white:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     34          unsigned int L_white;
+   \                     L_white:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          unsigned int R_black;
+   \                     R_black:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          unsigned int L_black;
+   \                     L_black:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     37          short measure_state = 0;
+   \                     measure_state:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     38          char calibration_state = 0;
+   \                     calibration_state:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     39          char calibrated = 0;
+   \                     calibrated:
+   \   000000                DS8 1
+     40          
+     41          #define ON_line		(0)
+     42          #define right_of_line		(1)
+     43          #define left_of_line		(2)
+     44          
+     45          
 
    \                                 In  segment CODE, align 2
-     30          float measurment(){//This is the measurment value for the pid contoller
+     46          int measurment(){//This is the measurment value for the pid contoller
    \                     measurment:
-   \   000000   1B15         PUSHM.W #0x2, R11
-     31          //  if(ADC_Left_Detect<=BASE_READING);//
-     32          //  if(ADC_Right_Detect<=BASE_READING);
-     33            return (float)ADC_Left_Detect - ADC_Right_Detect ;//+ PID_SETPOINT;
-   \   000002   1C42....     MOV.W   &ADC_Left_Detect, R12
-   \   000006   0D43         MOV.W   #0x0, R13
-   \   000008   ........     CALLA   #_Cast32uto32f
-   \   00000C   0A4C         MOV.W   R12, R10
-   \   00000E   0B4D         MOV.W   R13, R11
-   \   000010   1C42....     MOV.W   &ADC_Right_Detect, R12
-   \   000014   0D43         MOV.W   #0x0, R13
-   \   000016   ........     CALLA   #_Cast32uto32f
-   \   00001A   0E4C         MOV.W   R12, R14
-   \   00001C   0F4D         MOV.W   R13, R15
-   \   00001E   0C4A         MOV.W   R10, R12
-   \   000020   0D4B         MOV.W   R11, R13
-   \   000022   ........     CALLA   #_Sub32f
-   \   000026   1A17         POPM.W  #0x2, R11
-   \   000028   1001         RETA
-     34          }
-     35          
-     36          
+     47            if(ADC_Left_Detect<=L_white+Treshold/*+Treshold*/&& measure_state != right_of_line && measure_state != left_of_line ){
+   \   000000   1F42....     MOV.W   &L_white, R15
+   \   000004   3F50C800     ADD.W   #0xc8, R15
+   \   000008   1F92....     CMP.W   &ADC_Left_Detect, R15
+   \   00000C   0828         JNC     ??measurment_1
+   \   00000E   9293....     CMP.W   #0x1, &measure_state
+   \   000012   0524         JEQ     ??measurment_1
+   \   000014   A293....     CMP.W   #0x2, &measure_state
+   \   000018   0224         JEQ     ??measurment_1
+     48            	measure_state = right_of_line;
+   \   00001A   9243....     MOV.W   #0x1, &measure_state
+     49            }
+     50            if(ADC_Right_Detect<=R_white+Treshold/*+Treshold*/&& measure_state != right_of_line && measure_state != left_of_line ){
+   \                     ??measurment_1:
+   \   00001E   1F42....     MOV.W   &R_white, R15
+   \   000022   3F50C800     ADD.W   #0xc8, R15
+   \   000026   1F92....     CMP.W   &ADC_Right_Detect, R15
+   \   00002A   0828         JNC     ??measurment_2
+   \   00002C   9293....     CMP.W   #0x1, &measure_state
+   \   000030   0524         JEQ     ??measurment_2
+   \   000032   A293....     CMP.W   #0x2, &measure_state
+   \   000036   0224         JEQ     ??measurment_2
+     51          	measure_state =  left_of_line;
+   \   000038   A243....     MOV.W   #0x2, &measure_state
+     52            }
+     53            
+     54            switch(measure_state){//current state of where it is on line
+   \                     ??measurment_2:
+   \   00003C   1F42....     MOV.W   &measure_state, R15
+   \   000040   0F83         SUB.W   #0x0, R15
+   \   000042   0524         JEQ     ??measurment_3
+   \   000044   1F83         SUB.W   #0x1, R15
+   \   000046   1224         JEQ     ??measurment_4
+   \   000048   1F83         SUB.W   #0x1, R15
+   \   00004A   2924         JEQ     ??measurment_5
+   \   00004C   413C         JMP     ??measurment_0
+     55            case ON_line:
+     56              strcpy(display_line[DISPLAY3], "    on    ");
+   \                     ??measurment_3:
+   \   00004E   3D40....     MOV.W   #`?<Constant "    on    ">`, R13
+   \   000052   3C40....     MOV.W   #display_line + 33, R12
+   \   000056   ........     CALLA   #strcpy
+     57              return (ADC_Left_Detect - L_white) - (ADC_Right_Detect - R_white) ;
+   \   00005A   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   00005E   1C82....     SUB.W   &L_white, R12
+   \   000062   1C82....     SUB.W   &ADC_Right_Detect, R12
+   \   000066   1C52....     ADD.W   &R_white, R12
+   \   00006A   1001         RETA
+     58            break;
+     59            case right_of_line://want to turn left and keep turning until found line
+     60              strcpy(display_line[DISPLAY3], "   right  ");
+   \                     ??measurment_4:
+   \   00006C   3D40....     MOV.W   #`?<Constant "   right  ">`, R13
+   \   000070   3C40....     MOV.W   #display_line + 33, R12
+   \   000074   ........     CALLA   #strcpy
+     61              if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
+   \   000078   1F42....     MOV.W   &R_white, R15
+   \   00007C   3F50C800     ADD.W   #0xc8, R15
+   \   000080   1F92....     CMP.W   &ADC_Right_Detect, R15
+   \   000084   092C         JC      ??measurment_6
+   \   000086   1F42....     MOV.W   &L_white, R15
+   \   00008A   3F50C800     ADD.W   #0xc8, R15
+   \   00008E   1F92....     CMP.W   &ADC_Left_Detect, R15
+   \   000092   022C         JC      ??measurment_6
+   \   000094   8243....     MOV.W   #0x0, &measure_state
+     62              return -Off_line_ret;
+   \                     ??measurment_6:
+   \   000098   3C403EFE     MOV.W   #0xfe3e, R12
+   \   00009C   1001         RETA
+     63              break;
+     64            case left_of_line://want to turn right and keep turning until found line
+     65              strcpy(display_line[DISPLAY3], "   left   ");
+   \                     ??measurment_5:
+   \   00009E   3D40....     MOV.W   #`?<Constant "   left   ">`, R13
+   \   0000A2   3C40....     MOV.W   #display_line + 33, R12
+   \   0000A6   ........     CALLA   #strcpy
+     66              if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
+   \   0000AA   1F42....     MOV.W   &R_white, R15
+   \   0000AE   3F50C800     ADD.W   #0xc8, R15
+   \   0000B2   1F92....     CMP.W   &ADC_Right_Detect, R15
+   \   0000B6   092C         JC      ??measurment_7
+   \   0000B8   1F42....     MOV.W   &L_white, R15
+   \   0000BC   3F50C800     ADD.W   #0xc8, R15
+   \   0000C0   1F92....     CMP.W   &ADC_Left_Detect, R15
+   \   0000C4   022C         JC      ??measurment_7
+   \   0000C6   8243....     MOV.W   #0x0, &measure_state
+     67              return Off_line_ret;
+   \                     ??measurment_7:
+   \   0000CA   3C40C201     MOV.W   #0x1c2, R12
+   \   0000CE   1001         RETA
+     68              break;
+     69            
+     70            }
+     71            return (ADC_Left_Detect - L_white) - (ADC_Right_Detect - R_white) ;
+   \                     ??measurment_0:
+   \   0000D0   1C42....     MOV.W   &ADC_Left_Detect, R12
+   \   0000D4   1C82....     SUB.W   &L_white, R12
+   \   0000D8   1C82....     SUB.W   &ADC_Right_Detect, R12
+   \   0000DC   1C52....     ADD.W   &R_white, R12
+   \   0000E0   1001         RETA
+     72          }
 
    \                                 In  segment CODE, align 2
-     37          void set_line_bit(unsigned short level_detection){
+     73          void line_calibration(){
+   \                     line_calibration:
+   \   000000   043C         JMP     ??line_calibration_2
+     74            while(!(calibrated)){
+     75              switch(calibration_state){
+     76              case 0:
+     77                if(SW1_AND_TOGGLED){
+     78          	SW1_CLEAR;
+     79          	R_white = ADC_Right_Detect;
+     80          	L_white = ADC_Left_Detect;
+     81          	calibration_state++;
+     82                }
+     83                line_calibration_display('w');
+     84                break;
+     85              case 1:
+     86                if(SW1_AND_TOGGLED){
+     87          	SW1_CLEAR;
+     88          	R_black = ADC_Right_Detect;
+     89          	L_black = ADC_Left_Detect;
+     90          	calibration_state++;
+     91          	
+     92                }
+     93                line_calibration_display('b');
+     94                break;
+     95              case 2:
+     96                calibrated = 1;
+   \                     ??line_calibration_0:
+   \   000002   D243....     MOV.B   #0x1, &calibrated
+     97                break;
+     98              }
+     99              Display_Process();
+   \                     ??line_calibration_1:
+   \   000006   ........     CALLA   #Display_Process
+   \                     ??line_calibration_2:
+   \   00000A   C293....     CMP.B   #0x0, &calibrated
+   \   00000E   3120         JNE     ??line_calibration_3
+   \   000010   5E42....     MOV.B   &calibration_state, R14
+   \   000014   4E83         SUB.B   #0x0, R14
+   \   000016   0524         JEQ     ??line_calibration_4
+   \   000018   5E83         SUB.B   #0x1, R14
+   \   00001A   1724         JEQ     ??line_calibration_5
+   \   00001C   5E83         SUB.B   #0x1, R14
+   \   00001E   F127         JEQ     ??line_calibration_0
+   \   000020   F23F         JMP     ??line_calibration_1
+   \                     ??line_calibration_4:
+   \   000022   F2B01000.... BIT.B   #0x10, &switch_control
+   \   000028   0B28         JNC     ??line_calibration_6
+   \   00002A   F2C01000.... BIC.B   #0x10, &switch_control
+   \   000030   9242........ MOV.W   &ADC_Right_Detect, &R_white
+   \   000036   9242........ MOV.W   &ADC_Left_Detect, &L_white
+   \   00003C   D253....     ADD.B   #0x1, &calibration_state
+   \                     ??line_calibration_6:
+   \   000040   7C407700     MOV.B   #0x77, R12
+   \   000044   ........     CALLA   #line_calibration_display
+   \   000048   DE3F         JMP     ??line_calibration_1
+   \                     ??line_calibration_5:
+   \   00004A   F2B01000.... BIT.B   #0x10, &switch_control
+   \   000050   0B28         JNC     ??line_calibration_7
+   \   000052   F2C01000.... BIC.B   #0x10, &switch_control
+   \   000058   9242........ MOV.W   &ADC_Right_Detect, &R_black
+   \   00005E   9242........ MOV.W   &ADC_Left_Detect, &L_black
+   \   000064   D253....     ADD.B   #0x1, &calibration_state
+   \                     ??line_calibration_7:
+   \   000068   7C406200     MOV.B   #0x62, R12
+   \   00006C   ........     CALLA   #line_calibration_display
+   \   000070   CA3F         JMP     ??line_calibration_1
+    100            }
+    101          }
+   \                     ??line_calibration_3:
+   \   000072   1001         RETA
+    102          
+
+   \                                 In  segment CODE, align 2
+    103          void set_line_bit(unsigned short level_detection){
    \                     set_line_bit:
-     38            if(level_detection>L_CLEAR)line_detection &= L_CLEAR;
-   \   000000   5F42....     MOV.B   &line_detection, R15
-   \   000004   3C901000     CMP.W   #0x10, R12
-   \   000008   0328         JNC     ??set_line_bit_1
-   \   00000A   3FF00F00     AND.W   #0xf, R15
-   \   00000E   023C         JMP     ??set_line_bit_0
-     39            else line_detection &= R_CLEAR;
+    104            if(level_detection>L_CLEAR)line_detection &= L_CLEAR;
+   \   000000   3C901000     CMP.W   #0x10, R12
+   \   000004   0428         JNC     ??set_line_bit_1
+   \   000006   B2F00F00.... AND.W   #0xf, &line_detection
+   \   00000C   033C         JMP     ??set_line_bit_0
+    105            else line_detection &= R_CLEAR;
    \                     ??set_line_bit_1:
-   \   000010   3FF0F000     AND.W   #0xf0, R15
-     40            line_detection |= level_detection;
+   \   00000E   B2F0F000.... AND.W   #0xf0, &line_detection
+    106            line_detection |= level_detection;
    \                     ??set_line_bit_0:
-   \   000014   0FDC         BIS.W   R12, R15
-   \   000016   824F....     MOV.W   R15, &line_detection
-     41          }
-   \   00001A   1001         RETA
-     42          
+   \   000014   82DC....     BIS.W   R12, &line_detection
+    107          }
+   \   000018   1001         RETA
+    108          
 
    \                                 In  segment CODE, align 2
-     43          void left_detector_process(){
+    109          void left_detector_process(){
    \                     left_detector_process:
-     44            if(ADC_Right_Detect<=BASE_READING)set_line_bit(R_BASE);
-   \   000000   1F42....     MOV.W   &ADC_Right_Detect, R15
-   \   000004   3F901500     CMP.W   #0x15, R15
-   \   000008   032C         JC      ??left_detector_process_0
-   \   00000A   1C43         MOV.W   #0x1, R12
-   \   00000C   ........     BRA     #set_line_bit
-     45            else if(ADC_Right_Detect<=SLIGHT_DETECTION)set_line_bit(R_SLIGHT);
+    110            if(ADC_Right_Detect<=BASE_READING)set_line_bit(R_BASE);
+   \   000000   B2901500.... CMP.W   #0x15, &ADC_Right_Detect
+   \   000006   042C         JC      ??left_detector_process_0
+   \   000008   1C43         MOV.W   #0x1, R12
+   \   00000A   ........     CALLA   #set_line_bit
+   \   00000E   1001         RETA
+    111            else if(ADC_Right_Detect<=SLIGHT_DETECTION)set_line_bit(R_SLIGHT);
    \                     ??left_detector_process_0:
-   \   000010   3F901F00     CMP.W   #0x1f, R15
-   \   000014   032C         JC      ??left_detector_process_1
-   \   000016   2C43         MOV.W   #0x2, R12
-   \   000018   ........     BRA     #set_line_bit
-     46            else if(ADC_Right_Detect<=STRONG_DETECTION)set_line_bit(R_STRONG);
+   \   000010   B2901F00.... CMP.W   #0x1f, &ADC_Right_Detect
+   \   000016   042C         JC      ??left_detector_process_1
+   \   000018   2C43         MOV.W   #0x2, R12
+   \   00001A   ........     CALLA   #set_line_bit
+   \   00001E   1001         RETA
+    112            else if(ADC_Right_Detect<=STRONG_DETECTION)set_line_bit(R_STRONG);
    \                     ??left_detector_process_1:
-   \   00001C   3F906500     CMP.W   #0x65, R15
-   \   000020   032C         JC      ??left_detector_process_2
-   \   000022   2C42         MOV.W   #0x4, R12
-   \   000024   ........     BRA     #set_line_bit
-     47            else if(ADC_Right_Detect>STRONG_DETECTION)set_line_bit(R_FULL);
+   \   000020   B2906500.... CMP.W   #0x65, &ADC_Right_Detect
+   \   000026   042C         JC      ??left_detector_process_2
+   \   000028   2C42         MOV.W   #0x4, R12
+   \   00002A   ........     CALLA   #set_line_bit
+   \   00002E   1001         RETA
+    113            else if(ADC_Right_Detect>STRONG_DETECTION)set_line_bit(R_FULL);
    \                     ??left_detector_process_2:
-   \   000028   3C42         MOV.W   #0x8, R12
-   \   00002A   ........     BRA     #set_line_bit
-     48          }
+   \   000030   B2906500.... CMP.W   #0x65, &ADC_Right_Detect
+   \   000036   0328         JNC     ??left_detector_process_3
+   \   000038   3C42         MOV.W   #0x8, R12
+   \   00003A   ........     CALLA   #set_line_bit
+    114          }
+   \                     ??left_detector_process_3:
+   \   00003E   1001         RETA
 
    \                                 In  segment CODE, align 2
-     49          void right_detector_process(){
+    115          void right_detector_process(){
    \                     right_detector_process:
-     50            if(ADC_Left_Detect<=BASE_READING)set_line_bit(L_BASE);
-   \   000000   1F42....     MOV.W   &ADC_Left_Detect, R15
-   \   000004   3F901500     CMP.W   #0x15, R15
-   \   000008   042C         JC      ??right_detector_process_0
-   \   00000A   3C401000     MOV.W   #0x10, R12
-   \   00000E   ........     BRA     #set_line_bit
-     51            else if(ADC_Left_Detect<=SLIGHT_DETECTION)set_line_bit(L_SLIGHT);
+    116            if(ADC_Left_Detect<=BASE_READING)set_line_bit(L_BASE);
+   \   000000   B2901500.... CMP.W   #0x15, &ADC_Left_Detect
+   \   000006   052C         JC      ??right_detector_process_0
+   \   000008   3C401000     MOV.W   #0x10, R12
+   \   00000C   ........     CALLA   #set_line_bit
+   \   000010   1001         RETA
+    117            else if(ADC_Left_Detect<=SLIGHT_DETECTION)set_line_bit(L_SLIGHT);
    \                     ??right_detector_process_0:
-   \   000012   3F901F00     CMP.W   #0x1f, R15
-   \   000016   042C         JC      ??right_detector_process_1
-   \   000018   3C402000     MOV.W   #0x20, R12
-   \   00001C   ........     BRA     #set_line_bit
-     52            else if(ADC_Left_Detect<=STRONG_DETECTION)set_line_bit(L_STRONG);
+   \   000012   B2901F00.... CMP.W   #0x1f, &ADC_Left_Detect
+   \   000018   052C         JC      ??right_detector_process_1
+   \   00001A   3C402000     MOV.W   #0x20, R12
+   \   00001E   ........     CALLA   #set_line_bit
+   \   000022   1001         RETA
+    118            else if(ADC_Left_Detect<=STRONG_DETECTION)set_line_bit(L_STRONG);
    \                     ??right_detector_process_1:
-   \   000020   3F906500     CMP.W   #0x65, R15
-   \   000024   042C         JC      ??right_detector_process_2
-   \   000026   3C404000     MOV.W   #0x40, R12
-   \   00002A   ........     BRA     #set_line_bit
-     53            else if(ADC_Left_Detect>STRONG_DETECTION)set_line_bit(L_FULL);
+   \   000024   B2906500.... CMP.W   #0x65, &ADC_Left_Detect
+   \   00002A   052C         JC      ??right_detector_process_2
+   \   00002C   3C404000     MOV.W   #0x40, R12
+   \   000030   ........     CALLA   #set_line_bit
+   \   000034   1001         RETA
+    119            else if(ADC_Left_Detect>STRONG_DETECTION)set_line_bit(L_FULL);
    \                     ??right_detector_process_2:
-   \   00002E   3C408000     MOV.W   #0x80, R12
-   \   000032   ........     BRA     #set_line_bit
-     54          }
-     55          
+   \   000036   B2906500.... CMP.W   #0x65, &ADC_Left_Detect
+   \   00003C   0428         JNC     ??right_detector_process_3
+   \   00003E   3C408000     MOV.W   #0x80, R12
+   \   000042   ........     CALLA   #set_line_bit
+    120          }
+   \                     ??right_detector_process_3:
+   \   000046   1001         RETA
+    121          
 
    \                                 In  segment CODE, align 2
-     56          void process_detectors(){
+    122          void process_detectors(){
    \                     process_detectors:
-     57            left_detector_process();
+    123            left_detector_process();
    \   000000   ........     CALLA   #left_detector_process
-     58            right_detector_process();
-   \   000004   ........     BRA     #right_detector_process
-     59          }
-     60          
+    124            right_detector_process();
+   \   000004   ........     CALLA   #right_detector_process
+    125          }
+   \   000008   1001         RETA
+    126          
 
    \                                 In  segment CODE, align 2
-     61          unsigned short strong_detect(){
+    127          unsigned short strong_detect(){
    \                     strong_detect:
-     62            if(line_detection==0x88){
+    128            if(line_detection==0x88){
    \   000000   B2908800.... CMP.W   #0x88, &line_detection
-   \   000006   0C43         MOV.W   #0x0, R12
-   \   000008   22B3         BIT.W   #0x2, SR
-   \   00000A   0C63         ADDC.W  #0x0, R12
-     63              return 1;
-   \   00000C   1001         RETA
-     64            }
-     65            return 0;
-     66          }
-     67          
+   \   000006   0220         JNE     ??strong_detect_0
+    129              return 1;
+   \   000008   1C43         MOV.W   #0x1, R12
+   \   00000A   1001         RETA
+    130            }
+    131            return 0;
+   \                     ??strong_detect_0:
+   \   00000C   0C43         MOV.W   #0x0, R12
+   \   00000E   1001         RETA
+    132          }
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "    on    ">`:
+   \   000000   202020206F6E DC8 "    on    "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   right  ">`:
+   \   000000   202020726967 DC8 "   right  "
+   \            6874202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   left   ">`:
+   \   000000   2020206C6566 DC8 "   left   "
+   \            7420202000  
+    133          
 
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
       4   left_detector_process
-        0   -> set_line_bit
-      8   measurment
-        8 _Cast32uto32f
-        8 _Sub32f
+        4   -> set_line_bit
+      4   line_calibration
+        4   -> Display_Process
+        4   -> line_calibration_display
+      4   measurment
+        4   -> strcpy
       4   process_detectors
         4   -> left_detector_process
-        0   -> right_detector_process
+        4   -> right_detector_process
       4   right_detector_process
-        0   -> set_line_bit
+        4   -> set_line_bit
       4   set_line_bit
       4   strong_detect
 
@@ -221,20 +455,33 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      46  left_detector_process
+      11  ?<Constant "    on    ">
+      11  ?<Constant "   left   ">
+      11  ?<Constant "   right  ">
+       2  L_black
+       2  L_white
+       2  R_black
+       2  R_white
+       1  calibrated
+       1  calibration_state
+      64  left_detector_process
+     116  line_calibration
        2  line_detection
-      42  measurment
-       8  process_detectors
-      54  right_detector_process
-      28  set_line_bit
-      14  strong_detect
+       2  measure_state
+     226  measurment
+      10  process_detectors
+      72  right_detector_process
+      26  set_line_bit
+      16  strong_detect
 
  
- 192 bytes in segment CODE
-   2 bytes in segment DATA16_Z
+ 530 bytes in segment CODE
+  33 bytes in segment DATA16_C
+  14 bytes in segment DATA16_Z
  
- 192 bytes of CODE memory
-   2 bytes of DATA memory
+ 530 bytes of CODE  memory
+  33 bytes of CONST memory
+  14 bytes of DATA  memory
 
 Errors: none
 Warnings: none

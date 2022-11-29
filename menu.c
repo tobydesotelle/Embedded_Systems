@@ -1,23 +1,21 @@
 #include "macros.h"
-int prev_thumb;
+
 extern volatile unsigned short display_bits;
 extern unsigned int V_Thumb;
 extern volatile unsigned char switch_control;
-//This is will manage the menu state machine.
+int prev_thumb;
+extern int wheel_test;
 unsigned char menu_state;
 void menu_state_machine(){
   switch(menu_state){
   case Start_menu://start menu will have bat voltage and othe general info
     start_menu();
     break;
-//  case Connneting_menu:
-//    connecting_screen();
-//    break;
-  case IP_Display:
-    display_IP();
-    break;
   case Main_menu:
     main_menu();
+    break;
+  case WIFI_menu:
+    display_IP();
     break;
   case Settings:
     settings_menu();
@@ -28,7 +26,6 @@ void menu_state_machine(){
   case PID_menu:
     pid_menu();
     break;
-    
   default:
     menu_state = Main_menu;
     break;
@@ -36,8 +33,9 @@ void menu_state_machine(){
   
 }
 void start_menu(){
-  Init_Display_1();
   clear_display();
+  menu_state = Main_menu;
+  
 }
 void main_menu(){
   main_menu_display(menu_options_3);
@@ -70,8 +68,14 @@ void adc_menu(){
     menu_state = Main_menu;
     lcd_4line();
   }
-  
+  if(SW1_AND_TOGGLED){
+    SW1_CLEAR;
+    wheel_test ^= 0x01;
+    line_calibration();//_______________________ get rid ofthis after testing..................
+  }
+  adc_display();
 }
+
 void pid_menu(){
   if(SW2_AND_TOGGLED){
     SW2_CLEAR;

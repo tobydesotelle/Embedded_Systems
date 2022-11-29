@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:50
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,16 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAE57.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9350.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohz --multiplier=32
+#        ./ --core=430X --data_model=small -Ol --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -166,8 +167,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      18            Init_Port5();
    \   000012   ........     CALLA   #Init_Port5
      19            Init_Port6();
-   \   000016   ........     BRA     #Init_Port6
+   \   000016   ........     CALLA   #Init_Port6
      20          }
+   \   00001A   1001         RETA
 
    \                                 In  segment CODE, align 2
      21          void Init_Port1(void){
@@ -376,16 +378,20 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     187          //  P3OUT &= ~IOT_LINK_CPU;
     188          //  P3DIR |= IOT_LINK_CPU;
     189          //
-    190          //  P3SEL0 &= ~IOT_EN_CPU;
-    191          //  P3SEL1 &= ~IOT_EN_CPU;
-    192          //  P3OUT &= ~IOT_EN_CPU;
-    193          //  P3DIR |= IOT_EN_CPU;
+    190            P3SEL0 &= ~IOT_EN_CPU;
+   \   000016   F2C080002A02 BIC.B   #0x80, &0x22a
+    191            P3SEL1 &= ~IOT_EN_CPU;
+   \   00001C   F2C080002C02 BIC.B   #0x80, &0x22c
+    192            P3OUT &= ~IOT_EN_CPU;
+   \   000022   F2C080002202 BIC.B   #0x80, &0x222
+    193            P3DIR |= IOT_EN_CPU;
+   \   000028   F2D080002402 BIS.B   #0x80, &0x224
     194          }
-   \   000016   1001         RETA
-   \   000018                REQUIRE _A_PBOUT_L
-   \   000018                REQUIRE _A_PBDIR_L
-   \   000018                REQUIRE _A_PBSEL0_L
-   \   000018                REQUIRE _A_PBSEL1_L
+   \   00002E   1001         RETA
+   \   000030                REQUIRE _A_PBOUT_L
+   \   000030                REQUIRE _A_PBDIR_L
+   \   000030                REQUIRE _A_PBSEL0_L
+   \   000030                REQUIRE _A_PBSEL1_L
 
    \                                 In  segment CODE, align 2
     195          void Init_Port4(void){ 
@@ -402,7 +408,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000012   C2432D02     MOV.B   #0x0, &0x22d
     202            P4REN |= SW1; // Enable pullup resistor
    \   000016   E2D32702     BIS.B   #0x2, &0x227
-    203          P4IES |= SW1; // P4.2 Hi/Lo edge interrupt
+    203            P4IES |= SW1; // P4.2 Hi/Lo edge interrupt
    \   00001A   E2D33902     BIS.B   #0x2, &0x239
     204          P4IFG &= ~SW1; // Clear all P2.6 interrupt flags
    \   00001E   E2C33D02     BIC.B   #0x2, &0x23d
@@ -492,16 +498,20 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     271          //P5OUT &= ~V_3_3;
     272          //P5DIR &= ~V_3_3;
     273          //
-    274          //P5SEL0 &= ~IOT_BOOT_CPU;
-    275          //P5SEL1 &= ~IOT_BOOT_CPU;
-    276          //P5OUT &= ~IOT_BOOT_CPU;
-    277          //P5DIR &= ~IOT_BOOT_CPU;
+    274          P5SEL0 &= ~IOT_BOOT_CPU;
+   \   000010   F2C010004A02 BIC.B   #0x10, &0x24a
+    275          P5SEL1 &= ~IOT_BOOT_CPU;
+   \   000016   F2C010004C02 BIC.B   #0x10, &0x24c
+    276          P5OUT &= ~IOT_BOOT_CPU;
+   \   00001C   F2C010004202 BIC.B   #0x10, &0x242
+    277          P5DIR &= ~IOT_BOOT_CPU;
+   \   000022   F2C010004402 BIC.B   #0x10, &0x244
     278          }
-   \   000010   1001         RETA
-   \   000012                REQUIRE _A_PCOUT_L
-   \   000012                REQUIRE _A_PCDIR_L
-   \   000012                REQUIRE _A_PCSEL0_L
-   \   000012                REQUIRE _A_PCSEL1_L
+   \   000028   1001         RETA
+   \   00002A                REQUIRE _A_PCOUT_L
+   \   00002A                REQUIRE _A_PCDIR_L
+   \   00002A                REQUIRE _A_PCSEL0_L
+   \   00002A                REQUIRE _A_PCSEL1_L
 
    \                                 In  segment CODE, align 2
     279          void Init_Port6(void){ 
@@ -576,7 +586,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
         4   -> Init_Port3
         4   -> Init_Port4
         4   -> Init_Port5
-        0   -> Init_Port6
+        4   -> Init_Port6
 
 
    Segment part sizes:
@@ -585,11 +595,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    -----  --------------
       22  Init_Port1
       40  Init_Port2
-      24  Init_Port3
+      48  Init_Port3
       40  Init_Port4
-      18  Init_Port5
+      42  Init_Port5
       22  Init_Port6
-      26  Init_Ports
+      28  Init_Ports
        2  _A_PADIR_L
        2  _A_PAIES_L
        2  _A_PAIE_L
@@ -612,10 +622,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_PCSEL1_L
 
  
- 192 bytes in segment CODE
+ 242 bytes in segment CODE
   40 bytes in segment DATA16_AN
  
- 192 bytes of CODE memory
+ 242 bytes of CODE memory
    0 bytes of DATA memory (+ 40 bytes shared)
 
 Errors: none

@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          20/Nov/2022  19:04:49
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,16 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\init.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWAC9B.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9117.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\init.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --debug
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
 #        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
 #        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ohz --multiplier=32
+#        ./ --core=430X --data_model=small -Ol --multiplier=32
 #        --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
@@ -89,10 +90,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000022   4C43         MOV.B   #0x0, R12
    \   000024   ........     CALLA   #Init_Serial_UCA1
      27            Init_Display();
-   \   000028   ........     BRA     #Init_Display
+   \   000028   ........     CALLA   #Init_Display
      28            //#define BAUD115200      (0x00)
      29            //#define BAUD460800      (0x01)
      30          }
+   \   00002C   1001         RETA
 
    \                                 In  segment CODE, align 2
      31          void Init_Conditions(void){
@@ -102,47 +104,48 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      34            int i;
      35            for(i=DISPLAYSTART;i<DISPLAYCHARS;i++){
    \   000000   0F43         MOV.W   #0x0, R15
+   \   000002   093C         JMP     ??Init_Conditions_1
      36              display_line[DISPLAY0][i] = RESET_STATE;
    \                     ??Init_Conditions_0:
-   \   000002   CF43....     MOV.B   #0x0, display_line(R15)
+   \   000004   CF43....     MOV.B   #0x0, display_line(R15)
      37              display_line[DISPLAY1][i] = RESET_STATE;
-   \   000006   CF43....     MOV.B   #0x0, display_line + 11(R15)
+   \   000008   CF43....     MOV.B   #0x0, display_line + 11(R15)
      38              display_line[DISPLAY2][i] = RESET_STATE;
-   \   00000A   CF43....     MOV.B   #0x0, display_line + 22(R15)
+   \   00000C   CF43....     MOV.B   #0x0, display_line + 22(R15)
      39              display_line[DISPLAY3][i] = RESET_STATE;
-   \   00000E   CF43....     MOV.B   #0x0, display_line + 33(R15)
+   \   000010   CF43....     MOV.B   #0x0, display_line + 33(R15)
      40            }
-   \   000012   1F53         ADD.W   #0x1, R15
-   \   000014   3F900B00     CMP.W   #0xb, R15
-   \   000018   F43B         JL      ??Init_Conditions_0
+   \   000014   1F53         ADD.W   #0x1, R15
+   \                     ??Init_Conditions_1:
+   \   000016   3F900B00     CMP.W   #0xb, R15
+   \   00001A   F43B         JL      ??Init_Conditions_0
      41            display_line[DISPLAY0][DISPLAYEND] = RESET_STATE;
-   \   00001A   C243....     MOV.B   #0x0, &display_line + 10
+   \   00001C   C243....     MOV.B   #0x0, &display_line + 10
      42            display_line[DISPLAY1][DISPLAYEND] = RESET_STATE;
-   \   00001E   C243....     MOV.B   #0x0, &display_line + 21
+   \   000020   C243....     MOV.B   #0x0, &display_line + 21
      43            display_line[DISPLAY2][DISPLAYEND] = RESET_STATE;
-   \   000022   C243....     MOV.B   #0x0, &display_line + 32
+   \   000024   C243....     MOV.B   #0x0, &display_line + 32
      44            display_line[DISPLAY3][DISPLAYEND] = RESET_STATE;
-   \   000026   C243....     MOV.B   #0x0, &display_line + 43
+   \   000028   C243....     MOV.B   #0x0, &display_line + 43
      45          
      46            display[DISPLAY0] = &display_line[DISPLAY0][RESET_STATE];
-   \   00002A   B240........ MOV.W   #display_line, &display
+   \   00002C   B240........ MOV.W   #display_line, &display
      47            display[DISPLAY1] = &display_line[DISPLAY1][RESET_STATE];
-   \   000030   B240........ MOV.W   #display_line + 11, &display + 2
+   \   000032   B240........ MOV.W   #display_line + 11, &display + 2
      48            display[DISPLAY2] = &display_line[DISPLAY2][RESET_STATE];
-   \   000036   B240........ MOV.W   #display_line + 22, &display + 4
+   \   000038   B240........ MOV.W   #display_line + 22, &display + 4
      49            display[DISPLAY3] = &display_line[DISPLAY3][RESET_STATE];
-   \   00003C   B240........ MOV.W   #display_line + 33, &display + 6
+   \   00003E   B240........ MOV.W   #display_line + 33, &display + 6
      50            update_display = RESET_STATE;
-   \   000042   C243....     MOV.B   #0x0, &update_display
-   \   000046   0343         NOP
+   \   000044   C243....     MOV.B   #0x0, &update_display
      51          
      52          
      53          // Interrupts are disabled by default, enable them.
      54            enable_interrupts();
-   \   000048   32D2         BIS.W   #0x8, SR
+   \   000048   ........     CALLA   #enable_interrupts
      55          //------------------------------------------------------------------------------
      56          }
-   \   00004A   1001         RETA
+   \   00004C   1001         RETA
 
    \                                 In  segment CODE, align 2
      57          void enable_interrupts(void){
@@ -176,12 +179,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    CSTACK Function
    ------ --------
       4   Init_Conditions
+        4   -> enable_interrupts
       4   Init_LEDs
       4   Master_Init
         4   -> Init_ADC
         4   -> Init_Clocks
         4   -> Init_Conditions
-        0   -> Init_Display
+        4   -> Init_Display
         4   -> Init_LCD
         4   -> Init_LEDs
         4   -> Init_Ports
@@ -195,18 +199,18 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      76  Init_Conditions
+      78  Init_Conditions
       12  Init_LEDs
-      44  Master_Init
+      46  Master_Init
        2  _A_PAOUT_L
        2  _A_PCOUT_L
        6  enable_interrupts
 
  
- 138 bytes in segment CODE
+ 142 bytes in segment CODE
    4 bytes in segment DATA16_AN
  
- 138 bytes of CODE memory
+ 142 bytes of CODE memory
    0 bytes of DATA memory (+ 4 bytes shared)
 
 Errors: none

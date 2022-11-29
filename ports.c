@@ -187,10 +187,10 @@ void Init_Port3(char smclk){
 //  P3OUT &= ~IOT_LINK_CPU;
 //  P3DIR |= IOT_LINK_CPU;
 //
-//  P3SEL0 &= ~IOT_EN_CPU;
-//  P3SEL1 &= ~IOT_EN_CPU;
-//  P3OUT &= ~IOT_EN_CPU;
-//  P3DIR |= IOT_EN_CPU;
+  P3SEL0 &= ~IOT_EN_CPU;
+  P3SEL1 &= ~IOT_EN_CPU;
+  P3OUT &= ~IOT_EN_CPU;
+  P3DIR |= IOT_EN_CPU;
 }
 void Init_Port4(void){ 
 //------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ void Init_Port4(void){
   P4SEL0 = SEL4_0;
   P4SEL1 = SEL4_1;
   P4REN |= SW1; // Enable pullup resistor
-P4IES |= SW1; // P4.2 Hi/Lo edge interrupt
+  P4IES |= SW1; // P4.2 Hi/Lo edge interrupt
 P4IFG &= ~SW1; // Clear all P2.6 interrupt flags
 P4IE |= SW1; // P4.2 interrupt enabled
 //  P4OUT = LOW; // P4 set Low
@@ -271,10 +271,10 @@ void Init_Port5(void){
 //P5OUT &= ~V_3_3;
 //P5DIR &= ~V_3_3;
 //
-//P5SEL0 &= ~IOT_BOOT_CPU;
-//P5SEL1 &= ~IOT_BOOT_CPU;
-//P5OUT &= ~IOT_BOOT_CPU;
-//P5DIR &= ~IOT_BOOT_CPU;
+P5SEL0 &= ~IOT_BOOT_CPU;
+P5SEL1 &= ~IOT_BOOT_CPU;
+P5OUT &= ~IOT_BOOT_CPU;
+P5DIR &= ~IOT_BOOT_CPU;
 }
 void Init_Port6(void){ 
   

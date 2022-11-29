@@ -16,16 +16,19 @@ char ani_state;
 unsigned char connect_state;
 extern char IP_Addy[21];
 extern char SSID[11];
-
+extern char adc_char[5];
+extern unsigned int ADC_Left_Detect;
+extern unsigned int ADC_Right_Detect;
+extern unsigned int V_Thumb;
 
 #define Trying_to_connect	(0x00)
 void Connecting_machine(){
   switch(connect_state){
   case Trying_to_connect:
     Connecting_Display();
-    if(display_bits & Display_IP)connect_state = IP_Display;
+    if(display_bits & Display_IP)connect_state = WIFI_menu;
     break;
-  case IP_Display:
+  case WIFI_menu:
     display_IP();
     break;
   }
@@ -40,15 +43,6 @@ void Init_Display(void){
   update_display=UPDATED;
   Display_Process();
   
-}
-void Init_Display_1(void){
-    //lcd_BIG_mid();
-    strcpy(display_line[DISPLAY0], "Connecting");
-    strcpy(display_line[DISPLAY1], "          ");
-    //strcpy(display_line[DISPLAY2], "Desotelle ");
-  display_changed = TRUE;
-  update_display=UPDATED;
-  Display_Process();
 }
 void Connecting_Display(void){
     //lcd_BIG_mid();
@@ -108,11 +102,6 @@ void waiting_animation(){
   
   
 }
-void serial_display(){
-  
-  
-  
-}
 void clear_line(unsigned int line){
   strcpy(display_line[line], "          ");
   display_changed=DISPLAYCHANGED;
@@ -127,7 +116,7 @@ void change_display_line(char *text,int line){
   strcpy(display_line[line], text);
   display_changed=DISPLAYCHANGED;
 }
-void change_display_adc(char *text,unsigned int line){ 
+void change_display_adc(char *text,unsigned int line){ //MIght be outdated soon
   
   //text[]
   text[4]=' ';
@@ -156,10 +145,10 @@ void change_display_adc(char *text,unsigned int line){
   display_changed=DISPLAYCHANGED;
 }
 void main_menu_display(int line){
-  strcpy(display_line[DISPLAY0], Settings_dis);
+  strcpy(display_line[DISPLAY0], Wifi_dis);
   strcpy(display_line[DISPLAY1], Adc_disp);
   strcpy(display_line[DISPLAY2], Pid_menu);
-  strcpy(display_line[DISPLAY3], CLEAR_DISPLAY);
+  strcpy(display_line[DISPLAY3], Settings_dis);
   switch(line){
   case 0x00:
     display_line[DISPLAY0][0] = '-';
@@ -169,15 +158,53 @@ void main_menu_display(int line){
     display_line[DISPLAY1][0] = '-';
     display_line[DISPLAY1][1] = '>';
     break;
-  case 0x03:
   case 0x02:
     display_line[DISPLAY2][0] = '-';
     display_line[DISPLAY2][1] = '>';
     break;
+  case 0x03:
+    display_line[DISPLAY3][0] = '-';
+    display_line[DISPLAY3][1] = '>';
+    break;
   }
   display_changed=DISPLAYCHANGED;
 }
-void adc_menu_display(){
-  
-  
+void wifi_move_diplay(char *movement){
+  lcd_BIG_mid();
+  strcpy(display_line[DISPLAY1], movement);
+  display_changed=DISPLAYCHANGED;
+}
+void adc_display(){ // might be outdated    
+    strcpy(display_line[0], V_THUMB_STRING );
+    HEXtoBCD(V_Thumb); // Convert result to String
+    strcat(display_line[0],adc_char);
+    strcat(display_line[0], "   ");
+    strcpy(display_line[1], DETECT_L_STRING);
+    HEXtoBCD(ADC_Right_Detect); // Convert result to String
+    strcat(display_line[1],adc_char);
+    strcat(display_line[1], "   ");
+    strcpy(display_line[2],DETECT_R_STRING );
+    HEXtoBCD(ADC_Left_Detect); // Convert result to String
+    strcat(display_line[2],adc_char);
+    strcat(display_line[2], "   ");
+    display_changed=DISPLAYCHANGED;
+}
+void line_calibration_display(char color){ // might be outdated  
+  switch(color){
+  case 'w':
+    strcpy(display_line[0], "  White  " );
+    break;
+  case 'b':
+    strcpy(display_line[0], "  Black  " );
+	break;  
+  }
+    strcpy(display_line[1], DETECT_L_STRING);
+    HEXtoBCD(ADC_Right_Detect); // Convert result to String
+    strcat(display_line[1],adc_char);
+    strcat(display_line[1], "   ");
+    strcpy(display_line[2],DETECT_R_STRING );
+    HEXtoBCD(ADC_Left_Detect); // Convert result to String
+    strcat(display_line[2],adc_char);
+    strcat(display_line[2], "   ");
+    display_changed=DISPLAYCHANGED;
 }

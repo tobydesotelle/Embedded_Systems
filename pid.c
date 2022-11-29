@@ -1,12 +1,12 @@
 #include "pid.h"
 #include "macros.h"
 
-#define KP              (20.0f)
-#define KI              (0)
+#define KP              (2)
+#define KI              (1000)
 #define KD              (0)
-#define MAX             (30000)
+#define MAX             (10000)
 #define MIN             (-MAX)
-#define SAMPLE_TIME     (0.1)
+#define SAMPLE_TIME     (1)
 void PIDController_Init(PIDController *pid) {
         
         pid->Kp = KP;
@@ -17,45 +17,45 @@ void PIDController_Init(PIDController *pid) {
         pid->T = SAMPLE_TIME;
         
 	/* Clear controller variables */
-	pid->integrator = 0.0f;
-	pid->prevError  = 0.0f;
+	pid->integrator = 0;
+	pid->prevError  = 0;
 
-	pid->differentiator  = 0.0f;
-	pid->prevMeasurement = 0.0f;
+	pid->differentiator  = 0;
+	pid->prevMeasurement = 0;
 
-	pid->out = 0.0f;
+	pid->out = 0;
 
 }
 
-float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
+int PIDController_Update(PIDController *pid, int setpoint, int measurement) {
 
 	/*
 	* Error signal
 	*/
-    float error = setpoint - measurement;
+    int error = setpoint - measurement;
 
 
 	/*
 	* Proportional
 	*/
-    float proportional = pid->Kp * error;
+    int proportional = pid->Kp * error;
 
 
 	/*
 	* Integral
 	*/
-    pid->integrator = pid->integrator + 0.5f * pid->Ki * pid->T * (error + pid->prevError);
+    pid->integrator = pid->integrator + pid->Ki * pid->T * (error + pid->prevError);
 
 	/* Anti-wind-up via integrator clamping */
-//    if (pid->integrator > pid->limMaxInt) {
-//
-//        pid->integrator = pid->limMaxInt;
-//
-//    } else if (pid->integrator < pid->limMinInt) {
-//
-//        pid->integrator = pid->limMinInt;
-//
-//    }
+    if (pid->integrator > pid->limMaxInt) {
+
+        pid->integrator = pid->limMaxInt;
+
+    } else if (pid->integrator < pid->limMinInt) {
+
+        pid->integrator = pid->limMinInt;
+
+    }
 
 
 	/*
