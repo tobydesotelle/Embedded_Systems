@@ -23,14 +23,15 @@ void idle_case(unsigned char nextState){
   switch_control &= ~SW1_TOGGLED;
 }
 
-void find_line(unsigned char nextstate){
-  //this will stop the car when line is detected
-  
-  
-}
+//void find_line(unsigned char nextstate){
+//  //this will stop the car when line is detected
+//  
+//  
+//}
 void do_for(unsigned char *curState,unsigned char nextState,unsigned int time){
   if((TB1CCTL1&CCIE)!=CCIE){
   TB1CCTL1 &= ~CCIFG;
+  //TB1CCR1+=TB1CCR1_INTERVAL;
   TB1CCTL1 |= CCIE;
   time100=0;
   }
@@ -44,6 +45,7 @@ void do_for(unsigned char *curState,unsigned char nextState,unsigned int time){
     TB1CCTL1 &= ~CCIE;
   }
 }
+
 void search(unsigned char nextState){
   if(line_detection!=0x11){
     state=nextState;

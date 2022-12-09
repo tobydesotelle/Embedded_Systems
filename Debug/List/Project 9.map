@@ -7,7 +7,7 @@ Warning[w6]: Type conflict for external/entry "SSID", in module iot against exte
 #                                                                              #
 #      IAR Universal Linker V6.6.2.104                                         #
 #                                                                              #
-#           Link time     =  28/Nov/2022  20:14:03                             #
+#           Link time     =  04/Dec/2022  14:29:43                             #
 #           Target CPU    =  MSP430                                            #
 #           List file     =  "C:\Users\Tobias Desotelle\OneDrive - UNC Ashevil #
 #                            le\Documents\GitHub\Embedded_Systems\Debug\List\P #
@@ -19,7 +19,7 @@ Warning[w6]: Type conflict for external/entry "SSID", in module iot against exte
 #                            UBROF version 10.0.6                              #
 #                            Using library modules for C-SPY (-rt)             #
 #           Command line  =  -f                                                #
-#                            C:\Users\TOBIAS~1\AppData\Local\Temp\EWF792.tmp   #
+#                            C:\Users\TOBIAS~1\AppData\Local\Temp\EWE01C.tmp   #
 #                            ("C:\Users\Tobias Desotelle\OneDrive - UNC Ashevi #
 #                            lle\Documents\GitHub\Embedded_Systems\Debug\Obj\a #
 #                            nalogtodigital.r43"                               #
@@ -137,7 +137,7 @@ Warning[w6]: Type conflict for external/entry "SSID", in module iot against exte
                 *                                      *
                 ****************************************
 
-       Program entry at :           80E4  Relocatable, from module : ?cstart
+       Program entry at :           81A2  Relocatable, from module : ?cstart
 
 
 
@@ -192,14 +192,14 @@ analogtodigital ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\G
         _A_ADCIE_L                          071A
         _A_ADCIV_L                          071E
         _A_PAOUT_L                          0202
-        ADC_Left_Detect                     2004
-        ADC_Right_Detect                    2006
-        V_Thumb                             2008
-        adc_char                            2062
-        ADC_Channel                         200A
-        Init_ADC                            8D52
-        ADC_ISR                             810C
-        HEXtoBCD                            8C60
+        ADC_Left_Detect                     2014
+        ADC_Right_Detect                    2016
+        V_Thumb                             2018
+        adc_char                            20EC
+        ADC_Channel                         201A
+        Init_ADC                            9480
+        ADC_ISR                             81CA
+        HEXtoBCD                            9552
         ADC_ISR::??INTVEC 58                FFDC
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
@@ -231,10 +231,9 @@ cases ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embe
         _A_TB1CCTL1_L                       03C4
         delay_start                         NOT NEEDED
         times_repeated                      NOT NEEDED
-        time100                             NOT NEEDED
+        time100                             201C
         idle_case                           NOT NEEDED
-        find_line                           NOT NEEDED
-        do_for                              NOT NEEDED
+        do_for                              98FA
         search                              NOT NEEDED
         wait_case                           NOT NEEDED
         next_state                          NOT NEEDED
@@ -257,8 +256,8 @@ clocks ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         _A_PM5CTL0_L                        0130
         _A_SFRIFG1_L                        0102
         _A_WDTCTL_L                         01CC
-        Init_Clocks                         8E28
-        Software_Trim                       85F6
+        Init_Clocks                         94EC
+        Software_Trim                       8EE4
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
         CSCTL0                              0180
@@ -292,31 +291,43 @@ clocks ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         WDTCTL_H                            01CD
         WDTCTL_L                            01CC
 display ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\display.r43 )
+        _A_TB3CCR5_L                        045C
         ani_state                           NOT NEEDED
-        connect_state                       NOT NEEDED
-        Connecting_machine                  NOT NEEDED
-        Init_Display                        9120
-        Connecting_Display                  NOT NEEDED
-        Display_Process                     942A
-        display_IP                          8DC2
+        connect_state                       20F1
+        time_disp                           NOT NEEDED
+        display_pad_case                    20F2
+        Connecting_machine                  9BF8
+        Init_Display                        9974
+        Connecting_Display                  9C96
+        Display_Process                     9D46
+        display_IP                          95B8
         waiting_animation                   NOT NEEDED
-        clear_line                          94C2
-        clear_display                       946E
-        change_display_line                 950C
+        diplay_pad_increment                9FB4
+        pad                                 2010
+        pad_num                             201E
+        diplay_pad                          961C
+        clear_line                          9E0C
+        clear_display                       9DF2
+        change_display_line                 9E54
         change_display_adc                  NOT NEEDED
-        main_menu_display                   8B58
+        main_menu_display                   NOT NEEDED
         wifi_move_diplay                    NOT NEEDED
-        adc_display                         8AD2
-        line_calibration_display            8BDC
+        adc_display                         NOT NEEDED
+        line_calibration_display            9296
+        project_7_display                   NOT NEEDED
+        make_time                           9838
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
+        TB3CCR5                             045C
+        TB3CCR5_H                           045D
+        TB3CCR5_L                           045C
 init ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\init.r43 )
         _A_PAOUT_L                          NOT NEEDED
         _A_PCOUT_L                          0242
-        Master_Init                         92E6
-        Init_Conditions                     8F34
-        enable_interrupts                   9678
-        Init_LEDs                           9662
+        Master_Init                         9B28
+        Init_Conditions                     96CA
+        enable_interrupts                   9F9C
+        Init_LEDs                           9F7A
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
         PAOUT                               0202
@@ -328,25 +339,33 @@ init ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embed
 iot ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\iot.r43 )
         _A_PBOUT_L                          0222
         _A_TB1CCTL2_L                       03C6
-        cur_command                         NOT NEEDED
+        cur_command                         2020
         commmand_time                       NOT NEEDED
-        IOT_bits                            NOT NEEDED
+        IOT_bits                            2022
         command_state                       NOT NEEDED
-        command_queue                       NOT NEEDED
-        time_queue                          NOT NEEDED
-        add_to_queue                        NOT NEEDED
-        read_command_queue                  NOT NEEDED
-        add_to_time                         NOT NEEDED
-        read_time                           NOT NEEDED
+        trim                                2024
+        last_command                        NOT NEEDED
+        command_queue                       20F3
+        time_queue                          2026
+        add_to_queue                        2000
+        read_command_queue                  2002
+        add_to_time                         2004
+        read_time                           2006
         timerb1_2_cnt                       NOT NEEDED
-        IOT_state                           NOT NEEDED
+        IOT_state                           2125
         IOT_state_mem                       NOT NEEDED
-        IOT_main                            NOT NEEDED
-        Command_state                       NOT NEEDED
-        iot_wifi_connect                    NOT NEEDED
-        process_command                     NOT NEEDED
-        str_to_int                          NOT NEEDED
-        clear_command                       NOT NEEDED
+        Exit                                2126
+        char_num                            2127
+        foward_speed                        2008
+        right_trim                          200A
+        left_trim                           208A
+        Speed_state                         212C
+        IOT_main                            9A94
+        Command_state                       8826
+        iot_wifi_connect                    8BB6
+        process_command                     8A42
+        str_to_int                          97AA
+        clear_command                       9DD8
         movement_time                       NOT NEEDED
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
@@ -366,14 +385,14 @@ LCD ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedd
         _A_UCB1RXBUF_L                      05CC
         _A_UCB1TXBUF_L                      05CE
         _A_UCB1IFG_L                        05EC
-        current_character                   2067
+        current_character                   212D
         update_display_count                NOT NEEDED
         display_update_time                 NOT NEEDED
-        update_display                      2068
-        display_changed                     2069
+        update_display                      212E
+        display_changed                     212F
         lcd_control                         NOT NEEDED
-        display_line                        206A
-        display                             200C
+        display_line                        2130
+        display                             208C
         posi_L1                             NOT NEEDED
         posi_L2                             NOT NEEDED
         posi_L3                             NOT NEEDED
@@ -382,32 +401,32 @@ LCD ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedd
         char_count                          NOT NEEDED
         current_line                        NOT NEEDED
         LCD_test                            NOT NEEDED
-        spi_chipselect_idle                 9616
-        spi_chipselect_active               9656
-        spi_reset_idle                      967E
-        spi_reset_active                    968A
-        Display_Update                      9014
+        spi_chipselect_idle                 9F38
+        spi_chipselect_active               9F86
+        spi_reset_idle                      9FAE
+        spi_reset_active                    9FBA
+        Display_Update                      97F2
         enable_display_update               NOT NEEDED
         update_string                       NOT NEEDED
-        Init_LCD                            8902
-        lcd_4line                           9648
+        Init_LCD                            90D2
+        lcd_4line                           NOT NEEDED
         lcd_BIG_mid                         NOT NEEDED
         lcd_BIG_bot                         NOT NEEDED
         lcd_180                             NOT NEEDED
-        lcd_out                             9406
+        lcd_out                             9CDE
         lcd_puts                            NOT NEEDED
-        WriteIns                            9366
-        WriteData                           938E
+        WriteIns                            9BD0
+        WriteData                           9BA8
         CheckBusy                           NOT NEEDED
-        ClrDisplay                          9524
-        ClrDisplay_Buffer_0                 95A2
-        ClrDisplay_Buffer_1                 957A
-        ClrDisplay_Buffer_2                 95DE
-        ClrDisplay_Buffer_3                 9566
+        ClrDisplay                          9E6C
+        ClrDisplay_Buffer_0                 9F12
+        ClrDisplay_Buffer_1                 9EAE
+        ClrDisplay_Buffer_2                 9ED6
+        ClrDisplay_Buffer_3                 9EFE
         SetPostion                          NOT NEEDED
-        DisplayOnOff                        958E
-        Init_SPI_B1                         915E
-        SPI_B1_write                        948A
+        DisplayOnOff                        9EEA
+        Init_SPI_B1                         98BC
+        SPI_B1_write                        9DA2
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
         PAOUT                               0202
@@ -439,15 +458,16 @@ LCD ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedd
         UCB1IFG_L                           05EC
 line_detection ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\line_detection.r43 )
         line_detection                      NOT NEEDED
-        R_white                             2014
-        L_white                             2016
-        R_black                             2018
-        L_black                             201A
-        measure_state                       201C
-        calibration_state                   2096
-        calibrated                          2097
-        measurment                          8514
-        line_calibration                    8CDE
+        R_white                             2094
+        L_white                             2096
+        R_black                             2098
+        L_black                             209A
+        measure_state                       209C
+        calibration_state                   215C
+        calibrated                          215D
+        find_line                           9D02
+        measurment                          8E2E
+        line_calibration                    9398
         set_line_bit                        NOT NEEDED
         left_detector_process               NOT NEEDED
         right_detector_process              NOT NEEDED
@@ -456,21 +476,17 @@ line_detection ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\Gi
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
 main ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\main.r43 )
-        _A_PBOUT_L                          NOT NEEDED
         _A_PM5CTL0_L                        NOT NEEDED
-        _A_TB3CCR5_L                        045C
-        motor_control_bits                  201E
-        switch_control                      2098
-        timer_bits                          2020
-        serial_bits                         2022
-        display_bits                        2024
-        wheel_test                          2026
-        main                                90A0
+        _A_TB3CCR5_L                        NOT NEEDED
+        motor_control_bits                  209E
+        switch_control                      215E
+        timer_bits                          20A0
+        serial_bits                         20A2
+        display_bits                        20A4
+        wheel_test                          NOT NEEDED
+        main                                9A26
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
-        PBOUT                               0222
-        PBOUT_H                             0223
-        PBOUT_L                             0222
         PM5CTL0                             0130
         PM5CTL0_H                           0131
         PM5CTL0_L                           0130
@@ -479,19 +495,17 @@ main ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embed
         TB3CCR5_L                           045C
 menu ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\menu.r43 )
         prev_thumb                          NOT NEEDED
-        menu_state                          2099
-        menu_state_machine                  8FCC
-        start_menu                          966E
-        main_menu                           8E8E
-        settings_menu                       95B6
-        adc_menu                            9284
-        pid_menu                            94DC
+        menu_state                          215F
+        menu_state_machine                  NOT NEEDED
+        start_menu                          NOT NEEDED
+        main_menu                           NOT NEEDED
+        adc_menu                            NOT NEEDED
         v_thumb_process                     NOT NEEDED
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
 pid ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\pid.r43 )
-        PIDController_Init                  9250
-        PIDController_Update                885C
+        PIDController_Init                  9B7E
+        PIDController_Update                8F94
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
 ports ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj\ports.r43 )
@@ -515,13 +529,13 @@ ports ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embe
         _A_PCDIR_L                          0244
         _A_PCSEL0_L                         024A
         _A_PCSEL1_L                         024C
-        Init_Ports                          94A6
-        Init_Port1                          9550
-        Init_Port2                          93B6
-        Init_Port3                          92B6
-        Init_Port4                          93DE
-        Init_Port5                          9314
-        Init_Port6                          953A
+        Init_Ports                          9DBE
+        Init_Port1                          9E82
+        Init_Port2                          9C48
+        Init_Port3                          9AF8
+        Init_Port4                          9C20
+        Init_Port5                          9B54
+        Init_Port6                          9E98
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
         PAOUT                               0202
@@ -599,41 +613,41 @@ serial ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         _A_UCA1TXBUF_L                      058E
         _A_UCA1IE_L                         059A
         _A_UCA1IV_L                         059E
-        strstr                              NOT NEEDED
-        process_buf                         209A
-        process_buf_0                       229A
-        Ring_buf_0                          249A
-        Rx_write_0                          2000
-        Rx_read_0                           2028
-        line                                202A
-        cur_0                               202C
-        RING_BUF                            24BA
-        RX_write                            2002
-        RX_read                             202E
-        Process_in_cur                      2030
+        strstr                              9FC4
+        process_buf                         2160
+        process_buf_0                       2360
+        Ring_buf_0                          2560
+        Rx_write_0                          200C
+        Rx_read_0                           20A6
+        line                                20A8
+        cur_0                               20AA
+        RING_BUF                            2580
+        RX_write                            200E
+        RX_read                             20AC
+        Process_in_cur                      20AE
         Commad_start                        NOT NEEDED
         Command_end                         NOT NEEDED
-        Tx_String                           2032
-        process_line                        NOT NEEDED
-        i                                   2034
-        IP_Addy                             24DA
-        SSID                                24EF
-        char_buf                            NOT NEEDED
-        Num_bufs_to_process                 2036
-        Commands                            NOT NEEDED
-        write_command_line                  NOT NEEDED
-        send                                905A
-        get_command                         NOT NEEDED
-        get_connected                       NOT NEEDED
-        process_buffer_0                    NOT NEEDED
-        clear_buffer                        NOT NEEDED
+        Tx_String                           20B0
+        process_line                        20B2
+        i                                   20B4
+        IP_Addy                             25A0
+        SSID                                25B5
+        char_buf                            20B6
+        Num_bufs_to_process                 20B8
+        Commands                            25C0
+        write_command_line                  20BA
+        send                                9760
+        get_command                         9206
+        get_connected                       99B0
+        process_buffer_0                    99EC
+        clear_buffer                        9D86
         get_SSID                            NOT NEEDED
         get_IP                              NOT NEEDED
-        get_from_serial                     NOT NEEDED
-        Init_Serial_UCA0                    8A3A
-        Init_Serial_UCA1                    899E
-        EUSCI_A0_ISR                        81A8
-        EUSCI_A1_ISR                        8282
+        get_from_serial                     9412
+        Init_Serial_UCA0                    916E
+        Init_Serial_UCA1                    9036
+        EUSCI_A0_ISR                        8246
+        EUSCI_A1_ISR                        82FA
         EUSCI_A1_ISR::??INTVEC 64           FFE2
         EUSCI_A0_ISR::??INTVEC 66           FFE4
         ?setjmp_save_r4                     NOT NEEDED
@@ -684,11 +698,11 @@ switches ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\E
         _A_PAIFG_L                          NOT NEEDED
         _A_PBIFG_L                          NOT NEEDED
         _A_TB0CCTL1_L                       0384
-        sw1_timer                           2038
-        sw2_timer                           203A
-        switchP4_interrupt                  8384
-        switchP2_interrupt                  83A4
-        process_switches                    8F82
+        sw1_timer                           20BC
+        sw2_timer                           20BE
+        switchP4_interrupt                  83E0
+        switchP2_interrupt                  83FA
+        process_switches                    931A
         switchP4_interrupt::??INTVEC 44     FFCE
         switchP2_interrupt::??INTVEC 48     FFD2
         ?setjmp_save_r4                     NOT NEEDED
@@ -715,6 +729,7 @@ timers ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         _A_TB1CCR2_L                        03D6
         _A_TB1EX0_L                         03E0
         _A_TB2CTL_L                         0400
+        _A_TB2CCTL1_L                       0404
         _A_TB2CCTL2_L                       0406
         _A_TB2CCR0_L                        0412
         _A_TB2CCR1_L                        0414
@@ -732,11 +747,11 @@ timers ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         _A_TB3CCR2_L                        0456
         _A_TB3CCR3_L                        0458
         _A_TB3CCR4_L                        045A
-        Init_Timers                         95F2
-        Init_Timer_B0                       90E0
-        Init_Timer_B1                       91DA
-        Init_Timer_B2                       919C
-        Init_Timer_B3                       8EE2
+        Init_Timers                         9F5A
+        Init_Timer_B0                       987C
+        Init_Timer_B1                       9938
+        Init_Timer_B2                       9716
+        Init_Timer_B3                       967E
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
         TB0CTL                              0380
@@ -775,6 +790,9 @@ timers ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Emb
         TB2CTL                              0400
         TB2CTL_H                            0401
         TB2CTL_L                            0400
+        TB2CCTL1                            0404
+        TB2CCTL1_H                          0405
+        TB2CCTL1_L                          0404
         TB2CCTL2                            0406
         TB2CCTL2_H                          0407
         TB2CCTL2_L                          0406
@@ -839,20 +857,23 @@ timers_isr ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub
         _A_TB1IV_L                          03EE
         _A_TB2CCTL0_L                       0402
         _A_TB2CCR0_L                        NOT NEEDED
+        _A_TB2CCR1_L                        NOT NEEDED
         _A_TB2IV_L                          042E
         _A_TB3IV_L                          046E
-        time_interval50                     203C
-        time_interval_200                   203E
-        timer200                            2040
+        time_interval50                     20C0
+        time_interval_200                   20C2
+        timer200                            20C4
+        timing                              20C6
+        timer                               20C8
         cur                                 NOT NEEDED
-        Timer0_B0_ISR                       83C4
-        TIMER0_B1_ISR                       83E6
-        Timer1_B0_ISR                       844A
-        TIMER1_B1_ISR                       848E
-        Timer2_B0_ISR                       84C2
-        TIMER2_B1_ISR                       84DA
-        Timer3_B0_ISR                       84F6
-        TIMER3_B1_ISR                       84F8
+        Timer0_B0_ISR                       8414
+        TIMER0_B1_ISR                       8438
+        Timer1_B0_ISR                       849C
+        TIMER1_B1_ISR                       84E0
+        Timer2_B0_ISR                       8514
+        TIMER2_B1_ISR                       852C
+        Timer3_B0_ISR                       8548
+        TIMER3_B1_ISR                       854A
         TIMER3_B1_ISR::??INTVEC 72          FFEA
         Timer3_B0_ISR::??INTVEC 74          FFEC
         TIMER2_B1_ISR::??INTVEC 76          FFEE
@@ -899,6 +920,9 @@ timers_isr ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub
         TB2CCR0                             0412
         TB2CCR0_H                           0413
         TB2CCR0_L                           0412
+        TB2CCR1                             0414
+        TB2CCR1_H                           0415
+        TB2CCR1_L                           0414
         TB2IV                               042E
         TB2IV_H                             042F
         TB2IV_L                             042E
@@ -913,24 +937,29 @@ wheel_control ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\Git
         _A_TB3CCR3_L                        NOT NEEDED
         _A_TB3CCR4_L                        NOT NEEDED
         _A_TB3CCR5_L                        NOT NEEDED
-        right_speed                         2042
-        left_speed                          2044
+        right_speed                         20CA
+        left_speed                          20CC
         state                               NOT NEEDED
         check_state                         NOT NEEDED
-        pid                                 2046
-        right_wheel_state                   24FA
-        left_wheel_state                    24FB
-        right_wheel_statemachine            86C4
-        left_wheel_statemachine             8790
-        move                                9216
-        set_speed                           NOT NEEDED
-        set_right_speed                     9690
-        set_left_speed                      9684
+        pid                                 20CE
+        right_wheel_state                   2660
+        left_wheel_state                    2661
+        after_pause_state                   2662
+        pause_time                          20EA
+        right_wheel_statemachine            8C9A
+        left_wheel_statemachine             8D64
+        move                                9AC6
+        set_speed                           9F92
+        set_right_speed                     9FA8
+        set_left_speed                      9FA2
         enable_ramp_to                      NOT NEEDED
         ramp_up_to                          NOT NEEDED
-        stop                                NOT NEEDED
+        stop                                9E24
         Wheels_Process                      NOT NEEDED
-        pid_control                         933E
+        black_line_state                    2012
+        black_line_display                  2663
+        Line_Machine                        8554
+        pid_control                         9C70
         pid_test                            NOT NEEDED
         ?setjmp_save_r4                     NOT NEEDED
         ?setjmp_save_r5                     NOT NEEDED
@@ -958,15 +987,15 @@ wheel_control ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\Git
 ?abort ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         abort                               NOT NEEDED
 ?__dbg_break ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        __DebugBreak                        96A2
+        __DebugBreak                        9FD0
 ?__dwrite ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         __dwrite                            NOT NEEDED
 ?__exit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        __exit                              95CA
+        __exit                              9EC2
 ?__write ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         __write                             NOT NEEDED
 ?_exit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        _exit                               969A
+        _exit                               9FC0
         __cstart_call_dtors                 NOT NEEDED
         __cstart_closeall                   NOT NEEDED
         __cstart_clearlocks                 NOT NEEDED
@@ -977,37 +1006,37 @@ wheel_control ( C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\Git
         __call_dtors                        NOT NEEDED
         __data16_vec_cctor                  NOT NEEDED
 ?cstart ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        __program_start                     80E4
-        ?cstart_begin                       80E4
+        __program_start                     81A2
+        ?cstart_begin                       81A2
         ?cstart_call_mpu_init               NOT NEEDED
         ?cstart_call_frwp_init              NOT NEEDED
         ?cstart_call_low_level_init         NOT NEEDED
         ?cstart_init_copy_ramfunc           NOT NEEDED
-        ?cstart_init_zero                   80E8
-        ?cstart_init_copy                   80F4
+        ?cstart_init_zero                   81A6
+        ?cstart_init_copy                   81B2
         ?cstart_init_zero20                 NOT NEEDED
         ?cstart_init_copy20                 NOT NEEDED
         __cstart_init_tls                   NOT NEEDED
         ?cstart_call_ctors                  NOT NEEDED
-        ?cstart_call_main                   8104
-        ?cstart_end                         810C
+        ?cstart_call_main                   81C2
+        ?cstart_end                         81CA
 lowinit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         __low_level_init                    NOT NEEDED
 ?reset_vector ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         ?reset_vector                       FFFE
 ?exit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        exit                                9696
+        exit                                9FC8
 ?FrwpInit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         __iar_430_frwp_init                 NOT NEEDED
 ?malloc ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         malloc                              NOT NEEDED
 ?memcpy ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        memcpy                              9604
+        memcpy                              9F26
 ?memmove ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         memmove                             NOT NEEDED
 ?memzero ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        __data16_memzero                    9638
-        __data16_memcpy                     969E
+        __data16_memzero                    9F6A
+        __data16_memcpy                     9FCC
         __data16_memmove                    NOT NEEDED
 ?MpuInit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         __iar_430_mpu_init                  NOT NEEDED
@@ -1030,18 +1059,18 @@ lowinit ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib
 ?IndCallR15 ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         ?IndCallR15                         NOT NEEDED
 ?strcat ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        strcat                              94F4
+        strcat                              9E3C
 ?strcmp ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        strcmp                              NOT NEEDED
+        strcmp                              9D68
 ?strcpy ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        strcpy                              9628
+        strcpy                              9F4A
 ?strncmp ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        strncmp                             NOT NEEDED
+        strncmp                             9CBA
 ?strncpy ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
-        strncpy                             944C
+        strncpy                             9D24
 ?strstr ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         strstr                              NOT NEEDED
-        __iar_Strstr                        NOT NEEDED
+        __iar_Strstr                        9A60
 ?xcloseall ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
         _Close_all                          NOT NEEDED
 ?xgetmemchunk ( C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.r43 )
@@ -1072,43 +1101,47 @@ Module               CODE      DATA      CONST
 ?memzero               20
 ?reset_vector           2
 ?strcat                24
+?strcmp                30
 ?strcpy                16
+?strncmp               36
 ?strncpy               34
-LCD                   610     55     10
+?strstr                52
+LCD                   596     55     10
   + shared                            4
-analogtodigital       394     13     12
+analogtodigital       334     13     12
   + shared             60             4
   + common
-cases                                 2
-clocks                308            18
+cases                  62      2      2
+clocks                278            18
   + shared                            2
-display               674                  135
-init                  142
+display               648      6           110
   + shared                            2
-iot
+init                  138
+  + shared                            2
+iot                 1 288    178           122
   + shared                            4
-line_detection        342     12            33
-main                   64     11
-  + shared                            2
-menu                  260      1
-pid                   218
-ports                 242            30
+line_detection        338     12            33
+main                   58      9
+menu                           1
+pid                   204
+ports                 240            30
   + shared                            4
-serial                854  1 140     28      4
+serial              1 192  1 306     28     16
+  + shared              4
   + common             68
-switches              138      4
+switches              178      4
   + shared             50             2
   + common
-timers                286            38
-  + shared                           16
-timers_isr            336      6     12     55
+timers                290            38
+  + shared                           18
+timers_isr            320     10     12     55
   + shared             88             2
   + common
-wheel_control         518     34
+wheel_control       1 260     39            81
 N/A (command line)           160
 N/A (alignment)
 ----------          -----  -----    ---    ---
-Total:              5 570  1 436    192    227
+Total:              7 730  1 795    194    417
   + common             88
 
 
@@ -1142,8 +1175,7 @@ DATA16_AN                              0102 - 0103               2   rel    0
                                        03D2 - 03D7               6 
                                        03E0 - 03E1               2 
                                        03EE - 03EF               2 
-                                       0400 - 0403               4 
-                                       0406 - 0407               2 
+                                       0400 - 0407               8 
                                        0412 - 0417               6 
                                        0420 - 0421               2 
                                        042E - 042F               2 
@@ -1169,21 +1201,21 @@ DATA16_AN                              0102 - 0103               2   rel    0
                                        0712 - 0713               2 
                                        071A - 071B               2 
                                        071E - 071F               2 
-DATA16_I                               2000 - 2003               4   rel    1
-DATA16_Z                               2004 - 24FB             4F8   rel    1
-CODE_I                                    24FC                       rel    1
-DATA20_I                                  24FC                       rel    1
-DATA20_Z                                  24FC                       rel    1
-DATA20_N                                  24FC                       rel    1
+DATA16_I                               2000 - 2012              13   rel    1
+DATA16_Z                               2014 - 2663             650   rel    1
+CODE_I                                    2664                       rel    1
+DATA20_I                                  2664                       rel    1
+DATA20_Z                                  2664                       rel    1
+DATA20_N                                  2664                       rel    1
 CSTACK                                 2F60 - 2FFF              A0   rel    1
-DATA16_C                               8000 - 80DE              DF   rel    0
-DATA16_ID                              80E0 - 80E3               4   rel    1
-DATA20_ID                                 80E4                       rel    1
-DATA20_C                                  80E4                       rel    1
-CSTART                                 80E4 - 810B              28   rel    1
-ISR_CODE                               810C - 8513             408   rel    1
-CODE_ID                                   8514                       rel    1
-<CODE> 1                               8514 - 96A3            1190   rel    1
+DATA16_C                               8000 - 818D             18E   rel    0
+DATA16_ID                              818E - 81A0              13   rel    1
+DATA20_ID                                 81A2                       rel    1
+DATA20_C                                  81A2                       rel    1
+CSTART                                 81A2 - 81C9              28   rel    1
+ISR_CODE                               81CA - 8553             38A   rel    1
+CODE_ID                                   8554                       rel    1
+<CODE> 1                               8554 - 9FD1            1A7E   rel    1
 INTVEC                                 FFA2 - FFF9              58   com    1
 RESET                                  FFFE - FFFF               2   rel    1
 
@@ -1193,9 +1225,9 @@ RESET                                  FFFE - FFFF               2   rel    1
                 *                                      *
                 ****************************************
 
- 5 658 bytes of CODE  memory
- 1 436 bytes of DATA  memory (+ 192 absolute )
-   227 bytes of CONST memory
+ 7 818 bytes of CODE  memory
+ 1 795 bytes of DATA  memory (+ 194 absolute )
+   417 bytes of CONST memory
 
 Errors: none
 Warnings: 1

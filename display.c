@@ -20,7 +20,9 @@ extern char adc_char[5];
 extern unsigned int ADC_Left_Detect;
 extern unsigned int ADC_Right_Detect;
 extern unsigned int V_Thumb;
-
+char time_disp[4];
+extern unsigned int timer;
+char display_pad_case;
 #define Trying_to_connect	(0x00)
 void Connecting_machine(){
   switch(connect_state){
@@ -81,6 +83,10 @@ void display_IP(){
   update_display=UPDATED;
   Display_Process();
 }
+//void display_ssid(){
+//  strstr(SSID,'.')
+//  
+//}
 void waiting_animation(){
   switch(ani_state){
   case 0:
@@ -101,6 +107,37 @@ void waiting_animation(){
   } 
   
   
+}
+void diplay_pad_increment(){
+  display_pad_case++;
+}
+char pad[2] = "0\0";
+int pad_num;
+void diplay_pad(){
+  switch(display_pad_case){
+  case 0:
+    break;
+  case 1:
+    BACKLIGHT = 50000;
+    strcpy(display_line[0],"Arrived 0" );
+    strcat(display_line[0], pad);
+    display_pad_case++;
+    display_changed=DISPLAYCHANGED;
+    break;
+  case 2:
+    
+    break;
+  case 3:
+    BACKLIGHT = 0;
+    clear_line(0);
+    display_pad_case=0;
+    pad_num++;
+    pad[0]='0'+pad_num;
+    display_changed=DISPLAYCHANGED;
+    break;
+  }
+  make_time(timer);
+  display_changed=DISPLAYCHANGED;
 }
 void clear_line(unsigned int line){
   strcpy(display_line[line], "          ");
@@ -208,3 +245,41 @@ void line_calibration_display(char color){ // might be outdated
     strcat(display_line[2], "   ");
     display_changed=DISPLAYCHANGED;
 }
+void project_7_display(){ // might be outdated  
+//    make_time(timer);
+//    strcpy(display_line[0], time_disp );
+//    strcat(display_line[0], "   ");
+    strcpy(display_line[1], DETECT_L_STRING);
+    HEXtoBCD(ADC_Right_Detect); // Convert result to String
+    strcat(display_line[1],adc_char);
+    strcat(display_line[1], "   ");
+    strcpy(display_line[2],DETECT_R_STRING );
+    HEXtoBCD(ADC_Left_Detect); // Convert result to String
+    strcat(display_line[2],adc_char);
+    strcat(display_line[2], "   ");
+    display_changed=DISPLAYCHANGED;
+}
+void make_time(unsigned int time_in){
+  for(int i=7;i<11;i++){
+    display_line[DISPLAY3][i]='0';
+  }
+  while(time_in > 500){
+    display_line[DISPLAY3][7]+=1;
+    time_in-=500;
+  }
+  while(time_in > 50){
+    display_line[DISPLAY3][8]+=1;
+    //time_disp[1]+=1;
+    time_in-=50;
+  }
+  while(time_in > 5){
+    display_line[DISPLAY3][9]+=1;
+    //time_disp[2]+=1;
+    time_in-=5;
+  }
+  //time_disp[3]='.';
+  
+  
+  
+}
+//void project_10_display()

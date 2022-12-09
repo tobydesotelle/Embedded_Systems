@@ -70,9 +70,12 @@ void Init_Timer_B2(void){
   //TB0CCTL0 &= ~CCIFG; // CCR0 enable interrupt
   //TB0CCTL0 |= CCIE; // CCR0 enable interrupt
   
+  
   TB2CCR1 = TB0CCR1_INTERVAL; // CCR1 
   //------------------------------------
   
+  TB2CCTL1 |= CCIE; // CCR0 enable interrupt
+  TB2CCR1 = TB2CCR1_INTERVAL; // CCR1
   //TB0CCTL1 &= ~CCIFG; // CCR0 enable interrupt
   // TB0CCTL1 |= CCIE; // CCR1 enable interrupt
   

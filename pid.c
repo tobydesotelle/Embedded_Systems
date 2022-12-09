@@ -1,8 +1,8 @@
 #include "pid.h"
 #include "macros.h"
 
-#define KP              (2)
-#define KI              (1000)
+#define KP              (25)
+#define KI              (30000)
 #define KD              (0)
 #define MAX             (10000)
 #define MIN             (-MAX)

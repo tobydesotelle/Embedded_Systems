@@ -13,8 +13,9 @@ unsigned int commmand_time;
 unsigned short IOT_bits;
 unsigned char command_state;
 extern unsigned int write_command_line;
-
-
+unsigned int trim;
+extern short timing;
+char last_command[6];
 #define System_Store0	 ("AT+SYSSTORE=0\r\n")
 #define CIPMUX1		 ("AT+CIPMUX=1\r\n")
 #define SSID_Find	 ("AT+CWJAP?\r\n")
@@ -24,8 +25,10 @@ extern unsigned int write_command_line;
 #define OK		("OK\r\n")
 #define IP_found	("WIFI GOT IP\r\n")
 #define Start_timmer	(0x54)
-#define Process_next	(0x55)
+#define Trim		(0x59)
+#define Display_pad	(0xA4)
 #define IOT_Process_next (0x01)
+#define Change_Speed	(0xA5)
 #define NUM_queues	(50)
 
 unsigned char command_queue[NUM_queues];
@@ -39,6 +42,13 @@ unsigned int *read_time=time_queue;
 unsigned int timerb1_2_cnt;
 char IOT_state=0;
 char IOT_state_mem;
+char Exit;
+char char_num[5];
+extern char display_pad_case;
+unsigned int foward_speed = 8000;
+unsigned int right_trim = 500;
+unsigned int left_trim = 0;
+char Speed_state;
 void IOT_main(){
     P3OUT |= IOT_EN_CPU;
   while(!(serial_bits & Wifi_connected) ){
@@ -54,13 +64,21 @@ void IOT_main(){
 void Command_state(){//handle movements and times 
   get_command();
   process_command();
+  
   //if(Command_state == 0){//flag new command  and stop command
     switch(*read_command_queue){// Add display 
     case IDLE:
+      move(0X00);
+      if(display_pad_case == 0){
+	change_display_line(" Waiting  ",DISPLAY0);
+	//last_command = "     ";
+      }
       stop();
       break;
     case ESTOP:
       stop();
+      move(0X00);
+      do_for(read_command_queue,Process_next,*read_time);
       break;
     case STOP:
       stop();
@@ -68,34 +86,82 @@ void Command_state(){//handle movements and times
       do_for(read_command_queue,Process_next,*read_time);
       break;
     case FORWARD:
+//      set_speed(8000);
+      set_right_speed(foward_speed+right_trim);//8000
+      set_left_speed(foward_speed+left_trim);
       move(FORWARD);
-      //wifi_move_diplay(FORWARD_display);
+      clear_line(0);
+      //change_display_line("f0080",DISPLAY3);
       do_for(read_command_queue,Process_next,*read_time);
       //command_state = Start_timmer;
       break;
     case REVERSE:
+      set_speed(8000);
       move(REVERSE);
+      //change_display_line("b0080",DISPLAY3);
       //wifi_move_diplay(REVERSE_display);
       do_for(read_command_queue,Process_next,*read_time);
       //command_state = Start_timmer;
       break;
     case CCW:
+      set_speed(7000);
       move(CW);
+      //change_display_line("r0001",DISPLAY3);
       //wifi_move_diplay(CCW_display);
       do_for(read_command_queue,Process_next,*read_time);
       //command_state = Start_timmer;
       break;
     case CW:
+      set_speed(7000);
       move(CCW);
+      //change_display_line("l0001",DISPLAY3);
       //wifi_move_diplay(CW_display);
       do_for(read_command_queue,Process_next,*read_time);
       //command_state = Start_timmer;
+      break;
+    case PID:
+      //change_display_line("p9000",DISPLAY3);
+      Line_Machine();
+      //timing = 1; ------------------------------ timing start
+      //do_for(read_command_queue,Process_next,*read_time);
+      break;
+    case Trim:
+      trim+=100;
+      do_for(read_command_queue,Process_next,*read_time);
+      break;
+    case Display_pad:
+      //change_display_line("u0000",DISPLAY3);
+      diplay_pad_increment();
+      do_for(read_command_queue,Process_next,*read_time);
+      break;
+    case Change_Speed:
+      switch(Speed_state){
+      case 0:
+	foward_speed = 8000;
+	right_trim = 500;
+	Speed_state++;
+	break;
+      case 1:
+	foward_speed = 30000;
+	left_trim = 1000;
+	right_trim = 0;
+	Speed_state++;
+	break;
+      case 2:
+	foward_speed = 58000;
+	left_trim = 3000;
+	right_trim = 0;
+	Speed_state = 0;
+	break;
+      }
+      do_for(read_command_queue,Process_next,*read_time);
       break;
     case Start_timmer:
       do_for(read_command_queue,Process_next,*read_time);
       break;
     case Process_next:
       stop();
+      move(0X00);
       *read_command_queue = RESET;
       *read_time = RESET;
 	read_command_queue++;
@@ -106,6 +172,7 @@ void Command_state(){//handle movements and times
     //}
   }
 }
+
 void iot_wifi_connect(){
   if(serial_bits & Send_next_command){
     IOT_state++;
@@ -172,9 +239,14 @@ void iot_wifi_connect(){
 }
 void process_command(){ // reads command then adds to the queue
   if(Commands[cur_command][PASSWORD_LENGTH]=='x'){//If currently written is the estop command
-    command_state = ESTOP;
+    *read_command_queue = ESTOP;
+    cur_command++;
   }
-  if(strncmp(Commands[cur_command],PASSWORD,PASSWORD_LENGTH) == 0){
+  if(Commands[cur_command][PASSWORD_LENGTH]=='w'){//If currently written is the estop command
+    Exit=1;
+    cur_command++;
+  }
+  else if(strncmp(Commands[cur_command],PASSWORD,PASSWORD_LENGTH) == 0){
     switch(Commands[cur_command][PASSWORD_LENGTH]){
     case 'f':
       *add_to_queue++ = FORWARD;
@@ -191,9 +263,21 @@ void process_command(){ // reads command then adds to the queue
     case 's':
       *add_to_queue++ = STOP;
       break;
+    case 'p':
+      *add_to_queue++ = PID;
+      break;
+    case 'x':
+      *add_to_queue++ = Trim;
+      break;
+    case 'u':
+      *add_to_queue++ = Display_pad;
+      break;
+    case 'c':
+      *add_to_queue++ = Change_Speed;
+      break;
     }
     
-    char char_num[5];
+    
     strncpy(char_num,&Commands[cur_command][PASSWORD_LENGTH+1],4);
     
     clear_command();

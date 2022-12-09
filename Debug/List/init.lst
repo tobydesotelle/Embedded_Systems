@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:41
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\init.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9117.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWD792.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\init.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -90,11 +89,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000022   4C43         MOV.B   #0x0, R12
    \   000024   ........     CALLA   #Init_Serial_UCA1
      27            Init_Display();
-   \   000028   ........     CALLA   #Init_Display
+   \   000028   ........     BRA     #Init_Display
      28            //#define BAUD115200      (0x00)
      29            //#define BAUD460800      (0x01)
      30          }
-   \   00002C   1001         RETA
 
    \                                 In  segment CODE, align 2
      31          void Init_Conditions(void){
@@ -142,10 +140,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      52          
      53          // Interrupts are disabled by default, enable them.
      54            enable_interrupts();
-   \   000048   ........     CALLA   #enable_interrupts
+   \   000048   ........     BRA     #enable_interrupts
      55          //------------------------------------------------------------------------------
      56          }
-   \   00004C   1001         RETA
 
    \                                 In  segment CODE, align 2
      57          void enable_interrupts(void){
@@ -179,13 +176,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    CSTACK Function
    ------ --------
       4   Init_Conditions
-        4   -> enable_interrupts
+        0   -> enable_interrupts
       4   Init_LEDs
       4   Master_Init
         4   -> Init_ADC
         4   -> Init_Clocks
         4   -> Init_Conditions
-        4   -> Init_Display
+        0   -> Init_Display
         4   -> Init_LCD
         4   -> Init_LEDs
         4   -> Init_Ports
@@ -199,18 +196,18 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      78  Init_Conditions
+      76  Init_Conditions
       12  Init_LEDs
-      46  Master_Init
+      44  Master_Init
        2  _A_PAOUT_L
        2  _A_PCOUT_L
        6  enable_interrupts
 
  
- 142 bytes in segment CODE
+ 138 bytes in segment CODE
    4 bytes in segment DATA16_AN
  
- 142 bytes of CODE memory
+ 138 bytes of CODE memory
    0 bytes of DATA memory (+ 4 bytes shared)
 
 Errors: none

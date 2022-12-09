@@ -20,6 +20,11 @@ unsigned char check_state;
 PIDController pid;
 char right_wheel_state;//Right and left wheel controller
 char left_wheel_state;
+unsigned char after_pause_state;
+unsigned int pause_time;
+extern short timing;
+extern char Exit;
+extern unsigned char *read_command_queue;
 #define IDLE		(0x00)
 #define Configure_wheel (0x01)
 #define Forward_start	(0x02)
@@ -37,7 +42,8 @@ void right_wheel_statemachine(){
   case Configure_wheel:
     //set_speed(8000);
     if(!(motor_control_bits & R_MOTOR_DIR))right_wheel_state = Reverse_adjust;
-    else right_wheel_state =  Forward_adjust;
+    else if(motor_control_bits & R_MOTOR_DIR)  right_wheel_state =  Forward_adjust;
+    else right_wheel_state = Configure_wheel;
     break;
   case Forward_adjust:
     RIGHT_FORWARD_SPEED = right_speed;
@@ -78,7 +84,8 @@ void left_wheel_statemachine(){
   case Configure_wheel:
     //set_speed(8000);
     if(!(motor_control_bits & L_MOTOR_DIR))left_wheel_state =  Reverse_adjust;
-    else left_wheel_state = Forward_adjust;
+    else if((motor_control_bits & L_MOTOR_DIR))  left_wheel_state = Forward_adjust;
+    else left_wheel_state = Configure_wheel;
     break;
   case Forward_adjust:
     LEFT_FORWARD_SPEED = left_speed;
@@ -169,6 +176,7 @@ void Wheels_Process(void){
     move(FORWARD);
     do_for(&state,ALIGN,10);
     break;
+    
   case ALIGN: //Spin until both sensor read strong 
     set_speed(BASE_SPEED);
     move(CW);
@@ -191,6 +199,160 @@ void Wheels_Process(void){
     break;
   }
 }
+
+
+unsigned char black_line_state = START;
+unsigned char black_line_display;
+#define Boost_speed		(3000)
+#define Turn_speed		(2000)
+#define Trim_speed		(500)
+#define pause_length		(500)
+#define Stright1_length 	(400)//350
+#define Stright2_length 	(500)
+#define Stright3_length 	(10)
+#define Turn_length 		(110)
+void Line_Machine(){
+  switch(black_line_state){
+  case START:
+    //set_speed(BASE_SPEED+3000);
+    change_display_line(" BL Start " , 0);
+    set_right_speed(BASE_SPEED+Boost_speed);
+    set_left_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    after_pause_state = Turn1;
+    pause_time = 100;
+    do_for(&black_line_state,Pause,Stright1_length);
+    break;
+  case Pause:
+    stop();
+    move(0x00);
+    do_for(&black_line_state,after_pause_state,pause_time);
+    break;
+  case Turn1:
+    set_speed(BASE_SPEED+Turn_speed);
+    move(CW);
+    after_pause_state = stright1;
+    do_for(&black_line_state,Pause,Turn_length);
+    break;
+  case stright1:
+    set_right_speed(BASE_SPEED+Boost_speed+Trim_speed+800);
+    set_left_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    after_pause_state = Turn2;
+    do_for(&black_line_state,Pause,Stright2_length);
+    break;
+  case Turn2:
+    set_speed(BASE_SPEED+Turn_speed);
+    move(CW);
+    after_pause_state = striaght2white;
+    do_for(&black_line_state,Pause,Turn_length);
+    break;
+  case striaght2white:
+    set_right_speed(BASE_SPEED+Boost_speed+Trim_speed);
+    set_left_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    after_pause_state = Find_Line;
+    do_for(&black_line_state,Pause,Stright3_length);
+    break;
+  case Find_Line:
+     set_right_speed(BASE_SPEED+Boost_speed+Trim_speed);
+    set_left_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    after_pause_state = Find_Line;
+    do_for(&black_line_state,Pause,100);
+    find_line(&black_line_state,LINE_FOUND);
+    break;
+  case LINE_FOUND: 
+    stop();
+    pause_time = pause_length;
+    change_display_line("Intercept ",0);
+    move(0x00);
+    do_for(&black_line_state,BACK_UP,300);
+    break;
+  case BACK_UP: 
+    set_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    after_pause_state = ALIGN;
+    do_for(&black_line_state,Pause,20);
+    break;
+  case ALIGN: //Spin until both sensor read strong 
+    set_speed(BASE_SPEED+2000);
+    change_display_line(" BL Turn  ",0);
+    move(CCW);
+    find_line(&black_line_state,Pause);
+    after_pause_state = PID;
+    do_for(&black_line_state,Pause,400);
+    
+    break;
+    case PID : // Adjust Reverse
+    move(FORWARD);
+    pid_control();
+    switch(black_line_display){
+    case 0:
+      change_display_line("BL Travel ",0);
+	do_for(&black_line_display,1,700);
+      break;
+    case 1:
+      change_display_line("BL Circle ",0);
+	do_for(&black_line_display,1,500);
+      break;
+      case 2:
+	break;
+      
+    }
+    //do_for(&black_line_state,Hold2,2000);
+    if(Exit == 1){
+      after_pause_state = Leave;
+      black_line_state = Pause;
+      change_display_line("  BL Exit ”  ",0);
+    }
+    break;
+  case Leave:
+    set_right_speed(BASE_SPEED+Boost_speed+Trim_speed);
+    set_left_speed(BASE_SPEED+Boost_speed);
+    move(FORWARD);
+    do_for(&black_line_state,Complete,800);
+    break;
+  case Complete:
+    move(0x00);
+    change_display_line("  BL Stop "  ,0);
+    after_pause_state = Reset;
+    do_for(&black_line_state,Pause,400);
+    timing=0;
+   break;
+  case Reset:
+    *read_command_queue = Process_next;
+    black_line_state = START;
+    break;
+//    case Hold2:
+//    stop();
+//    move(0x00);
+//    do_for(&black_line_state,TURN_IN,100);
+//    break;
+//  case TURN_IN:
+//    set_speed(BASE_SPEED);
+//    move(CW);
+//    do_for(&black_line_state,Hold3,100);
+//    break;
+//    case Hold3:
+//    stop();
+//    move(0x00);
+//    do_for(&black_line_state,Move_IN,300);
+//    break;
+//  case Move_IN:
+//    set_speed(BASE_SPEED);
+//    move(FORWARD);
+//    do_for(&black_line_state,PID,300);
+//    break;
+//  case FINISH:
+//    black_line_state = IDLE;
+//    timing = 0;
+//    break;
+  }
+  
+}
+
+
 void pid_control(){
   //Want to update pid loop and set output
   int Motor_offset = PIDController_Update(&pid,0,measurment());

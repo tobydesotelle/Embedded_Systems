@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:42
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9350.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWDC9C.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\ports.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -167,9 +166,8 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      18            Init_Port5();
    \   000012   ........     CALLA   #Init_Port5
      19            Init_Port6();
-   \   000016   ........     CALLA   #Init_Port6
+   \   000016   ........     BRA     #Init_Port6
      20          }
-   \   00001A   1001         RETA
 
    \                                 In  segment CODE, align 2
      21          void Init_Port1(void){
@@ -586,7 +584,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
         4   -> Init_Port3
         4   -> Init_Port4
         4   -> Init_Port5
-        4   -> Init_Port6
+        0   -> Init_Port6
 
 
    Segment part sizes:
@@ -599,7 +597,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       40  Init_Port4
       42  Init_Port5
       22  Init_Port6
-      28  Init_Ports
+      26  Init_Ports
        2  _A_PADIR_L
        2  _A_PAIES_L
        2  _A_PAIE_L
@@ -622,10 +620,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_PCSEL1_L
 
  
- 242 bytes in segment CODE
+ 240 bytes in segment CODE
   40 bytes in segment DATA16_AN
  
- 242 bytes of CODE memory
+ 240 bytes of CODE memory
    0 bytes of DATA memory (+ 40 bytes shared)
 
 Errors: none

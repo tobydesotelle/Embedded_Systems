@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:41
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\cases.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9106.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWD791.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\cases.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -85,7 +84,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      21            //This will wait until SW1 is pressed.
      22            if(switch_control&SW1_TOGGLED)state=nextState;
    \   000000   F2B01000.... BIT.B   #0x10, &switch_control
-   \   000006   0228         JNC     ??idle_case_0
+   \   000006   0224         JEQ     ??idle_case_0
    \   000008   C24C....     MOV.B   R12, &state
      23            switch_control &= ~SW1_TOGGLED;
    \                     ??idle_case_0:
@@ -93,151 +92,149 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      24          }
    \   000012   1001         RETA
      25          
-
-   \                                 In  segment CODE, align 2
-     26          void find_line(unsigned char nextstate){
-   \                     find_line:
-     27            //this will stop the car when line is detected
-     28            
-     29            
-     30          }
-   \   000000   1001         RETA
+     26          //void find_line(unsigned char nextstate){
+     27          //  //this will stop the car when line is detected
+     28          //  
+     29          //  
+     30          //}
 
    \                                 In  segment CODE, align 2
      31          void do_for(unsigned char *curState,unsigned char nextState,unsigned int time){
    \                     do_for:
      32            if((TB1CCTL1&CCIE)!=CCIE){
    \   000000   B2B01000C403 BIT.W   #0x10, &0x3c4
-   \   000006   072C         JC      ??do_for_0
+   \   000006   0720         JNE     ??do_for_1
      33            TB1CCTL1 &= ~CCIFG;
    \   000008   92C3C403     BIC.W   #0x1, &0x3c4
-     34            TB1CCTL1 |= CCIE;
+     34            //TB1CCR1+=TB1CCR1_INTERVAL;
+     35            TB1CCTL1 |= CCIE;
    \   00000C   B2D01000C403 BIS.W   #0x10, &0x3c4
-     35            time100=0;
+     36            time100=0;
    \   000012   8243....     MOV.W   #0x0, &time100
-     36            }
-     37            if(timer_bits&TB1CCR1_BIT){
-   \                     ??do_for_0:
-   \   000016   B2B01000.... BIT.W   #0x10, &timer_bits
-   \   00001C   0528         JNC     ??do_for_1
-     38              time100++;
-   \   00001E   9253....     ADD.W   #0x1, &time100
-     39              timer_bits &= ~TB1CCR1_BIT;
-   \   000022   B2C01000.... BIC.W   #0x10, &timer_bits
-     40            }
-     41            if(time100>=time){
+     37            }
+     38            if(timer_bits&TB1CCR1_BIT){
    \                     ??do_for_1:
+   \   000016   B2B01000.... BIT.W   #0x10, &timer_bits
+   \   00001C   0524         JEQ     ??do_for_0
+     39              time100++;
+   \   00001E   9253....     ADD.W   #0x1, &time100
+     40              timer_bits &= ~TB1CCR1_BIT;
+   \   000022   B2C01000.... BIC.W   #0x10, &timer_bits
+     41            }
+     42            if(time100>=time){
+   \                     ??do_for_0:
    \   000028   829E....     CMP.W   R14, &time100
    \   00002C   0728         JNC     ??do_for_2
-     42              *curState=nextState;
+     43              *curState=nextState;
    \   00002E   CC4D0000     MOV.B   R13, 0(R12)
-     43              time100=0;
+     44              time100=0;
    \   000032   8243....     MOV.W   #0x0, &time100
-     44              TB1CCTL1 &= ~CCIE;
+     45              TB1CCTL1 &= ~CCIE;
    \   000036   B2C01000C403 BIC.W   #0x10, &0x3c4
-     45            }
-     46          }
+     46            }
+     47          }
    \                     ??do_for_2:
    \   00003C   1001         RETA
    \   00003E                REQUIRE _A_TB1CCTL1_L
+     48          
 
    \                                 In  segment CODE, align 2
-     47          void search(unsigned char nextState){
+     49          void search(unsigned char nextState){
    \                     search:
-     48            if(line_detection!=0x11){
+     50            if(line_detection!=0x11){
    \   000000   B2901100.... CMP.W   #0x11, &line_detection
    \   000006   0224         JEQ     ??search_0
-     49              state=nextState;
+     51              state=nextState;
    \   000008   C24C....     MOV.B   R12, &state
-     50            }
-     51          }
+     52            }
+     53          }
    \                     ??search_0:
    \   00000C   1001         RETA
-     52          void delay();
-     53          
+     54          void delay();
+     55          
 
    \                                 In  segment CODE, align 2
-     54          void wait_case(unsigned char nextState){
+     56          void wait_case(unsigned char nextState){
    \                     wait_case:
-     55           //if(half_seconds==1){
-     56            
-     57           //}
-     58          }
+     57           //if(half_seconds==1){
+     58            
+     59           //}
+     60          }
    \   000000   1001         RETA
 
    \                                 In  segment CODE, align 2
-     59          void next_state(unsigned int duration,unsigned char nextState){
+     61          void next_state(unsigned int duration,unsigned char nextState){
    \                     next_state:
-     60            
-     61          }
+     62            
+     63          }
    \   000000   1001         RETA
 
    \                                 In  segment CODE, align 2
-     62          void start_case(unsigned char nextState){
+     64          void start_case(unsigned char nextState){
    \                     start_case:
-     63           //move_forward();
-     64           state = nextState;
+     65           //move_forward();
+     66           state = nextState;
    \   000000   C24C....     MOV.B   R12, &state
-     65          }
+     67          }
    \   000004   1001         RETA
-     66          
+     68          
 
    \                                 In  segment CODE, align 2
-     67          void repeat_case(unsigned char repeatState,unsigned char nextState,unsigned int repeat_times){
+     69          void repeat_case(unsigned char repeatState,unsigned char nextState,unsigned int repeat_times){
    \                     repeat_case:
-     68            if(times_repeated==repeat_times){
-   \   000000   829E....     CMP.W   R14, &times_repeated
+     70            if(times_repeated==repeat_times){
+   \   000000   1E92....     CMP.W   &times_repeated, R14
    \   000004   0320         JNE     ??repeat_case_0
-     69              state=nextState;
+     71              state=nextState;
    \   000006   C24D....     MOV.B   R13, &state
    \   00000A   1001         RETA
-     70            }else{
-     71              times_repeated++;
+     72            }else{
+     73              times_repeated++;
    \                     ??repeat_case_0:
    \   00000C   9253....     ADD.W   #0x1, &times_repeated
-     72              state=repeatState;
+     74              state=repeatState;
    \   000010   C24C....     MOV.B   R12, &state
-     73            }
-     74          }
+     75            }
+     76          }
    \   000014   1001         RETA
 
    \                                 In  segment CODE, align 2
-     75          void end_case(unsigned char nextEvent){
+     77          void end_case(unsigned char nextEvent){
    \                     end_case:
    \   000000   0A12         PUSH.W  R10
    \   000002   4A4C         MOV.B   R12, R10
-     76           stop();
+     78           stop();
    \   000004   ........     CALLA   #stop
-     77           delay_start=RESET_STATE;
+     79           delay_start=RESET_STATE;
    \   000008   8243....     MOV.W   #0x0, &delay_start
-     78           times_repeated=RESET_STATE;
+     80           times_repeated=RESET_STATE;
    \   00000C   8243....     MOV.W   #0x0, &times_repeated
-     79           //state = WAIT;
-     80           event = nextEvent;
+     81           //state = WAIT;
+     82           event = nextEvent;
    \   000010   C24A....     MOV.B   R10, &event
-     81          }
+     83          }
    \   000014   3A41         POP.W   R10
    \   000016   1001         RETA
-     82          //Diffrent Motions
-     83          //void Run_Straight(void){
-     84          // switch(state){
-     85          //   case WAIT: // Begin
-     86          //       wait_case(START);
-     87          //       break; //
-     88          //     case START: // Begin
-     89          //       start_case(RUN);
-     90          //       break; //
-     91          //     case RUN: // Run
-     92          //       run_case(END);
-     93          //       break; //
-     94          //     case END: // End
-     95          //       end_case(WAIT);
-     96          //       break; //
-     97          //     default:
-     98          //       state=WAIT;
-     99          //       break;
-    100          // }
-    101          //}
+     84          //Diffrent Motions
+     85          //void Run_Straight(void){
+     86          // switch(state){
+     87          //   case WAIT: // Begin
+     88          //       wait_case(START);
+     89          //       break; //
+     90          //     case START: // Begin
+     91          //       start_case(RUN);
+     92          //       break; //
+     93          //     case RUN: // Run
+     94          //       run_case(END);
+     95          //       break; //
+     96          //     case END: // End
+     97          //       end_case(WAIT);
+     98          //       break; //
+     99          //     default:
+    100          //       state=WAIT;
+    101          //       break;
+    102          // }
+    103          //}
 
    Maximum stack usage in bytes:
 
@@ -246,7 +243,6 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       4   do_for
       6   end_case
         6   -> stop
-      4   find_line
       4   idle_case
       4   next_state
       4   repeat_case
@@ -263,7 +259,6 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  delay_start
       62  do_for
       24  end_case
-       2  find_line
       20  idle_case
        2  next_state
       22  repeat_case
@@ -274,11 +269,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  wait_case
 
  
- 154 bytes in segment CODE
+ 152 bytes in segment CODE
    2 bytes in segment DATA16_AN
    6 bytes in segment DATA16_Z
  
- 154 bytes of CODE memory
+ 152 bytes of CODE memory
    6 bytes of DATA memory (+ 2 bytes shared)
 
 Errors: none

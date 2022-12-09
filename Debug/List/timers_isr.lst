@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:43
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers_isr.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9400.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWDE26.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\timers_isr.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -111,6 +110,11 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     _A_TB2CCR0_L:
    \   000000                DS8 2
 
+   \                                 In  segment DATA16_AN, at 0x414
+   \   union <unnamed> _A_TB2CCR1_L
+   \                     _A_TB2CCR1_L:
+   \   000000                DS8 2
+
    \                                 In  segment DATA16_AN, at 0x42e
    \   union <unnamed> _A_TB2IV_L
    \                     _A_TB2IV_L:
@@ -154,385 +158,389 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      28          extern unsigned int right_speed;
      29          extern unsigned int left_speed;
      30          
-     31          
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
    \   000000                REQUIRE ?cstart_init_zero
-     32          int cur=0;
+     31          short timing;
+   \                     timing:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     32          unsigned int timer=0;
+   \                     timer:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          int cur=0;
    \                     cur:
    \   000000                DS8 2
-     33          
-     34          //==================================Timer 0=====================================
-     35          /* Timer 0 Refreance
-     36            SMCLK 8MHZ
-     37            
-     38            #define TB0CCR0_INTERVAL        (6250)//50MS
-     39            50ms timer counter for timed events and enables conversions
-     40            
-     41            #define TB0CCR1_INTERVAL        (6250)//50MS
-     42            CCR1 used for a toggle 50ms timer used for debouncing
-     43            
-     44            #define TB0CCR2_INTERVAL        (25000)//200MS
-     45            CCR2 used for motor delay
-     46          
+     34          
+     35          //==================================Timer 0=====================================
+     36          /* Timer 0 Refreance
+     37            SMCLK 8MHZ
+     38            
+     39            #define TB0CCR0_INTERVAL        (6250)//50MS
+     40            50ms timer counter for timed events and enables conversions
+     41            
+     42            #define TB0CCR1_INTERVAL        (6250)//50MS
+     43            CCR1 used for a toggle 50ms timer used for debouncing
+     44            
+     45            #define TB0CCR2_INTERVAL        (25000)//200MS
+     46            CCR2 used for motor delay
      47          
-     48          */
-     49          #pragma vector = TIMER0_B0_VECTOR
+     48          
+     49          */
+     50          #pragma vector = TIMER0_B0_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-     50          __interrupt void Timer0_B0_ISR(void){
+     51          __interrupt void Timer0_B0_ISR(void){
    \                     Timer0_B0_ISR:
-     51            TB0CCR0 += TB0CCR0_INTERVAL;
+     52            TB0CCR0 += TB0CCR0_INTERVAL;
    \   000000   B2506A189203 ADD.W   #0x186a, &0x392
-     52            //process_detectors();
-     53              ADCCTL0 |= ADCENC; //Enable Conversions
-   \   000006   A2D30007     BIS.W   #0x2, &0x700
-     54              ADCCTL0 |= ADCSC;  //Start next sample
-   \   00000A   92D30007     BIS.W   #0x1, &0x700
-     55            time_interval50++;
-   \   00000E   9253....     ADD.W   #0x1, &time_interval50
-     56            if(time_interval50>=4){
-   \   000012   A292....     CMP.W   #0x4, &time_interval50
-   \   000016   0428         JNC     ??Timer0_B0_ISR_0
-     57              time_interval50=0;
-   \   000018   8243....     MOV.W   #0x0, &time_interval50
-     58              update_display=UPDATED;
-   \   00001C   D243....     MOV.B   #0x1, &update_display
-     59            }
-     60            
-     61          }
+     53            //process_detectors();
+     54          //    ADCCTL0 |= ADCENC; //Enable Conversions
+     55          //    ADCCTL0 |= ADCSC;  //Start next sample
+     56            time_interval50++;
+   \   000006   9253....     ADD.W   #0x1, &time_interval50
+     57            if(time_interval50>=4){
+   \   00000A   A292....     CMP.W   #0x4, &time_interval50
+   \   00000E   0928         JNC     ??Timer0_B0_ISR_0
+     58              time_interval50=0;
+   \   000010   8243....     MOV.W   #0x0, &time_interval50
+     59              if(timing > 0){
+   \   000014   9293....     CMP.W   #0x1, &timing
+   \   000018   0238         JL      ??Timer0_B0_ISR_1
+     60                 timer++;
+   \   00001A   9253....     ADD.W   #0x1, &timer
+     61              }
+     62              update_display=UPDATED;
+   \                     ??Timer0_B0_ISR_1:
+   \   00001E   D243....     MOV.B   #0x1, &update_display
+     63            }
+     64            
+     65          }
    \                     ??Timer0_B0_ISR_0:
-   \   000020   0013         RETI
-   \   000022                REQUIRE _A_TB0CCR0_L
-   \   000022                REQUIRE _A_ADCCTL0_L
-     62          #pragma vector=TIMER0_B1_VECTOR
+   \   000022   0013         RETI
+   \   000024                REQUIRE _A_TB0CCR0_L
+     66          #pragma vector=TIMER0_B1_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-     63          __interrupt void TIMER0_B1_ISR(void){
+     67          __interrupt void TIMER0_B1_ISR(void){
    \                     TIMER0_B1_ISR:
    \   000000   3F15         PUSHM.W #0x4, R15
-     64            switch(__even_in_range(TB0IV,14)){
+     68            switch(__even_in_range(TB0IV,14)){
    \   000002   1F42AE03     MOV.W   &0x3ae, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for TIMER0_B1_ISR>_0`:
-   \   000008   2B3C         JMP     ??TIMER0_B1_ISR_2
-   \   00000A   063C         JMP     ??TIMER0_B1_ISR_5
-   \   00000C   153C         JMP     ??TIMER0_B1_ISR_6
-   \   00000E   283C         JMP     ??TIMER0_B1_ISR_2
-   \   000010   273C         JMP     ??TIMER0_B1_ISR_2
-   \   000012   263C         JMP     ??TIMER0_B1_ISR_2
-   \   000014   253C         JMP     ??TIMER0_B1_ISR_2
-   \   000016   243C         JMP     ??TIMER0_B1_ISR_2
-     65            case TIMER_CASE_0: break; // No interrupt
-     66            case CCR1:
-     67              TB0CCTL1 &= ~CCIFG;
-   \                     ??TIMER0_B1_ISR_5:
-   \   000018   92C38403     BIC.W   #0x1, &0x384
-     68              TB0CCR1 += TB0CCR1_INTERVAL;
-   \   00001C   B2506A189403 ADD.W   #0x186a, &0x394
-     69              if(switch_control&SW1_PRESSED){
-   \   000022   D2B3....     BIT.B   #0x1, &switch_control
-   \   000026   0228         JNC     ??TIMER0_B1_ISR_3
-     70                sw1_timer++;
-   \   000028   9253....     ADD.W   #0x1, &sw1_timer
-     71              }
-     72              if(switch_control&SW2_PRESSED){
+   \   000008   2B3C         JMP     ??TIMER0_B1_ISR_0
+   \   00000A   063C         JMP     ??TIMER0_B1_ISR_3
+   \   00000C   153C         JMP     ??TIMER0_B1_ISR_4
+   \   00000E   283C         JMP     ??TIMER0_B1_ISR_0
+   \   000010   273C         JMP     ??TIMER0_B1_ISR_0
+   \   000012   263C         JMP     ??TIMER0_B1_ISR_0
+   \   000014   253C         JMP     ??TIMER0_B1_ISR_0
+   \   000016   243C         JMP     ??TIMER0_B1_ISR_0
+     69            case TIMER_CASE_0: break; // No interrupt
+     70            case CCR1:
+     71              TB0CCTL1 &= ~CCIFG;
    \                     ??TIMER0_B1_ISR_3:
+   \   000018   92C38403     BIC.W   #0x1, &0x384
+     72              TB0CCR1 += TB0CCR1_INTERVAL;
+   \   00001C   B2506A189403 ADD.W   #0x186a, &0x394
+     73              if(switch_control&SW1_PRESSED){
+   \   000022   D2B3....     BIT.B   #0x1, &switch_control
+   \   000026   0224         JEQ     ??TIMER0_B1_ISR_1
+     74                sw1_timer++;
+   \   000028   9253....     ADD.W   #0x1, &sw1_timer
+     75              }
+     76              if(switch_control&SW2_PRESSED){
+   \                     ??TIMER0_B1_ISR_1:
    \   00002C   E2B3....     BIT.B   #0x2, &switch_control
-   \   000030   1728         JNC     ??TIMER0_B1_ISR_2
-     73                sw2_timer++;
+   \   000030   1724         JEQ     ??TIMER0_B1_ISR_0
+     77                sw2_timer++;
    \   000032   9253....     ADD.W   #0x1, &sw2_timer
-     74              }
-     75              break;
-   \   000036   143C         JMP     ??TIMER0_B1_ISR_2
-     76            case CCR2: 
-     77              time_interval_200++;
-   \                     ??TIMER0_B1_ISR_6:
+   \   000036   143C         JMP     ??TIMER0_B1_ISR_0
+     78              }
+     79              break;
+     80            case CCR2: 
+     81              time_interval_200++;
+   \                     ??TIMER0_B1_ISR_4:
    \   000038   9253....     ADD.W   #0x1, &time_interval_200
-     78              if((time_interval_200 >= 5 )&& serial_bits & Serial_off){
+     82              if((time_interval_200 >= 5 )&& serial_bits & Serial_off){
    \   00003C   B2900500.... CMP.W   #0x5, &time_interval_200
-   \   000042   0B28         JNC     ??TIMER0_B1_ISR_4
+   \   000042   0B28         JNC     ??TIMER0_B1_ISR_2
    \   000044   B2B02000.... BIT.W   #0x20, &serial_bits
-   \   00004A   0728         JNC     ??TIMER0_B1_ISR_4
-     79                send("hello im testing the length of stings that can be sent",1);
+   \   00004A   0724         JEQ     ??TIMER0_B1_ISR_2
+     83                send("hello im testing the length of stings that can be sent",1);
    \   00004C   5D43         MOV.B   #0x1, R13
    \   00004E   3C40....     MOV.W   #`?<Constant "hello im testing the ...">`, R12
    \   000052   ........     CALLA   #send
-     80                time_interval_200 = 0;
+     84                time_interval_200 = 0;
    \   000056   8243....     MOV.W   #0x0, &time_interval_200
-     81              }
-     82              TB0CCR2 += TB0CCR2_INTERVAL;
-   \                     ??TIMER0_B1_ISR_4:
-   \   00005A   B250A8619603 ADD.W   #0x61a8, &0x396
-     83              break;
-     84            case TIMER_OVERFLOW: // overflow
-     85              break;
-     86            default: break; 
-     87            }
-     88          }
+     85              }
+     86              TB0CCR2 += TB0CCR2_INTERVAL;
    \                     ??TIMER0_B1_ISR_2:
+   \   00005A   B250A8619603 ADD.W   #0x61a8, &0x396
+     87              break;
+     88            case TIMER_OVERFLOW: // overflow
+     89              break;
+     90            default: break; 
+     91            }
+     92          }
+   \                     ??TIMER0_B1_ISR_0:
    \   000060   3C17         POPM.W  #0x4, R15
    \   000062   0013         RETI
    \   000064                REQUIRE _A_TB0CCTL1_L
    \   000064                REQUIRE _A_TB0CCR1_L
    \   000064                REQUIRE _A_TB0CCR2_L
    \   000064                REQUIRE _A_TB0IV_L
-     89          
-     90          
-     91          
-     92          //==================================Timer 1=====================================
-     93          /* Timer 1 Refreance
-     94            SMCLK 8MHZ
-     95            
-     96            #define TB1CCR0_INTERVAL        (6250)//50MS
-     97            CCR0 is used for ramping pwm signals
-     98            
-     99            #define TB0CCR1_INTERVAL        (6250)//50MS
-    100            un-used
-    101            
-    102            #define TB0CCR2_INTERVAL        (25000)//200MS
-    103            CCR2 used for updating display
+     93          
+     94          
+     95          
+     96          //==================================Timer 1=====================================
+     97          /* Timer 1 Refreance
+     98            SMCLK 8MHZ
+     99            
+    100            #define TB1CCR0_INTERVAL        (6250)//50MS
+    101            CCR0 is used for ramping pwm signals
+    102            
+    103            #define TB0CCR1_INTERVAL        (6250)//50MS
     104            un-used
-    105          
-    106          */
-    107          #pragma vector = TIMER1_B0_VECTOR
+    105            
+    106            #define TB0CCR2_INTERVAL        (25000)//200MS
+    107            CCR2 used for updating display
+    108            un-used
+    109          
+    110          */
+    111          #pragma vector = TIMER1_B0_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    108          __interrupt void Timer1_B0_ISR(void){ 
+    112          __interrupt void Timer1_B0_ISR(void){ 
    \                     Timer1_B0_ISR:
    \   000000   3F15         PUSHM.W #0x4, R15
-    109            if(!(display_bits&Splash_bit)){
+    113            if(!(display_bits&Splash_bit)){
    \   000002   92B3....     BIT.W   #0x1, &display_bits
-   \   000006   0D2C         JC      ??Timer1_B0_ISR_0
-    110              timer200++;
+   \   000006   0D20         JNE     ??Timer1_B0_ISR_1
+    114              timer200++;
    \   000008   9253....     ADD.W   #0x1, &timer200
-    111              if(timer200>=START_DELAY){
+    115              if(timer200>=START_DELAY){
    \   00000C   B2900500.... CMP.W   #0x5, &timer200
-   \   000012   0728         JNC     ??Timer1_B0_ISR_0
-    112                display_bits |= Splash_bit;
+   \   000012   0728         JNC     ??Timer1_B0_ISR_1
+    116                display_bits |= Splash_bit;
    \   000014   92D3....     BIS.W   #0x1, &display_bits
-    113                clear_line(0);
+    117                clear_line(0);
    \   000018   0C43         MOV.W   #0x0, R12
    \   00001A   ........     CALLA   #clear_line
-    114                timer200=RESET;
+    118                timer200=RESET;
    \   00001E   8243....     MOV.W   #0x0, &timer200
-    115              }
-    116            }
-    117            if(timer_bits & DELAY_2_SEC){
-   \                     ??Timer1_B0_ISR_0:
+    119              }
+    120            }
+    121            if(timer_bits & DELAY_2_SEC){
+   \                     ??Timer1_B0_ISR_1:
    \   000022   A2B2....     BIT.W   #0x4, &timer_bits
-   \   000026   0C28         JNC     ??Timer1_B0_ISR_1
-    118              timer200++;
+   \   000026   0C24         JEQ     ??Timer1_B0_ISR_0
+    122              timer200++;
    \   000028   9253....     ADD.W   #0x1, &timer200
-    119              if(timer200>=START_DELAY){
+    123              if(timer200>=START_DELAY){
    \   00002C   B2900500.... CMP.W   #0x5, &timer200
-   \   000032   0628         JNC     ??Timer1_B0_ISR_1
-    120                timer_bits |= DELAYED_2_SEC;
+   \   000032   0628         JNC     ??Timer1_B0_ISR_0
+    124                timer_bits |= DELAYED_2_SEC;
    \   000034   B2D2....     BIS.W   #0x8, &timer_bits
-    121                timer_bits &= ~DELAY_2_SEC;
+    125                timer_bits &= ~DELAY_2_SEC;
    \   000038   A2C2....     BIC.W   #0x4, &timer_bits
-    122                timer200=RESET;
+    126                timer200=RESET;
    \   00003C   8243....     MOV.W   #0x0, &timer200
-    123              }
-    124            }
-    125              
-    126              
-    127          //  if(BACKLIGHT==speed){
-    128          //    TB1CCTL0 &= ~CCIFG;
-    129          //    TB1CCTL0 &= ~CCIE; 
-    130          //  }
-    131          //  else if(BACKLIGHT<speed){
-    132          //    BACKLIGHT+=1000;
-    133          //    TB1CCR0+=TB1CCR0_INTERVAL;
+    127              }
+    128            }
+    129              
+    130              
+    131          //  if(BACKLIGHT==speed){
+    132          //    TB1CCTL0 &= ~CCIFG;
+    133          //    TB1CCTL0 &= ~CCIE; 
     134          //  }
-    135          //  else if(BACKLIGHT>speed){
-    136          //    BACKLIGHT-=1000;
+    135          //  else if(BACKLIGHT<speed){
+    136          //    BACKLIGHT+=1000;
     137          //    TB1CCR0+=TB1CCR0_INTERVAL;
     138          //  }
-    139          }
-   \                     ??Timer1_B0_ISR_1:
+    139          //  else if(BACKLIGHT>speed){
+    140          //    BACKLIGHT-=1000;
+    141          //    TB1CCR0+=TB1CCR0_INTERVAL;
+    142          //  }
+    143          }
+   \                     ??Timer1_B0_ISR_0:
    \   000040   3C17         POPM.W  #0x4, R15
    \   000042   0013         RETI
-    140          #pragma vector=TIMER1_B1_VECTOR
+    144          #pragma vector=TIMER1_B1_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    141          __interrupt void TIMER1_B1_ISR(void){
+    145          __interrupt void TIMER1_B1_ISR(void){
    \                     TIMER1_B1_ISR:
    \   000000   0F12         PUSH.W  R15
-    142            switch(__even_in_range(TB1IV,14)){
+    146            switch(__even_in_range(TB1IV,14)){
    \   000002   1F42EE03     MOV.W   &0x3ee, R15
    \   000006   E00F         ADDA    R15, PC
    \                     `?<Jumptable for TIMER1_B1_ISR>_0`:
-   \   000008   133C         JMP     ??TIMER1_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER1_B1_ISR_2
-   \   00000C   0C3C         JMP     ??TIMER1_B1_ISR_3
-   \   00000E   103C         JMP     ??TIMER1_B1_ISR_1
-   \   000010   0F3C         JMP     ??TIMER1_B1_ISR_1
-   \   000012   0E3C         JMP     ??TIMER1_B1_ISR_1
-   \   000014   0D3C         JMP     ??TIMER1_B1_ISR_1
-   \   000016   0C3C         JMP     ??TIMER1_B1_ISR_1
-    143            case TIMER_CASE_0: break; // No interrupt
-    144            case CCR1://use for lentgth of movement
-    145              TB1CCR1+=TB1CCR1_INTERVAL;
-   \                     ??TIMER1_B1_ISR_2:
-   \   000018   B250E204D403 ADD.W   #0x4e2, &0x3d4
-    146              timer_bits |= TB1CCR1_BIT;
-   \   00001E   B2D01000.... BIS.W   #0x10, &timer_bits
-    147              break;
-   \   000024   053C         JMP     ??TIMER1_B1_ISR_1
-    148            case CCR2: 
-    149              TB1CCTL2 &= ~CCIFG;
-   \                     ??TIMER1_B1_ISR_3:
-   \   000026   92C3C603     BIC.W   #0x1, &0x3c6
-    150              TB1CCR2+=TB1CCR2_INTERVAL;
-   \   00002A   B250E204D603 ADD.W   #0x4e2, &0x3d6
-    151              
-    152              break;
-    153            case TIMER_OVERFLOW:
-    154              break;
-    155            default: break; 
-    156            }
-    157          }
+   \   000008   133C         JMP     ??TIMER1_B1_ISR_0
+   \   00000A   063C         JMP     ??TIMER1_B1_ISR_1
+   \   00000C   0C3C         JMP     ??TIMER1_B1_ISR_2
+   \   00000E   103C         JMP     ??TIMER1_B1_ISR_0
+   \   000010   0F3C         JMP     ??TIMER1_B1_ISR_0
+   \   000012   0E3C         JMP     ??TIMER1_B1_ISR_0
+   \   000014   0D3C         JMP     ??TIMER1_B1_ISR_0
+   \   000016   0C3C         JMP     ??TIMER1_B1_ISR_0
+    147            case TIMER_CASE_0: break; // No interrupt
+    148            case CCR1://use for lentgth of movement
+    149              TB1CCR1+=TB1CCR1_INTERVAL;
    \                     ??TIMER1_B1_ISR_1:
+   \   000018   B250E204D403 ADD.W   #0x4e2, &0x3d4
+    150              timer_bits |= TB1CCR1_BIT;
+   \   00001E   B2D01000.... BIS.W   #0x10, &timer_bits
+    151              break;
+   \   000024   053C         JMP     ??TIMER1_B1_ISR_0
+    152            case CCR2: 
+    153              TB1CCTL2 &= ~CCIFG;
+   \                     ??TIMER1_B1_ISR_2:
+   \   000026   92C3C603     BIC.W   #0x1, &0x3c6
+    154              TB1CCR2+=TB1CCR2_INTERVAL;
+   \   00002A   B250E204D603 ADD.W   #0x4e2, &0x3d6
+    155              
+    156              break;
+    157            case TIMER_OVERFLOW:
+    158              break;
+    159            default: break; 
+    160            }
+    161          }
+   \                     ??TIMER1_B1_ISR_0:
    \   000030   3F41         POP.W   R15
    \   000032   0013         RETI
    \   000034                REQUIRE _A_TB1CCR1_L
    \   000034                REQUIRE _A_TB1CCTL2_L
    \   000034                REQUIRE _A_TB1CCR2_L
    \   000034                REQUIRE _A_TB1IV_L
-    158          
-    159          
-    160          //==================================Timer 2=====================================
-    161          /* Timer 2 Refreance
-    162            SMCLK 8MHZ
-    163            
-    164            #define TB0CCR0_INTERVAL        (6250)//50MS
-    165            50ms timer counter for timed events and enables conversions
-    166            
-    167            #define TB0CCR1_INTERVAL        (6250)//50MS
-    168            CCR1 used for a toggle 50ms timer used for debouncing
-    169            
-    170            #define TB0CCR2_INTERVAL        (25000)//200MS
-    171            CCR2 used for updating display
-    172          
-    173          
-    174          */
-    175          #pragma vector = TIMER2_B0_VECTOR
+    162          
+    163          
+    164          //==================================Timer 2=====================================
+    165          /* Timer 2 Refreance
+    166            SMCLK 8MHZ
+    167            
+    168            #define TB0CCR0_INTERVAL        (6250)//50MS
+    169            50ms timer counter for timed events and enables conversions
+    170            
+    171            #define TB0CCR1_INTERVAL        (6250)//50MS
+    172            CCR1 used for a toggle 50ms timer used for debouncing
+    173            
+    174            #define TB0CCR2_INTERVAL        (25000)//200MS
+    175            CCR2 used for updating display
+    176          
+    177          
+    178          */
+    179          #pragma vector = TIMER2_B0_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    176          __interrupt void Timer2_B0_ISR(void){ 
+    180          __interrupt void Timer2_B0_ISR(void){ 
    \                     Timer2_B0_ISR:
-    177            TB2CCTL0 &= ~CCIFG;
+    181            TB2CCTL0 &= ~CCIFG;
    \   000000   92C30204     BIC.W   #0x1, &0x402
-    178            TB2CCTL0 &= ~CCIE;
+    182            TB2CCTL0 &= ~CCIE;
    \   000004   B2C010000204 BIC.W   #0x10, &0x402
-    179            TB2CCR0 = TB0CCR0_INTERVAL;
+    183            TB2CCR0 = TB0CCR0_INTERVAL;
    \   00000A   B2406A181204 MOV.W   #0x186a, &0x412
-    180            timer_bits |= Change_wheel_state;
+    184            timer_bits |= Change_wheel_state;
    \   000010   B2D02000.... BIS.W   #0x20, &timer_bits
-    181          }
+    185          }
    \   000016   0013         RETI
    \   000018                REQUIRE _A_TB2CCTL0_L
    \   000018                REQUIRE _A_TB2CCR0_L
-    182          #pragma vector=TIMER2_B1_VECTOR
+    186          #pragma vector=TIMER2_B1_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    183          __interrupt void TIMER2_B1_ISR(void){
+    187          __interrupt void TIMER2_B1_ISR(void){
    \                     TIMER2_B1_ISR:
    \   000000   0F12         PUSH.W  R15
-    184            switch(__even_in_range(TB2IV,14)){
+    188            switch(__even_in_range(TB2IV,14)){
    \   000002   1F422E04     MOV.W   &0x42e, R15
-   \   000006   E00F         ADDA    R15, PC
-   \                     `?<Jumptable for TIMER2_B1_ISR>_0`:
-   \   000008   073C         JMP     ??TIMER2_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER2_B1_ISR_1
-   \   00000C   053C         JMP     ??TIMER2_B1_ISR_1
-   \   00000E   043C         JMP     ??TIMER2_B1_ISR_1
-   \   000010   033C         JMP     ??TIMER2_B1_ISR_1
-   \   000012   023C         JMP     ??TIMER2_B1_ISR_1
-   \   000014   013C         JMP     ??TIMER2_B1_ISR_1
-   \   000016   003C         JMP     ??TIMER2_B1_ISR_1
-    185            case TIMER_CASE_0: break; // No interrupt
-    186            case CCR1:
-    187              break;
-    188            case CCR2: 
-    189              break;
-    190            case TIMER_OVERFLOW:
-    191              break;
-    192            default: break; 
-    193            }
-    194            //----------------------------------------------------------------------------
-    195          }
-   \                     ??TIMER2_B1_ISR_1:
+   \   000006   2F93         CMP.W   #0x2, R15
+   \   000008   0720         JNE     ??TIMER2_B1_ISR_0
+    189            case TIMER_CASE_0: break; // No interrupt
+    190            case CCR1:
+    191              TB2CCR1 += TB2CCR1_INTERVAL; // CCR1
+   \   00000A   B250FA001404 ADD.W   #0xfa, &0x414
+    192              ADCCTL0 |= ADCENC; //Enable Conversions
+   \   000010   A2D30007     BIS.W   #0x2, &0x700
+    193              ADCCTL0 |= ADCSC;  //Start next sample
+   \   000014   92D30007     BIS.W   #0x1, &0x700
+    194              break;
+    195            case CCR2: 
+    196              break;
+    197            case TIMER_OVERFLOW:
+    198              break;
+    199            default: break; 
+    200            }
+    201            //----------------------------------------------------------------------------
+    202          }
+   \                     ??TIMER2_B1_ISR_0:
    \   000018   3F41         POP.W   R15
    \   00001A   0013         RETI
+   \   00001C                REQUIRE _A_TB2CCR1_L
+   \   00001C                REQUIRE _A_ADCCTL0_L
    \   00001C                REQUIRE _A_TB2IV_L
-    196          
-    197          //==================================Timer 3=====================================
-    198          /* Timer 3 Refreance
-    199            SMCLK 8MHZ
-    200            
-    201            #define TB0CCR0_INTERVAL        (6250)//50MS
-    202            50ms timer counter for timed events and enables conversions
-    203            
-    204            #define TB0CCR1_INTERVAL        (6250)//50MS
-    205            CCR1 used for a toggle 50ms timer used for debouncing
-    206            
-    207            #define TB0CCR2_INTERVAL        (25000)//200MS
-    208            CCR2 used for updating display
-    209          
-    210          
-    211          */
-    212          #pragma vector = TIMER3_B0_VECTOR
+    203          
+    204          //==================================Timer 3=====================================
+    205          /* Timer 3 Refreance
+    206            SMCLK 8MHZ
+    207            
+    208            #define TB0CCR0_INTERVAL        (6250)//50MS
+    209            50ms timer counter for timed events and enables conversions
+    210            
+    211            #define TB0CCR1_INTERVAL        (6250)//50MS
+    212            CCR1 used for a toggle 50ms timer used for debouncing
+    213            
+    214            #define TB0CCR2_INTERVAL        (25000)//200MS
+    215            CCR2 used for updating display
+    216          
+    217          
+    218          */
+    219          #pragma vector = TIMER3_B0_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    213          __interrupt void Timer3_B0_ISR(void){ 
+    220          __interrupt void Timer3_B0_ISR(void){ 
    \                     Timer3_B0_ISR:
-    214            // TB3_0 - no interrupt
-    215          }
+    221            // TB3_0 - no interrupt
+    222          }
    \   000000   0013         RETI
-    216          #pragma vector = TIMER3_B1_VECTOR
+    223          #pragma vector = TIMER3_B1_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
-    217          __interrupt void TIMER3_B1_ISR(void){
+    224          __interrupt void TIMER3_B1_ISR(void){
    \                     TIMER3_B1_ISR:
    \   000000   0F12         PUSH.W  R15
-    218            switch(__even_in_range(TB3IV,14)){
+    225            switch(__even_in_range(TB3IV,14)){
    \   000002   1F426E04     MOV.W   &0x46e, R15
-   \   000006   E00F         ADDA    R15, PC
-   \                     `?<Jumptable for TIMER3_B1_ISR>_0`:
-   \   000008   073C         JMP     ??TIMER3_B1_ISR_1
-   \   00000A   063C         JMP     ??TIMER3_B1_ISR_1
-   \   00000C   053C         JMP     ??TIMER3_B1_ISR_1
-   \   00000E   043C         JMP     ??TIMER3_B1_ISR_1
-   \   000010   033C         JMP     ??TIMER3_B1_ISR_1
-   \   000012   023C         JMP     ??TIMER3_B1_ISR_1
-   \   000014   013C         JMP     ??TIMER3_B1_ISR_1
-   \   000016   003C         JMP     ??TIMER3_B1_ISR_1
-    219            case TIMER_CASE_0: break;   // No interrupt
-    220            case CCR1:   // R_FORWARD
-    221              break; 
-    222            case CCR2:   // L_FORWARD
-    223              // No interrupt
-    224              break;
-    225            case CCR3:   // R_REVERSE
-    226              // No interrupt
-    227              break;
-    228            case CCR4:   // L_REVERSE
-    229              // No interrupt
-    230              break;
-    231            case CCR5:   // L_REVERSE
-    232              // No interrupt
-    233              break;
-    234            case TIMER_OVERFLOW:     // overflow available for greater than 1 second timer
-    235              break;
-    236            default: break;
-    237            }
-    238          } 
-   \                     ??TIMER3_B1_ISR_1:
-   \   000018   3F41         POP.W   R15
-   \   00001A   0013         RETI
-   \   00001C                REQUIRE _A_TB3IV_L
+    226            case TIMER_CASE_0: break;   // No interrupt
+    227            case CCR1:   // R_FORWARD
+    228              break; 
+    229            case CCR2:   // L_FORWARD
+    230              // No interrupt
+    231              break;
+    232            case CCR3:   // R_REVERSE
+    233              // No interrupt
+    234              break;
+    235            case CCR4:   // L_REVERSE
+    236              // No interrupt
+    237              break;
+    238            case CCR5:   // L_REVERSE
+    239              // No interrupt
+    240              break;
+    241            case TIMER_OVERFLOW:     // overflow available for greater than 1 second timer
+    242              break;
+    243            default: break;
+    244            }
+    245          } 
+   \   000006   3F41         POP.W   R15
+   \   000008   0013         RETI
+   \   00000A                REQUIRE _A_TB3IV_L
 
    \                                 In  segment INTVEC, offset 0x48, root
    \                     `??TIMER3_B1_ISR::??INTVEC 72`:
@@ -582,12 +590,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \            2062        
    \   000030   652073656E74 DC8 65H, 20H, 73H, 65H, 6EH, 74H, 0
    \            00          
-    239          
-    240          
-    241              
-    242              
-    243          
-    244            
+    246          
+    247          
+    248              
+    249              
+    250          
+    251            
 
    Maximum stack usage in bytes:
 
@@ -616,9 +624,9 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  TIMER1_B1_ISR::??INTVEC 80
       28  TIMER2_B1_ISR
        2  TIMER2_B1_ISR::??INTVEC 76
-      28  TIMER3_B1_ISR
+      10  TIMER3_B1_ISR
        2  TIMER3_B1_ISR::??INTVEC 72
-      34  Timer0_B0_ISR
+      36  Timer0_B0_ISR
        2  Timer0_B0_ISR::??INTVEC 86
       68  Timer1_B0_ISR
        2  Timer1_B0_ISR::??INTVEC 82
@@ -637,24 +645,27 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  _A_TB1CCTL2_L
        2  _A_TB1IV_L
        2  _A_TB2CCR0_L
+       2  _A_TB2CCR1_L
        2  _A_TB2CCTL0_L
        2  _A_TB2IV_L
        2  _A_TB3IV_L
        2  cur
        2  time_interval50
        2  time_interval_200
+       2  timer
        2  timer200
+       2  timing
 
  
-  28 bytes in segment DATA16_AN
+  30 bytes in segment DATA16_AN
   55 bytes in segment DATA16_C
-   8 bytes in segment DATA16_Z
+  12 bytes in segment DATA16_Z
   16 bytes in segment INTVEC
- 336 bytes in segment ISR_CODE
+ 320 bytes in segment ISR_CODE
  
- 336 bytes of CODE  memory
+ 320 bytes of CODE  memory
   55 bytes of CONST memory (+ 16 bytes shared)
-   8 bytes of DATA  memory (+ 28 bytes shared)
+  12 bytes of DATA  memory (+ 30 bytes shared)
 
 Errors: none
 Warnings: none

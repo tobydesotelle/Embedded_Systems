@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:41
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\analogtodigital.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9105.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWD793.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\analogtodigital.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -139,48 +138,49 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      26            ADCCTL2 = RESET_STATE; // Reset
    \   000016   82430407     MOV.W   #0x0, &0x704
      27            ADCCTL1 |= ADCSHS_0; // 00b = ADCSC bit
-   \   00001A   924202070207 MOV.W   &0x702, &0x702
+   \   00001A   3F400207     MOV.W   #0x702, R15
+   \   00001E   A24F0207     MOV.W   @R15, &0x702
      28            ADCCTL1 |= ADCSHP; // ADC sample-and-hold SAMPCON signal from sampling timer.
-   \   000020   B2D000020207 BIS.W   #0x200, &0x702
+   \   000022   B2D000020207 BIS.W   #0x200, &0x702
      29            ADCCTL1 &= ~ADCISSH; // ADC invert signal sample-and-hold.
-   \   000026   B2C000010207 BIC.W   #0x100, &0x702
+   \   000028   B2C000010207 BIC.W   #0x100, &0x702
      30            ADCCTL1 |= ADCDIV_0; // ADC clock divider - 000b = Divide by 1
-   \   00002C   924202070207 MOV.W   &0x702, &0x702
+   \   00002E   A24F0207     MOV.W   @R15, &0x702
      31            ADCCTL1 |= ADCSSEL_0; // ADC clock MODCLK
-   \   000032   924202070207 MOV.W   &0x702, &0x702
+   \   000032   A24F0207     MOV.W   @R15, &0x702
      32            ADCCTL1 |= ADCCONSEQ_0; // ADC conversion sequence 00b = Single-channel single-conversion
-   \   000038   924202070207 MOV.W   &0x702, &0x702
+   \   000036   A24F0207     MOV.W   @R15, &0x702
      33            // ADCCTL1 & ADCBUSY identifies a conversion is in process
      34            
      35            // ADCCTL2 Register
      36            ADCCTL2 = RESET_STATE; // Reset
-   \   00003E   82430407     MOV.W   #0x0, &0x704
+   \   00003A   82430407     MOV.W   #0x0, &0x704
      37            ADCCTL2 |= ADCPDIV0; // ADC pre-divider 00b = Pre-divide by 1
-   \   000042   B2D000010407 BIS.W   #0x100, &0x704
+   \   00003E   B2D000010407 BIS.W   #0x100, &0x704
      38            ADCCTL2 |= ADCRES_2; // ADC resolution 10b = 12 bit (14 clock cycle conversion time) was ADCRES_0
-   \   000048   B2D020000407 BIS.W   #0x20, &0x704
+   \   000044   B2D020000407 BIS.W   #0x20, &0x704
      39            ADCCTL2 &= ~ADCDF; // ADC data read-back format 0b = Binary unsigned.
-   \   00004E   B2C20407     BIC.W   #0x8, &0x704
+   \   00004A   B2C20407     BIC.W   #0x8, &0x704
      40            ADCCTL2 &= ~ADCSR; // ADC sampling rate 0b = ADC buffer supports up to 200 ksps
-   \   000052   A2C20407     BIC.W   #0x4, &0x704
+   \   00004E   A2C20407     BIC.W   #0x4, &0x704
      41            // ADCMCTL0 Register
      42            ADCMCTL0 |= ADCSREF_0; // VREF - 000b = {VR+ = AVCC and VR– = AVSS }
-   \   000056   92420A070A07 MOV.W   &0x70a, &0x70a
+   \   000052   92420A070A07 MOV.W   &0x70a, &0x70a
      43            ADCMCTL0 |= ADCINCH_5; // V_THUMB (0x20) Pin 5 A5
-   \   00005C   B2D005000A07 BIS.W   #0x5, &0x70a
+   \   000058   B2D005000A07 BIS.W   #0x5, &0x70a
      44            ADCIE |= ADCIE0; // Enable ADC conv complete interrupt
-   \   000062   92D31A07     BIS.W   #0x1, &0x71a
+   \   00005E   92D31A07     BIS.W   #0x1, &0x71a
      45            ADCCTL0 |= ADCENC; // ADC enable conversion.
-   \   000066   A2D30007     BIS.W   #0x2, &0x700
+   \   000062   A2D30007     BIS.W   #0x2, &0x700
      46            ADCCTL0 |= ADCSC; // ADC start conversion.
-   \   00006A   92D30007     BIS.W   #0x1, &0x700
+   \   000066   92D30007     BIS.W   #0x1, &0x700
      47          }
-   \   00006E   1001         RETA
-   \   000070                REQUIRE _A_ADCCTL0_L
-   \   000070                REQUIRE _A_ADCCTL2_L
-   \   000070                REQUIRE _A_ADCCTL1_L
-   \   000070                REQUIRE _A_ADCMCTL0_L
-   \   000070                REQUIRE _A_ADCIE_L
+   \   00006A   1001         RETA
+   \   00006C                REQUIRE _A_ADCCTL0_L
+   \   00006C                REQUIRE _A_ADCCTL2_L
+   \   00006C                REQUIRE _A_ADCCTL1_L
+   \   00006C                REQUIRE _A_ADCMCTL0_L
+   \   00006C                REQUIRE _A_ADCIE_L
      48          #pragma vector=ADC_VECTOR
 
    \                                 In  segment ISR_CODE, align 2
@@ -189,15 +189,8 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   3F15         PUSHM.W #0x4, R15
      50            switch(__even_in_range(ADCIV,ADCIV_ADCIFG)){
    \   000002   1F421E07     MOV.W   &0x71e, R15
-   \   000006   E00F         ADDA    R15, PC
-   \                     `?<Jumptable for ADC_ISR>_0`:
-   \   000008   473C         JMP     ??ADC_ISR_0
-   \   00000A   463C         JMP     ??ADC_ISR_0
-   \   00000C   453C         JMP     ??ADC_ISR_0
-   \   00000E   443C         JMP     ??ADC_ISR_0
-   \   000010   433C         JMP     ??ADC_ISR_0
-   \   000012   423C         JMP     ??ADC_ISR_0
-   \   000014   003C         JMP     ??ADC_ISR_5
+   \   000006   3F900C00     CMP.W   #0xc, R15
+   \   00000A   3620         JNE     ??ADC_ISR_0
      51            case ADCIV_NONE:
      52              break;
      53            case ADCIV_ADCOVIFG: // When a conversion result is written to the ADCMEM0
@@ -213,68 +206,64 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      63              break;
      64            case ADCIV_ADCIFG: // ADCMEM0 memory register with the conversion result
      65              ADCCTL0 &= ~ADCENC; // Disable ENC bit.
-   \                     ??ADC_ISR_5:
-   \   000016   A2C30007     BIC.W   #0x2, &0x700
+   \   00000C   A2C30007     BIC.W   #0x2, &0x700
      66              switch (ADC_Channel++){
-   \   00001A   1F42....     MOV.W   &ADC_Channel, R15
-   \   00001E   0E4F         MOV.W   R15, R14
-   \   000020   1E53         ADD.W   #0x1, R14
-   \   000022   824E....     MOV.W   R14, &ADC_Channel
-   \   000026   0F83         SUB.W   #0x0, R15
-   \   000028   0524         JEQ     ??ADC_ISR_2
-   \   00002A   1F83         SUB.W   #0x1, R15
-   \   00002C   1124         JEQ     ??ADC_ISR_3
-   \   00002E   1F83         SUB.W   #0x1, R15
-   \   000030   1F24         JEQ     ??ADC_ISR_4
-   \   000032   323C         JMP     ??ADC_ISR_0
+   \   000010   1F42....     MOV.W   &ADC_Channel, R15
+   \   000014   0E4F         MOV.W   R15, R14
+   \   000016   1E53         ADD.W   #0x1, R14
+   \   000018   824E....     MOV.W   R14, &ADC_Channel
+   \   00001C   0F83         SUB.W   #0x0, R15
+   \   00001E   0524         JEQ     ??ADC_ISR_1
+   \   000020   1F83         SUB.W   #0x1, R15
+   \   000022   0E24         JEQ     ??ADC_ISR_2
+   \   000024   1F83         SUB.W   #0x1, R15
+   \   000026   1824         JEQ     ??ADC_ISR_3
+   \   000028   273C         JMP     ??ADC_ISR_0
      67              case GET_V_THUMB: // Channel A2 Interrupt
      68                ADCMCTL0 &= ~ADCINCH_5; // Disable Last channel A2
-   \                     ??ADC_ISR_2:
-   \   000034   B2F0FAFF0A07 AND.W   #0xfffa, &0x70a
+   \                     ??ADC_ISR_1:
+   \   00002A   B2F0FAFF0A07 AND.W   #0xfffa, &0x70a
      69                ADCMCTL0 |= ADCINCH_2; // Enable Next channel A3
-   \   00003A   A2D30A07     BIS.W   #0x2, &0x70a
+   \   000030   A2D30A07     BIS.W   #0x2, &0x70a
      70                V_Thumb = ADCMEM0; // Move result into Global
-   \   00003E   92421207.... MOV.W   &0x712, &V_Thumb
+   \   000034   92421207.... MOV.W   &0x712, &V_Thumb
      71                V_Thumb = V_Thumb; // Divide the result by 4
-   \   000044   9242........ MOV.W   &V_Thumb, &V_Thumb
      72                P2OUT|=IR_LED;
-   \   00004A   E2D20302     BIS.B   #0x4, &0x203
+   \   00003A   E2D20302     BIS.B   #0x4, &0x203
      73                break;
-   \   00004E   243C         JMP     ??ADC_ISR_0
+   \   00003E   1C3C         JMP     ??ADC_ISR_0
      74              case GET_L_DETECT:
      75                 ADCMCTL0 &= ~ADCINCH_2; // Disable Last channel A2
-   \                     ??ADC_ISR_3:
-   \   000050   A2C30A07     BIC.W   #0x2, &0x70a
+   \                     ??ADC_ISR_2:
+   \   000040   A2C30A07     BIC.W   #0x2, &0x70a
      76                ADCMCTL0 |= ADCINCH_3; // Enable Next channel A3
-   \   000054   B2D003000A07 BIS.W   #0x3, &0x70a
+   \   000044   B2D003000A07 BIS.W   #0x3, &0x70a
      77                ADC_Right_Detect = ADCMEM0; // Move result into Global
-   \   00005A   92421207.... MOV.W   &0x712, &ADC_Right_Detect
+   \   00004A   1C421207     MOV.W   &0x712, R12
+   \   00004E   824C....     MOV.W   R12, &ADC_Right_Detect
      78                ADC_Right_Detect = ADC_Right_Detect; // Divide the result by 4
-   \   000060   9242........ MOV.W   &ADC_Right_Detect, &ADC_Right_Detect
      79                HEXtoBCD(ADC_Right_Detect); // Convert result to String
-   \   000066   1C42....     MOV.W   &ADC_Right_Detect, R12
-   \   00006A   ........     CALLA   #HEXtoBCD
+   \   000052   ........     CALLA   #HEXtoBCD
      80                //change_display_adc(adc_char,DISPLAY0); // Place String in Display
      81                break;
-   \   00006E   143C         JMP     ??ADC_ISR_0
+   \   000056   103C         JMP     ??ADC_ISR_0
      82              case GET_R_DETECT:
      83                ADCMCTL0 &= ~ADCINCH_3; // Disable Last channel A2
-   \                     ??ADC_ISR_4:
-   \   000070   B2F0FCFF0A07 AND.W   #0xfffc, &0x70a
+   \                     ??ADC_ISR_3:
+   \   000058   B2F0FCFF0A07 AND.W   #0xfffc, &0x70a
      84                ADCMCTL0 |= ADCINCH_5; // Enable Next channel A3
-   \   000076   B2D005000A07 BIS.W   #0x5, &0x70a
+   \   00005E   B2D005000A07 BIS.W   #0x5, &0x70a
      85                ADC_Left_Detect = ADCMEM0; // Move result into Global
-   \   00007C   92421207.... MOV.W   &0x712, &ADC_Left_Detect
+   \   000064   1C421207     MOV.W   &0x712, R12
+   \   000068   824C....     MOV.W   R12, &ADC_Left_Detect
      86                ADC_Left_Detect = ADC_Left_Detect; // Divide the result by 4
-   \   000082   9242........ MOV.W   &ADC_Left_Detect, &ADC_Left_Detect
      87                HEXtoBCD(ADC_Left_Detect); // Convert result to String
-   \   000088   1C42....     MOV.W   &ADC_Left_Detect, R12
-   \   00008C   ........     CALLA   #HEXtoBCD
+   \   00006C   ........     CALLA   #HEXtoBCD
      88                //change_display_adc(adc_char,DISPLAY1); // Place String in Display
      89                ADC_Channel=RESET_STATE;
-   \   000090   8243....     MOV.W   #0x0, &ADC_Channel
+   \   000070   8243....     MOV.W   #0x0, &ADC_Channel
      90                P2OUT&=~IR_LED;
-   \   000094   E2C20302     BIC.B   #0x4, &0x203
+   \   000074   E2C20302     BIC.B   #0x4, &0x203
      91                break;
      92              default:
      93                break;
@@ -287,13 +276,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
     100            }
     101          }
    \                     ??ADC_ISR_0:
-   \   000098   3C17         POPM.W  #0x4, R15
-   \   00009A   0013         RETI
-   \   00009C                REQUIRE _A_ADCCTL0_L
-   \   00009C                REQUIRE _A_ADCMCTL0_L
-   \   00009C                REQUIRE _A_ADCMEM0_L
-   \   00009C                REQUIRE _A_PAOUT_L
-   \   00009C                REQUIRE _A_ADCIV_L
+   \   000078   3C17         POPM.W  #0x4, R15
+   \   00007A   0013         RETI
+   \   00007C                REQUIRE _A_ADCCTL0_L
+   \   00007C                REQUIRE _A_ADCMCTL0_L
+   \   00007C                REQUIRE _A_ADCMEM0_L
+   \   00007C                REQUIRE _A_PAOUT_L
+   \   00007C                REQUIRE _A_ADCIV_L
     102          //-----------------------------------------------------------------
     103          // Hex to BCD Conversion
     104          // Convert a Hex number to a BCD for display on an LCD or monitor
@@ -307,77 +296,72 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000000   0F43         MOV.W   #0x0, R15
     109            for(int i=RESET_STATE; i < adc_num_chars; i++) {
    \   000002   0E43         MOV.W   #0x0, R14
-   \   000004   043C         JMP     ??HEXtoBCD_4
+   \   000004   033C         JMP     ??HEXtoBCD_4
     110              adc_char[i] = CHAR_0;
    \                     ??HEXtoBCD_0:
-   \   000006   FE403000.... MOV.B   #0x30, adc_char(R14)
+   \   000006   CE4D....     MOV.B   R13, adc_char(R14)
     111            }
-   \   00000C   1E53         ADD.W   #0x1, R14
+   \   00000A   1E53         ADD.W   #0x1, R14
    \                     ??HEXtoBCD_4:
-   \   00000E   2E92         CMP.W   #0x4, R14
-   \   000010   FA3B         JL      ??HEXtoBCD_0
+   \   00000C   7D403000     MOV.B   #0x30, R13
+   \   000010   2E92         CMP.W   #0x4, R14
+   \   000012   F93B         JL      ??HEXtoBCD_0
     112            while (hex_value > Above_999){
    \                     ??HEXtoBCD_1:
-   \   000012   3C90E803     CMP.W   #0x3e8, R12
-   \   000016   0C28         JNC     ??HEXtoBCD_7
+   \   000014   3C90E803     CMP.W   #0x3e8, R12
+   \   000018   0828         JNC     ??HEXtoBCD_7
     113              hex_value = hex_value - (Above_999+add_one);
-   \   000018   3C5018FC     ADD.W   #0xfc18, R12
+   \   00001A   3C5018FC     ADD.W   #0xfc18, R12
     114              value = value + add_one;
-   \   00001C   1F53         ADD.W   #0x1, R15
+   \   00001E   1F53         ADD.W   #0x1, R15
     115              adc_char[adc_c_0] = CHAR_0 + value;
-   \   00001E   0E12         PUSH.W  R14
-   \   000020   C14F0000     MOV.B   R15, 0(SP)
-   \   000024   3E41         POP.W   R14
-   \   000026   7E503000     ADD.B   #0x30, R14
-   \   00002A   C24E....     MOV.B   R14, &adc_char
-   \   00002E   F13F         JMP     ??HEXtoBCD_1
+   \   000020   4E4F         MOV.B   R15, R14
+   \   000022   4E5D         ADD.B   R13, R14
+   \   000024   C24E....     MOV.B   R14, &adc_char
+   \   000028   F53F         JMP     ??HEXtoBCD_1
     116            }
     117            value = RESET_STATE;
    \                     ??HEXtoBCD_7:
-   \   000030   0F43         MOV.W   #0x0, R15
-   \   000032   0B3C         JMP     ??HEXtoBCD_5
+   \   00002A   0F43         MOV.W   #0x0, R15
+   \   00002C   073C         JMP     ??HEXtoBCD_5
     118            while (hex_value > Above_99){
     119              hex_value = hex_value - (Above_99+add_one);
    \                     ??HEXtoBCD_2:
-   \   000034   3C509CFF     ADD.W   #0xff9c, R12
+   \   00002E   3C509CFF     ADD.W   #0xff9c, R12
     120              value = value + add_one;
-   \   000038   1F53         ADD.W   #0x1, R15
+   \   000032   1F53         ADD.W   #0x1, R15
     121              adc_char[adc_c_1] = CHAR_0 + value;
-   \   00003A   0E12         PUSH.W  R14
-   \   00003C   C14F0000     MOV.B   R15, 0(SP)
-   \   000040   3E41         POP.W   R14
-   \   000042   7E503000     ADD.B   #0x30, R14
-   \   000046   C24E....     MOV.B   R14, &adc_char + 1
+   \   000034   4E4F         MOV.B   R15, R14
+   \   000036   4E5D         ADD.B   R13, R14
+   \   000038   C24E....     MOV.B   R14, &adc_char + 1
     122            }
    \                     ??HEXtoBCD_5:
-   \   00004A   3C906400     CMP.W   #0x64, R12
-   \   00004E   F22F         JC      ??HEXtoBCD_2
+   \   00003C   3C906400     CMP.W   #0x64, R12
+   \   000040   F62F         JC      ??HEXtoBCD_2
     123            value = RESET_STATE;
-   \   000050   0F43         MOV.W   #0x0, R15
-   \   000052   0B3C         JMP     ??HEXtoBCD_6
+   \   000042   0F43         MOV.W   #0x0, R15
+   \   000044   073C         JMP     ??HEXtoBCD_6
     124            while (hex_value > Above_9){
     125              hex_value = hex_value - (Above_9+add_one);
    \                     ??HEXtoBCD_3:
-   \   000054   3C50F6FF     ADD.W   #0xfff6, R12
+   \   000046   3C50F6FF     ADD.W   #0xfff6, R12
     126              value = value + add_one;
-   \   000058   1F53         ADD.W   #0x1, R15
+   \   00004A   1F53         ADD.W   #0x1, R15
     127              adc_char[adc_c_2] = CHAR_0 + value;
-   \   00005A   0E12         PUSH.W  R14
-   \   00005C   C14F0000     MOV.B   R15, 0(SP)
-   \   000060   3E41         POP.W   R14
-   \   000062   7E503000     ADD.B   #0x30, R14
-   \   000066   C24E....     MOV.B   R14, &adc_char + 2
+   \   00004C   4E4F         MOV.B   R15, R14
+   \   00004E   4E5D         ADD.B   R13, R14
+   \   000050   C24E....     MOV.B   R14, &adc_char + 2
     128            }
    \                     ??HEXtoBCD_6:
-   \   00006A   3C900A00     CMP.W   #0xa, R12
-   \   00006E   F22F         JC      ??HEXtoBCD_3
+   \   000054   3C900A00     CMP.W   #0xa, R12
+   \   000058   F62F         JC      ??HEXtoBCD_3
     129            adc_char[adc_c_3] = CHAR_0 + hex_value;
-   \   000070   7C503000     ADD.B   #0x30, R12
-   \   000074   C24C....     MOV.B   R12, &adc_char + 3
+   \   00005A   4C5D         ADD.B   R13, R12
+   \   00005C   C24C....     MOV.B   R12, &adc_char + 3
     130            adc_char[4] = '\0';
-   \   000078   C243....     MOV.B   #0x0, &adc_char + 4
+   \   000060   C243....     MOV.B   #0x0, &adc_char + 4
     131          }
-   \   00007C   1001         RETA
+   \   000064   1001         RETA
 
    \                                 In  segment INTVEC, offset 0x3a, root
    \                     `??ADC_ISR::??INTVEC 58`:
@@ -418,7 +402,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    ------ --------
      12   ADC_ISR
        12   -> HEXtoBCD
-      6   HEXtoBCD
+      4   HEXtoBCD
       4   Init_ADC
 
 
@@ -427,12 +411,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    Bytes  Function/Label
    -----  --------------
        2  ADC_Channel
-     156  ADC_ISR
+     124  ADC_ISR
        2  ADC_ISR::??INTVEC 58
        2  ADC_Left_Detect
        2  ADC_Right_Detect
-     126  HEXtoBCD
-     112  Init_ADC
+     102  HEXtoBCD
+     108  Init_ADC
        2  V_Thumb
        2  _A_ADCCTL0_L
        2  _A_ADCCTL1_L
@@ -445,13 +429,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        5  adc_char
 
  
- 238 bytes in segment CODE
+ 210 bytes in segment CODE
   16 bytes in segment DATA16_AN
   13 bytes in segment DATA16_Z
    2 bytes in segment INTVEC
- 156 bytes in segment ISR_CODE
+ 124 bytes in segment ISR_CODE
  
- 394 bytes of CODE  memory
+ 334 bytes of CODE  memory
    0 bytes of CONST memory (+  2 bytes shared)
   13 bytes of DATA  memory (+ 16 bytes shared)
 

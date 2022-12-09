@@ -26,7 +26,8 @@
 #
 
 #define TURN_SPEED              (0)
-#define BASE_SPEED              (4250)
+#define BASE_SPEED              (10000)
+//(4250)
 //===========================GENERAL PORT DEFINTIONS ===========================
 #define LOW                     (0X00)
 #define HIGH                    (0X01)
@@ -116,6 +117,30 @@
 #define ALIGN                   (0x04)
 #define PID                     (0x05)
 #define ADJUST                  (0x06)
+#define Calibrate		(0x07)
+#define Hold			(0x08)
+#define Hold1			(0x09)
+#define Hold2			(0x0A)
+#define TURN_IN			(0x0B)
+#define Hold3			(0x0C)
+#define Move_IN			(0x0D)
+#define FINISH			(0x0E)
+#define Pause			(0x0F)
+#define Pause2			(0x10)
+#define Pause3			(0x11)
+#define Pause4			(0x12)
+#define Pause5			(0x13)
+#define Turn1			(0x14)
+#define stright1		(0x15)
+#define striaght2white		(0x16)
+#define Turn2			(0x17)
+#define Find_Line		(0x18)
+#define Leave			(0x19)
+#define Complete		(0x1A)
+#define Reset			(0x1B)
+
+
+#define Process_next	(0x55)
 
 #define Configure_Wheel_Speeds  ('C')
 #define Forward_Move_Start      ('F')
@@ -198,7 +223,7 @@
 #define TB1CCR2_INTERVAL        (1250)
 //Timer 2
 #define TB2CCR0_INTERVAL        (25000)
-//#define TB2CCR1_INTERVAL        (6250)
+#define TB2CCR1_INTERVAL        (250)// for adc
 //#define TB2CCR2_INTERVAL        (6250)
 //Timer 3
 

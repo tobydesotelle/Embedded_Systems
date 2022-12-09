@@ -21,7 +21,7 @@ __interrupt void switchP4_interrupt(void){
     P4IFG &= ~SW1; // IFG SW1 cleared
     switch_control |= SW1_PRESSED;
     switch_control &= ~SW1_RELEASED;
-    switch_control |= SW1_TOGGLED;
+    //switch_control |= SW1_TOGGLED;
     //sw1_timer=RESET_STATE;
     TB0CCTL1 |= CCIE; // starts debounce timer
   }
@@ -34,7 +34,7 @@ __interrupt void switchP2_interrupt(void){
     P2IFG &= ~SW2; // IFG SW1 cleared
     switch_control |= SW2_PRESSED;
     switch_control &= ~SW1_RELEASED;
-    switch_control ^= SW2_TOGGLED;
+    //switch_control ^= SW2_TOGGLED;
     //sw2_timer=RESET_STATE;
     TB0CCTL1 |= CCIE; //starts debounce timer
   }
@@ -45,25 +45,27 @@ void process_switches(){
     sw1_timer = RESET_STATE;
     switch_control &= ~SW1_PRESSED;
     switch_control |= SW1_RELEASED;
+    switch_control |= SW1_TOGGLED;
   }
   if(sw2_timer>=TIME20){
     sw2_timer = RESET_STATE;
     switch_control &= ~SW2_PRESSED;
     switch_control |= SW2_RELEASED;
+    switch_control |= SW2_TOGGLED;
     
   }
   if(switch_control==0){
     switch_control |= SW1_RELEASED;
     switch_control |= SW2_RELEASED;
   }
-//  if((switch_control&SW1_RELEASED)&&(switch_control&SW1_PRESSED)){
-//    switch_control &= ~SW1_PRESSED;
-//    switch_control |= SW1_RELEASED;
-//  }
-//  if((switch_control&SW2_RELEASED)&&(switch_control&SW2_PRESSED)){
-//    switch_control &= ~SW2_PRESSED;
-//    switch_control |= SW2_RELEASED;
-//  }
+  if((switch_control&SW1_RELEASED)&&(switch_control&SW1_PRESSED)){
+    switch_control &= ~SW1_PRESSED;
+    switch_control |= SW1_RELEASED;
+  }
+  if((switch_control&SW2_RELEASED)&&(switch_control&SW2_PRESSED)){
+    switch_control &= ~SW2_PRESSED;
+    switch_control |= SW2_RELEASED;
+  }
   
   if((switch_control&SW1_RELEASED)&&(switch_control&SW2_RELEASED)){
     TB0CCTL1 &= ~CCIE; //Turn off debounce 

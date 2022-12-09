@@ -28,7 +28,8 @@ extern unsigned int time100;
 extern unsigned int right_speed;
 extern unsigned int left_speed;
 
-
+short timing;
+unsigned int timer=0;
 int cur=0;
 
 //==================================Timer 0=====================================
@@ -50,11 +51,14 @@ int cur=0;
 __interrupt void Timer0_B0_ISR(void){
   TB0CCR0 += TB0CCR0_INTERVAL;
   //process_detectors();
-    ADCCTL0 |= ADCENC; //Enable Conversions
-    ADCCTL0 |= ADCSC;  //Start next sample
+//    ADCCTL0 |= ADCENC; //Enable Conversions
+//    ADCCTL0 |= ADCSC;  //Start next sample
   time_interval50++;
   if(time_interval50>=4){
     time_interval50=0;
+    if(timing > 0){
+       timer++;
+    }
     update_display=UPDATED;
   }
   
@@ -184,6 +188,9 @@ __interrupt void TIMER2_B1_ISR(void){
   switch(__even_in_range(TB2IV,14)){
   case TIMER_CASE_0: break; // No interrupt
   case CCR1:
+    TB2CCR1 += TB2CCR1_INTERVAL; // CCR1
+    ADCCTL0 |= ADCENC; //Enable Conversions
+    ADCCTL0 |= ADCSC;  //Start next sample
     break;
   case CCR2: 
     break;

@@ -18,13 +18,13 @@ void menu_state_machine(){
     display_IP();
     break;
   case Settings:
-    settings_menu();
+    //settings_menu();
     break;
   case ADC_menu:
     adc_menu();
     break;
   case PID_menu:
-    pid_menu();
+    //pid_menu();
     break;
   default:
     menu_state = Main_menu;
@@ -56,12 +56,12 @@ void main_menu(){
     }
   }
 }
-void settings_menu(){
-  if(SW2_AND_TOGGLED){
-    SW2_CLEAR;
-    menu_state = Main_menu;
-  }
-}
+//void settings_menu(){
+//  if(SW2_AND_TOGGLED){
+//    SW2_CLEAR;
+//    menu_state = Main_menu;
+//  }
+//}
 void adc_menu(){
   if(SW2_AND_TOGGLED){
     SW2_CLEAR;
@@ -70,20 +70,20 @@ void adc_menu(){
   }
   if(SW1_AND_TOGGLED){
     SW1_CLEAR;
-    wheel_test ^= 0x01;
-    line_calibration();//_______________________ get rid ofthis after testing..................
+    wheel_test ^= 0x01;//-------------------------------------------------
+    
   }
   adc_display();
 }
 
-void pid_menu(){
-  if(SW2_AND_TOGGLED){
-    SW2_CLEAR;
-    menu_state = Main_menu;
-    lcd_4line();
-  }
-  
-}
+//void pid_menu(){
+//  if(SW2_AND_TOGGLED){
+//    SW2_CLEAR;
+//    menu_state = Main_menu;
+//    lcd_4line();
+//  }
+//  
+//}
 void v_thumb_process(){
   if(prev_thumb<(V_Thumb>>4)){
     prev_thumb=V_Thumb>>4;

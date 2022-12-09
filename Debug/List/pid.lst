@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:14:03
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:42
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\pid.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWF705.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWDC3D.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\pid.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -42,8 +41,8 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
       1          #include "pid.h"
       2          #include "macros.h"
       3          
-      4          #define KP              (2)
-      5          #define KI              (1000)
+      4          #define KP              (25)
+      5          #define KI              (30000)
       6          #define KD              (0)
       7          #define MAX             (10000)
       8          #define MIN             (-MAX)
@@ -54,34 +53,31 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \                     PIDController_Init:
      11                  
      12                  pid->Kp = KP;
-   \   000000   AC430000     MOV.W   #0x2, 0(R12)
+   \   000000   BC4019000000 MOV.W   #0x19, 0(R12)
      13                  pid->Ki = KI;
-   \   000004   BC40E8030200 MOV.W   #0x3e8, 0x2(R12)
      14                  pid->Kd = KD;
-   \   00000A   8C430400     MOV.W   #0x0, 0x4(R12)
+   \   000006   0018FC403075 MOVX.A  #0x7530, 0x2(R12)
+   \            0200        
      15                  pid->limMax = MAX;
    \   00000E   BC4010270A00 MOV.W   #0x2710, 0xa(R12)
      16                  pid->limMin = MIN;
    \   000014   BC40F0D80800 MOV.W   #0xd8f0, 0x8(R12)
      17                  pid->T = SAMPLE_TIME;
-   \   00001A   9C431000     MOV.W   #0x1, 0x10(R12)
      18                  
      19          	/* Clear controller variables */
      20          	pid->integrator = 0;
-   \   00001E   8C431200     MOV.W   #0x0, 0x12(R12)
+   \   00001A   0018DC431000 MOVX.A  #0x1, 0x10(R12)
      21          	pid->prevError  = 0;
-   \   000022   8C431400     MOV.W   #0x0, 0x14(R12)
      22          
      23          	pid->differentiator  = 0;
-   \   000026   8C431600     MOV.W   #0x0, 0x16(R12)
+   \   000020   7C031400     MOVA    #0x0, 0x14(R12)
      24          	pid->prevMeasurement = 0;
-   \   00002A   8C431800     MOV.W   #0x0, 0x18(R12)
      25          
      26          	pid->out = 0;
-   \   00002E   8C431A00     MOV.W   #0x0, 0x1a(R12)
+   \   000024   7C031800     MOVA    #0x0, 0x18(R12)
      27          
      28          }
-   \   000032   1001         RETA
+   \   000028   1001         RETA
      29          
 
    \                                 In  segment CODE, align 2
@@ -114,41 +110,44 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      45          	* Integral
      46          	*/
      47              pid->integrator = pid->integrator + pid->Ki * pid->T * (error + pid->prevError);
-   \   00001A   0A4D         MOV.W   R13, R10
-   \   00001C   1A5C1400     ADD.W   0x14(R12), R10
+   \   00001A   0B4D         MOV.W   R13, R11
+   \   00001C   1B5C1400     ADD.W   0x14(R12), R11
    \   000020   0212         PUSH.W  SR
    \   000022   32C2         DINT
    \   000024   0343         NOP
    \   000026   924C0200.... MOV.W   0x2(R12), &__iar_HWMUL         // MPY
    \   00002C   924C1000.... MOV.W   0x10(R12), &__iar_HWMUL + 8    // OP2
-   \   000032   1B42....     MOV.W   &__iar_HWMUL + 10, R11         // RESLO
+   \   000032   1A42....     MOV.W   &__iar_HWMUL + 10, R10         // RESLO
    \   000036   0343         NOP
-   \   000038   3241         POP.W   SR
-   \   00003A   0212         PUSH.W  SR
+   \   000038   2241         MOV.W   @SP, SR
+   \   00003A   0343         NOP
    \   00003C   32C2         DINT
    \   00003E   0343         NOP
-   \   000040   824B....     MOV.W   R11, &__iar_HWMUL              // MPY
-   \   000044   824A....     MOV.W   R10, &__iar_HWMUL + 8          // OP2
+   \   000040   824A....     MOV.W   R10, &__iar_HWMUL              // MPY
+   \   000044   824B....     MOV.W   R11, &__iar_HWMUL + 8          // OP2
    \   000048   9C52....1200 ADD.W   &__iar_HWMUL + 10, 0x12(R12)   // RESLO
    \   00004E   0343         NOP
    \   000050   3241         POP.W   SR
      48          
      49          	/* Anti-wind-up via integrator clamping */
      50              if (pid->integrator > pid->limMaxInt) {
-   \   000052   9C9C12000E00 CMP.W   0x12(R12), 0xe(R12)
-   \   000058   0434         JGE     ??PIDController_Update_2
+   \   000052   1A4C0E00     MOV.W   0xe(R12), R10
+   \   000056   1B4C1200     MOV.W   0x12(R12), R11
+   \   00005A   0A9B         CMP.W   R11, R10
+   \   00005C   0334         JGE     ??PIDController_Update_2
      51          
      52                  pid->integrator = pid->limMaxInt;
-   \   00005A   9C4C0E001200 MOV.W   0xe(R12), 0x12(R12)
-   \   000060   073C         JMP     ??PIDController_Update_0
+   \   00005E   8C4A1200     MOV.W   R10, 0x12(R12)
+   \   000062   063C         JMP     ??PIDController_Update_0
      53          
      54              } else if (pid->integrator < pid->limMinInt) {
    \                     ??PIDController_Update_2:
-   \   000062   9C9C0C001200 CMP.W   0xc(R12), 0x12(R12)
-   \   000068   0334         JGE     ??PIDController_Update_0
+   \   000064   1A4C0C00     MOV.W   0xc(R12), R10
+   \   000068   0B9A         CMP.W   R10, R11
+   \   00006A   0234         JGE     ??PIDController_Update_0
      55          
      56                  pid->integrator = pid->limMinInt;
-   \   00006A   9C4C0C001200 MOV.W   0xc(R12), 0x12(R12)
+   \   00006C   8C4A1200     MOV.W   R10, 0x12(R12)
      57          
      58              }
      59          
@@ -171,35 +170,37 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
    \   000074   8C4F1A00     MOV.W   R15, 0x1a(R12)
      74          
      75              if (pid->out > pid->limMax) {
-   \   000078   9C9C1A000A00 CMP.W   0x1a(R12), 0xa(R12)
-   \   00007E   0434         JGE     ??PIDController_Update_3
+   \   000078   1B4C0A00     MOV.W   0xa(R12), R11
+   \   00007C   0B9F         CMP.W   R15, R11
+   \   00007E   0334         JGE     ??PIDController_Update_3
      76          
      77                  pid->out = pid->limMax;
-   \   000080   9C4C0A001A00 MOV.W   0xa(R12), 0x1a(R12)
-   \   000086   073C         JMP     ??PIDController_Update_1
+   \   000080   8C4B1A00     MOV.W   R11, 0x1a(R12)
+   \   000084   063C         JMP     ??PIDController_Update_1
      78          
      79              } else if (pid->out < pid->limMin) {
    \                     ??PIDController_Update_3:
-   \   000088   9C9C08001A00 CMP.W   0x8(R12), 0x1a(R12)
-   \   00008E   0334         JGE     ??PIDController_Update_1
+   \   000086   1B4C0800     MOV.W   0x8(R12), R11
+   \   00008A   0F9B         CMP.W   R11, R15
+   \   00008C   0234         JGE     ??PIDController_Update_1
      80          
      81                  pid->out = pid->limMin;
-   \   000090   9C4C08001A00 MOV.W   0x8(R12), 0x1a(R12)
+   \   00008E   8C4B1A00     MOV.W   R11, 0x1a(R12)
      82          
      83              }
      84          
      85          	/* Store error and measurement for later use */
      86              pid->prevError       = error;
    \                     ??PIDController_Update_1:
-   \   000096   8C4D1400     MOV.W   R13, 0x14(R12)
+   \   000092   8C4D1400     MOV.W   R13, 0x14(R12)
      87              pid->prevMeasurement = measurement;
-   \   00009A   8C4E1800     MOV.W   R14, 0x18(R12)
+   \   000096   8C4E1800     MOV.W   R14, 0x18(R12)
      88          
      89          	/* Return controller output */
      90              return pid->out;
-   \   00009E   1C4C1A00     MOV.W   0x1a(R12), R12
-   \   0000A2   1A17         POPM.W  #0x2, R11
-   \   0000A4   1001         RETA
+   \   00009A   1C4C1A00     MOV.W   0x1a(R12), R12
+   \   00009E   1A17         POPM.W  #0x2, R11
+   \   0000A0   1001         RETA
      91          
      92          }
 
@@ -215,13 +216,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-      52  PIDController_Init
-     166  PIDController_Update
+      42  PIDController_Init
+     162  PIDController_Update
 
  
- 218 bytes in segment CODE
+ 204 bytes in segment CODE
  
- 218 bytes of CODE memory
+ 204 bytes of CODE memory
 
 Errors: none
 Warnings: none

@@ -28,10 +28,10 @@ unsigned Process_in_cur;
 
 char *Commad_start;
 char *Command_end;
-char *Tx_String;
+volatile char *Tx_String;
 
 int process_line;
-unsigned int i;
+volatile unsigned int i;
 char IP_Addy[21];
 char SSID[11];
 char *char_buf;
@@ -47,6 +47,7 @@ void send(char *string, char port){
   case Send_UCA0:
     UCA0IE |= UCTXIE;
     UCA0TXBUF = Tx_String[i++];
+    
     break;
   case Send_UCA1:
     UCA1IE |= UCTXIE;
@@ -315,6 +316,7 @@ __interrupt void EUSCI_A0_ISR(void){
       //UCA0IE &= ~UCTXIE;
     }else{// keep chars going
       UCA0TXBUF = Tx_String[i++];
+      //i++;
     }
     break;
   default: break;

@@ -21,9 +21,10 @@
 
 
 #define Treshold			(200)
+#define Black_threshold			(500)
 #define White_val			(300)
 #define Black_val			(3000)
-#define Off_line_ret			(450)
+#define Off_line_ret			(5000)
 extern char display_line[DISPLAYLINES][DISPLAYCHARS];
 extern volatile unsigned char switch_control;
 unsigned short line_detection;
@@ -42,7 +43,11 @@ char calibrated = 0;
 #define right_of_line		(1)
 #define left_of_line		(2)
 
-
+void find_line(unsigned char *curState,unsigned char nextState){
+  if(ADC_Left_Detect >= L_black - Black_threshold && ADC_Right_Detect >= R_black - Black_threshold){
+    *curState = nextState; 
+  }
+}
 int measurment(){//This is the measurment value for the pid contoller
   if(ADC_Left_Detect<=L_white+Treshold/*+Treshold*/&& measure_state != right_of_line && measure_state != left_of_line ){
   	measure_state = right_of_line;
@@ -59,12 +64,12 @@ int measurment(){//This is the measurment value for the pid contoller
   case right_of_line://want to turn left and keep turning until found line
     strcpy(display_line[DISPLAY3], "   right  ");
     if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
-    return -Off_line_ret;
+    return Off_line_ret;
     break;
   case left_of_line://want to turn right and keep turning until found line
     strcpy(display_line[DISPLAY3], "   left   ");
     if(ADC_Right_Detect>R_white+Treshold && ADC_Left_Detect > L_white+Treshold) measure_state = ON_line;
-    return Off_line_ret;
+    return -Off_line_ret;
     break;
   
   }
@@ -73,7 +78,7 @@ int measurment(){//This is the measurment value for the pid contoller
 void line_calibration(){
   while(!(calibrated)){
     switch(calibration_state){
-    case 0:
+    case 1:
       if(SW1_AND_TOGGLED){
 	SW1_CLEAR;
 	R_white = ADC_Right_Detect;
@@ -82,7 +87,7 @@ void line_calibration(){
       }
       line_calibration_display('w');
       break;
-    case 1:
+    case 0:
       if(SW1_AND_TOGGLED){
 	SW1_CLEAR;
 	R_black = ADC_Right_Detect;
@@ -97,7 +102,9 @@ void line_calibration(){
       break;
     }
     Display_Process();
+    process_switches();
   }
+  clear_display();
 }
 
 void set_line_bit(unsigned short level_detection){

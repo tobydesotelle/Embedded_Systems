@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          28/Nov/2022  20:12:32
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          04/Dec/2022  14:29:42
 # Copyright 1996-2021 IAR Systems AB.
 # PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
 #
@@ -16,18 +16,17 @@
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c
 #    Command line  =  
-#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EW9291.tmp ("C:\Users\Tobias
+#        -f C:\Users\TOBIAS~1\AppData\Local\Temp\EWDB02.tmp ("C:\Users\Tobias
 #        Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\main.c" -lC
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
 #        Asheville\Documents\GitHub\Embedded_Systems\Debug\List" -o
 #        "C:\Users\Tobias Desotelle\OneDrive - UNC
-#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_cse
-#        --no_unroll --no_inline --no_code_motion --no_tbaa --debug
-#        -D__MSP430FR2355__ -e --double=32 --dlib_config "C:\Program Files
-#        (x86)\IAR Systems\Embedded Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I
-#        ./ --core=430X --data_model=small -Ol --multiplier=32
-#        --hw_workaround=CPU40 --code_model=large)
+#        Asheville\Documents\GitHub\Embedded_Systems\Debug\Obj" --no_unroll
+#        --no_inline --no_tbaa --debug -D__MSP430FR2355__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X --data_model=small
+#        -Om --multiplier=32 --hw_workaround=CPU40 --code_model=large)
 #    Locale        =  English_USA.1252
 #    List file     =  
 #        C:\Users\Tobias Desotelle\OneDrive - UNC
@@ -59,18 +58,13 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      18          
      19          
      20          //Make pid_update updated from timer
-     21          
+     21          //
      22          //Make serial lighter
      23          //faster ADC
      24          //
-     25          
+     25          //build ping wifi server
      26          
      27          #include "macros.h"
-
-   \                                 In  segment DATA16_AN, at 0x222
-   \   union <unnamed> _A_PBOUT_L
-   \                     _A_PBOUT_L:
-   \   000000                DS8 2
 
    \                                 In  segment DATA16_AN, at 0x130
    \   union <unnamed> _A_PM5CTL0_L
@@ -112,7 +106,7 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      33          volatile unsigned short display_bits;
    \                     display_bits:
    \   000000                DS8 2
-     34          
+     34          extern short timing;
      35          extern PIDController pid;
 
    \                                 In  segment DATA16_Z, align 2, align-sorted
@@ -136,51 +130,45 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
      42            while(!((display_bits) & (Splash_bit))){}//Wait for 2 seconds to boot IOT 
    \                     ??main_0:
    \   000014   92B3....     BIT.W   #0x1, &display_bits
-   \   000018   FD2B         JNC     ??main_0
-     43            //IOT_main();//uncommet when IOT Works
-     44            
-     45            while(ALWAYS){
-     46              menu_state_machine();
+   \   000018   FD27         JEQ     ??main_0
+     43            IOT_main();//uncommet when IOT Works
+   \   00001A   ........     CALLA   #IOT_main
+     44            line_calibration();
+   \   00001E   ........     CALLA   #line_calibration
+     45            timing=1;
+   \   000022   9243....     MOV.W   #0x1, &timing
+     46            while(ALWAYS){
+     47              //menu_state_machine();
+     48              process_switches();
    \                     ??main_1:
-   \   00001A   ........     CALLA   #menu_state_machine
-     47              process_switches();
-   \   00001E   ........     CALLA   #process_switches
-     48              //Command_state();
-     49              Display_Process();
-   \   000022   ........     CALLA   #Display_Process
-     50              //Command_state();
-     51              P3OUT ^= TEST_PROBE;   	// Change State of TEST_PROBE OFF
-   \   000026   D2E32202     XOR.B   #0x1, &0x222
-     52              if(wheel_test != 0){
-   \   00002A   8293....     CMP.W   #0x0, &wheel_test
-   \   00002E   F527         JEQ     ??main_1
-     53              	//Wheels_Process();         //State machine for line following 
-     54            	move(FORWARD);
-   \   000030   3C400300     MOV.W   #0x3, R12
-   \   000034   ........     CALLA   #move
-     55                pid_control();
-   \   000038   ........     CALLA   #pid_control
-   \   00003C   EE3F         JMP     ??main_1
-   \   00003E   0343         NOP
-   \   000040                REQUIRE _A_PM5CTL0_L
-   \   000040                REQUIRE _A_TB3CCR5_L
-   \   000040                REQUIRE _A_PBOUT_L
-     56              }
-     57            }
-     58          }
-     59            
+   \   000026   ........     CALLA   #process_switches
+     49              Command_state();
+   \   00002A   ........     CALLA   #Command_state
+     50              Display_Process();
+   \   00002E   ........     CALLA   #Display_Process
+     51              //P3OUT ^= TEST_PROBE;   	// Change State of TEST_PROBE OFF
+     52              diplay_pad();
+   \   000032   ........     CALLA   #diplay_pad
+   \   000036   F73F         JMP     ??main_1
+   \   000038   0343         NOP
+   \   00003A                REQUIRE _A_PM5CTL0_L
+   \   00003A                REQUIRE _A_TB3CCR5_L
+     53            }
+     54          }
+     55            
 
    Maximum stack usage in bytes:
 
    CSTACK Function
    ------ --------
       4   main
+        4   -> Command_state
         4   -> Display_Process
+        4   -> IOT_main
         4   -> Master_Init
         4   -> PIDController_Init
-        4   -> menu_state_machine
-        4   -> move
-        4   -> pid_control
+        4   -> diplay_pad
+        4   -> line_calibration
         4   -> process_switches
 
 
@@ -188,11 +176,10 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
 
    Bytes  Function/Label
    -----  --------------
-       2  _A_PBOUT_L
        2  _A_PM5CTL0_L
        2  _A_TB3CCR5_L
        2  display_bits
-      64  main
+      58  main
        2  motor_control_bits
        2  serial_bits
        1  switch_control
@@ -200,12 +187,12 @@ C:\Users\Tobias Desotelle\OneDrive - UNC Asheville\Documents\GitHub\Embedded_Sys
        2  wheel_test
 
  
- 64 bytes in segment CODE
-  6 bytes in segment DATA16_AN
+ 58 bytes in segment CODE
+  4 bytes in segment DATA16_AN
  11 bytes in segment DATA16_Z
  
- 64 bytes of CODE memory
- 11 bytes of DATA memory (+ 6 bytes shared)
+ 58 bytes of CODE memory
+ 11 bytes of DATA memory (+ 4 bytes shared)
 
 Errors: none
 Warnings: none
