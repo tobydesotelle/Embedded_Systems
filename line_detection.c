@@ -24,7 +24,7 @@
 #define Black_threshold			(500)
 #define White_val			(300)
 #define Black_val			(3000)
-#define Off_line_ret			(5000)
+#define Off_line_ret			(3000)
 extern char display_line[DISPLAYLINES][DISPLAYCHARS];
 extern volatile unsigned char switch_control;
 unsigned short line_detection;

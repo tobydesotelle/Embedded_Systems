@@ -1,10 +1,10 @@
 #include "pid.h"
 #include "macros.h"
 
-#define KP              (25)
+#define KP              (20)
 #define KI              (30000)
 #define KD              (0)
-#define MAX             (10000)
+#define MAX             (3000)
 #define MIN             (-MAX)
 #define SAMPLE_TIME     (1)
 void PIDController_Init(PIDController *pid) {

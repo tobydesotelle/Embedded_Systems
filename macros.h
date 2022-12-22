@@ -26,7 +26,7 @@
 #
 
 #define TURN_SPEED              (0)
-#define BASE_SPEED              (10000)
+#define BASE_SPEED              (4250)
 //(4250)
 //===========================GENERAL PORT DEFINTIONS ===========================
 #define LOW                     (0X00)
